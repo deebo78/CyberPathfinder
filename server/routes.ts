@@ -232,7 +232,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // NICE Framework automated import endpoint
-  app.post("/api/import-nice-framework", async (req, res) => {
+  app.post("/api/import/nice-framework", async (req, res) => {
     try {
       const { NiceFrameworkImporter } = await import("./nice-importer");
       const importer = new NiceFrameworkImporter();
