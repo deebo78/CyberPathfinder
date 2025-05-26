@@ -956,7 +956,7 @@ export class NiceFrameworkImporter {
         ];
         
         console.log("Importing abilities...");
-        for (const ability of sampleAbilities) {
+        for (const ability of completeAbilities) {
           try {
             await storage.createAbility({
               code: ability.code,
