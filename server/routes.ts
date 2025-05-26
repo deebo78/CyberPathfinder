@@ -250,7 +250,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload and import endpoint
-  app.post("/api/import", upload.single('file'), async (req, res) => {
+  app.post("/api/import", upload.single('file'), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
@@ -261,21 +261,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(400).json({ message: "Import type is required" });
       }
 
-      // For now, we'll create a placeholder import history record
-      // In a real implementation, you would parse the Excel/CSV file here
-      const importHistory = await storage.createImportHistory({
-        filename: req.file.originalname,
-        importType,
-        recordsImported: 0,
-        status: "pending",
-        metadata: { fileSize: req.file.size, mimetype: req.file.mimetype }
-      });
+      // Check if it's a JSON file for NICE Framework import
+      if (req.file.mimetype === 'application/json' || req.file.originalname.endsWith('.json')) {
+        try {
+          const fs = await import('fs');
+          const jsonContent = fs.readFileSync(req.file.path, 'utf8');
+          const jsonData = JSON.parse(jsonContent);
+          
+          const { NiceFrameworkImporter } = await import("./nice-importer");
+          const importer = new NiceFrameworkImporter();
+          
+          await importer.importFromJsonFile(jsonData);
+          
+          // Clean up the uploaded file
+          fs.unlinkSync(req.file.path);
+          
+          res.status(200).json({
+            message: "NICE Framework JSON imported successfully",
+            status: "completed"
+          });
+          
+        } catch (error) {
+          console.error("Error processing JSON import:", error);
+          res.status(500).json({ message: "JSON import failed" });
+        }
+      } else {
+        // For other file types, create a placeholder import history record
+        const importHistory = await storage.createImportHistory({
+          filename: req.file.originalname,
+          importType,
+          recordsImported: 0,
+          status: "pending",
+          metadata: { fileSize: req.file.size, mimetype: req.file.mimetype }
+        });
 
-      res.status(201).json({
-        message: "File uploaded successfully",
-        importId: importHistory.id,
-        status: "pending"
-      });
+        res.status(201).json({
+          message: "File uploaded successfully",
+          importId: importHistory.id,
+          status: "pending"
+        });
+      }
     } catch (error) {
       console.error("Error processing import:", error);
       res.status(500).json({ message: "Import failed" });

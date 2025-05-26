@@ -42,32 +42,133 @@ interface NiceAbility {
 }
 
 export class NiceFrameworkImporter {
-  private async fetchCsvData(filename: string): Promise<string> {
+  public async importFromJsonFile(jsonData: any): Promise<void> {
     try {
-      // Try multiple potential URLs for NICE Framework data
-      const urls = [
-        `${NICE_FRAMEWORK_BASE_URL}/${filename}`,
-        `https://niccs.cisa.gov/workforce-development/nice-framework/${filename}`,
-        `https://www.nist.gov/nice/nice-framework/${filename}`,
-        `https://raw.githubusercontent.com/NICCS/NICE-Framework/master/data/${filename}`
-      ];
-
-      for (const url of urls) {
-        try {
-          console.log(`Attempting to fetch from: ${url}`);
-          const response = await fetch(url);
-          if (response.ok) {
-            return await response.text();
+      console.log("Starting NICE Framework import from JSON file...");
+      
+      // First, create categories and specialty areas from the existing hardcoded data
+      const categoryMap = await this.importCategories();
+      const specialtyAreaMap = await this.importSpecialtyAreas(categoryMap);
+      
+      // Now import the actual framework data from the JSON
+      let recordsImported = categoryMap.size + specialtyAreaMap.size;
+      
+      // Import work roles if present
+      if (jsonData.workRoles && Array.isArray(jsonData.workRoles)) {
+        for (const role of jsonData.workRoles) {
+          try {
+            const specialtyAreaId = specialtyAreaMap.get(role.specialtyAreaCode) || null;
+            const categoryId = categoryMap.get(role.categoryCode) || null;
+            
+            await storage.createWorkRole({
+              code: role.code || role.id,
+              name: role.name || role.title,
+              description: role.description || role.summary || "",
+              specialtyAreaId,
+              categoryId
+            });
+            recordsImported++;
+          } catch (error) {
+            console.error(`Error importing work role ${role.code}:`, error);
           }
-        } catch (error) {
-          console.log(`Failed to fetch from ${url}:`, error);
-          continue;
         }
       }
-
-      throw new Error(`Could not fetch ${filename} from any known source`);
+      
+      // Import tasks if present
+      if (jsonData.tasks && Array.isArray(jsonData.tasks)) {
+        for (const task of jsonData.tasks) {
+          try {
+            await storage.createTask({
+              code: task.code || task.id,
+              description: task.description || task.text || ""
+            });
+            recordsImported++;
+          } catch (error) {
+            console.error(`Error importing task ${task.code}:`, error);
+          }
+        }
+      }
+      
+      // Import knowledge items if present
+      if (jsonData.knowledge && Array.isArray(jsonData.knowledge)) {
+        for (const knowledge of jsonData.knowledge) {
+          try {
+            await storage.createKnowledgeItem({
+              code: knowledge.code || knowledge.id,
+              description: knowledge.description || knowledge.text || ""
+            });
+            recordsImported++;
+          } catch (error) {
+            console.error(`Error importing knowledge item ${knowledge.code}:`, error);
+          }
+        }
+      }
+      
+      // Import skills if present
+      if (jsonData.skills && Array.isArray(jsonData.skills)) {
+        for (const skill of jsonData.skills) {
+          try {
+            await storage.createSkill({
+              code: skill.code || skill.id,
+              description: skill.description || skill.text || ""
+            });
+            recordsImported++;
+          } catch (error) {
+            console.error(`Error importing skill ${skill.code}:`, error);
+          }
+        }
+      }
+      
+      // Import abilities if present
+      if (jsonData.abilities && Array.isArray(jsonData.abilities)) {
+        for (const ability of jsonData.abilities) {
+          try {
+            await storage.createAbility({
+              code: ability.code || ability.id,
+              description: ability.description || ability.text || ""
+            });
+            recordsImported++;
+          } catch (error) {
+            console.error(`Error importing ability ${ability.code}:`, error);
+          }
+        }
+      }
+      
+      // Record the successful import
+      await storage.createImportHistory({
+        filename: "NICE_Framework_JSON_Upload",
+        importType: "complete",
+        recordsImported,
+        status: "completed",
+        metadata: { 
+          source: "JSON file upload",
+          categories: categoryMap.size,
+          specialtyAreas: specialtyAreaMap.size,
+          workRoles: jsonData.workRoles?.length || 0,
+          tasks: jsonData.tasks?.length || 0,
+          knowledge: jsonData.knowledge?.length || 0,
+          skills: jsonData.skills?.length || 0,
+          abilities: jsonData.abilities?.length || 0,
+          importedAt: new Date().toISOString()
+        }
+      });
+      
+      console.log(`NICE Framework import completed! Imported ${recordsImported} records.`);
+      
     } catch (error) {
-      console.error(`Error fetching ${filename}:`, error);
+      console.error("Error during NICE Framework import:", error);
+      
+      await storage.createImportHistory({
+        filename: "NICE_Framework_JSON_Upload",
+        importType: "complete",
+        recordsImported: 0,
+        status: "failed",
+        metadata: { 
+          error: error instanceof Error ? error.message : "Unknown error",
+          failedAt: new Date().toISOString()
+        }
+      });
+      
       throw error;
     }
   }

@@ -115,10 +115,10 @@ export function ImportModal({ isOpen, onClose }: ImportModalProps) {
             <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-colors">
               <CloudUpload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
               <p className="text-sm text-gray-600 mb-2">Drop files here or click to browse</p>
-              <p className="text-xs text-gray-500 mb-4">Supports Excel (.xlsx) and CSV files</p>
+              <p className="text-xs text-gray-500 mb-4">Supports Excel (.xlsx), CSV, and JSON files</p>
               <Input
                 type="file"
-                accept=".xlsx,.csv"
+                accept=".xlsx,.csv,.json"
                 onChange={handleFileChange}
                 className="max-w-xs"
               />
