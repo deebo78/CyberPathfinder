@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, ListTodo, Brain, ServerCog } from "lucide-react";
+import { Briefcase, ListTodo, Brain, ServerCog, FolderTree, Building2 } from "lucide-react";
 
 interface StatsCardsProps {
   statistics?: {
@@ -8,6 +8,9 @@ interface StatsCardsProps {
     tasks: number;
     knowledge: number;
     skills: number;
+    abilities: number;
+    categories: number;
+    specialtyAreas: number;
   };
   isLoading?: boolean;
 }
@@ -15,28 +18,40 @@ interface StatsCardsProps {
 export function StatsCards({ statistics, isLoading }: StatsCardsProps) {
   const stats = [
     {
-      name: "Work Roles",
-      value: statistics?.workRoles || 0,
-      icon: Briefcase,
+      name: "Categories",
+      value: statistics?.categories || 0,
+      icon: FolderTree,
       color: "text-blue-600 bg-blue-100",
     },
     {
-      name: "ListTodo",
+      name: "Specialty Areas",
+      value: statistics?.specialtyAreas || 0,
+      icon: Building2,
+      color: "text-green-600 bg-green-100",
+    },
+    {
+      name: "Work Roles",
+      value: statistics?.workRoles || 0,
+      icon: Briefcase,
+      color: "text-orange-600 bg-orange-100",
+    },
+    {
+      name: "Tasks",
       value: statistics?.tasks || 0,
       icon: ListTodo,
-      color: "text-green-600 bg-green-100",
+      color: "text-purple-600 bg-purple-100",
     },
     {
       name: "Knowledge Areas",
       value: statistics?.knowledge || 0,
       icon: Brain,
-      color: "text-orange-600 bg-orange-100",
+      color: "text-cyan-600 bg-cyan-100",
     },
     {
       name: "Skills & Abilities",
       value: (statistics?.skills || 0) + (statistics?.abilities || 0),
       icon: ServerCog,
-      color: "text-purple-600 bg-purple-100",
+      color: "text-pink-600 bg-pink-100",
     },
   ];
 
