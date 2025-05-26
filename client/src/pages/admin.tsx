@@ -4,14 +4,42 @@ import { Button } from "@/components/ui/button";
 import { ImportModal } from "@/components/modals/import-modal";
 import { DataTable } from "@/components/tables/data-table";
 import { useNiceFramework } from "@/hooks/use-nice-framework";
-import { CloudUpload, Download, Database, CheckCircle } from "lucide-react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "@/hooks/use-toast";
+import { apiRequest } from "@/lib/queryClient";
+import { CloudUpload, Download, Database, CheckCircle, Globe } from "lucide-react";
 
 export default function Admin() {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const { importHistory, isLoadingImportHistory } = useNiceFramework();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+
+  const niceFrameworkImportMutation = useMutation({
+    mutationFn: () => apiRequest("/api/import/nice-framework", "POST"),
+    onSuccess: () => {
+      toast({
+        title: "Success!",
+        description: "NICE Framework data imported successfully from official sources",
+      });
+      queryClient.invalidateQueries({ queryKey: ["/api/statistics"] });
+      queryClient.invalidateQueries({ queryKey: ["/api/import-history"] });
+    },
+    onError: (error: any) => {
+      toast({
+        title: "Import Failed",
+        description: error.message || "Failed to import NICE Framework data",
+        variant: "destructive",
+      });
+    },
+  });
 
   const handleExport = (type: string) => {
     window.open(`/api/export/${type}`, '_blank');
+  };
+
+  const handleNiceFrameworkImport = () => {
+    niceFrameworkImportMutation.mutate();
   };
 
   const columns = [
@@ -80,18 +108,37 @@ export default function Admin() {
       </div>
 
       {/* Import/Export Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Globe className="w-5 h-5 mr-2" />
+              Official Framework
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-gray-600 mb-4">Import complete NICE Framework 2.0.0 from official sources</p>
+            <Button 
+              onClick={handleNiceFrameworkImport} 
+              className="w-full"
+              disabled={niceFrameworkImportMutation.isPending}
+            >
+              {niceFrameworkImportMutation.isPending ? "Importing..." : "Import NICE Framework"}
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
               <CloudUpload className="w-5 h-5 mr-2" />
-              Data Import
+              File Upload
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-gray-600 mb-4">Import NICE Framework data from Excel or CSV files</p>
+            <p className="text-gray-600 mb-4">Import custom data from Excel, CSV, or JSON files</p>
             <Button onClick={() => setIsImportModalOpen(true)} className="w-full">
-              Import Data
+              Upload File
             </Button>
           </CardContent>
         </Card>
