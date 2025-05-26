@@ -16,7 +16,7 @@ export default function Admin() {
   const queryClient = useQueryClient();
 
   const niceFrameworkImportMutation = useMutation({
-    mutationFn: () => apiRequest("/api/import/nice-framework", "POST"),
+    mutationFn: () => apiRequest("/api/import/nice-framework", "POST", {}),
     onSuccess: () => {
       toast({
         title: "Success!",
