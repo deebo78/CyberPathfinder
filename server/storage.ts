@@ -331,13 +331,13 @@ export class DatabaseStorage implements IStorage {
     ]);
 
     return {
-      workRoles: workRolesCount[0].count,
-      tasks: tasksCount[0].count,
-      knowledge: knowledgeCount[0].count,
-      skills: skillsCount[0].count,
-      abilities: abilitiesCount[0].count,
-      categories: categoriesCount[0].count,
-      specialtyAreas: specialtyAreasCount[0].count,
+      workRoles: Number(workRolesCount[0].count) || 0,
+      tasks: Number(tasksCount[0].count) || 0,
+      knowledge: Number(knowledgeCount[0].count) || 0,
+      skills: Number(skillsCount[0].count) || 0,
+      abilities: Number(abilitiesCount[0].count) || 0,
+      categories: Number(categoriesCount[0].count) || 0,
+      specialtyAreas: Number(specialtyAreasCount[0].count) || 0,
     };
   }
 
