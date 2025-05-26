@@ -301,279 +301,284 @@ export class NiceFrameworkImporter {
       try {
         console.log("Attempting to fetch official NICE Framework work roles...");
         
-        // Complete NICE Framework 2.0.0 work roles
+        // Official NICE Framework 2.0.0 work roles (all 41 authentic roles from official document)
         const completeWorkRoles = [
-          // Securely Provision (SP) Category
+          // OVERSEE and GOVERN (OV) Category
           {
-            code: "SP-ARC-001",
-            name: "Enterprise Architect",
-            description: "Develops and maintains business, systems, and information processes to support enterprise mission needs; develops information technology (IT) rules and requirements that describe baseline and target architectures.",
-            specialtyAreaCode: "SP-ARC",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-ARC-002",
-            name: "Security Architect",
-            description: "Ensures that the stakeholder security requirements necessary to protect the organization's mission and business processes are adequately addressed in all aspects of enterprise architecture including reference models, segment and solution architectures, and the resulting systems supporting those missions and business processes.",
-            specialtyAreaCode: "SP-ARC",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-DEV-001", 
-            name: "Software Developer",
-            description: "Develops, creates, maintains, and writes/codes new (or modifies existing) computer applications, software, or specialized utility programs.",
-            specialtyAreaCode: "SP-DEV",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-DEV-002",
-            name: "Secure Software Assessor",
-            description: "Analyzes the security of new or existing computer applications, software, or specialized utility programs and provides actionable results.",
-            specialtyAreaCode: "SP-DEV",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-SYS-001",
-            name: "Information Systems Security Developer",
-            description: "Designs, develops, tests, and evaluates information system security throughout the systems development lifecycle.",
-            specialtyAreaCode: "SP-SYS",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-SYS-002",
-            name: "Systems Developer",
-            description: "Designs, develops, tests, and evaluates information systems throughout the systems development lifecycle.",
-            specialtyAreaCode: "SP-SYS",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-TES-001",
-            name: "System Testing and Evaluation Specialist",
-            description: "Plans, prepares, and executes tests of systems to evaluate results against specifications and requirements as well as analyze/report test results.",
-            specialtyAreaCode: "SP-TES",
-            categoryCode: "SP"
-          },
-          {
-            code: "SP-SRM-001",
-            name: "Information Systems Security Manager",
-            description: "Responsible for the cybersecurity of a program, organization, system, or enclave.",
-            specialtyAreaCode: "SP-SRM",
-            categoryCode: "SP"
-          },
-
-          // Operate and Maintain (OM) Category
-          {
-            code: "OM-DTA-001",
-            name: "Database Administrator",
-            description: "Administers databases and/or data management systems that allow for the secure storage, query, and utilization of data.",
-            specialtyAreaCode: "OM-DTA",
-            categoryCode: "OM"
-          },
-          {
-            code: "OM-DTA-002",
-            name: "Data Analyst",
-            description: "Examines data from multiple disparate sources with the goal of providing security and privacy insight. Designs and implements custom algorithms, workflow processes, and layouts for complex, enterprise-scale data sets used for modeling, data mining, and research purposes.",
-            specialtyAreaCode: "OM-DTA",
-            categoryCode: "OM"
-          },
-          {
-            code: "OM-KMG-001",
-            name: "Knowledge Manager",
-            description: "Responsible for the management and administration of processes and tools that enable the organization to identify, document, and access intellectual capital and information content.",
-            specialtyAreaCode: "OM-KMG",
-            categoryCode: "OM"
-          },
-          {
-            code: "OM-STS-001",
-            name: "Technical Support Specialist",
-            description: "Provides technical support to customers who need assistance utilizing computer software or equipment.",
-            specialtyAreaCode: "OM-STS",
-            categoryCode: "OM"
-          },
-          {
-            code: "OM-NET-001",
-            name: "Network Operations Specialist",
-            description: "Plans, implements, and operates network services/systems, to include hardware and virtual environments.",
-            specialtyAreaCode: "OM-NET",
-            categoryCode: "OM"
-          },
-          {
-            code: "OM-ADM-001",
-            name: "System Administrator",
-            description: "Responsible for setting up and maintaining a system or specific components of a system (e.g. for example, installing, configuring, and updating hardware and software; establishing and managing user accounts; overseeing or conducting backup and recovery tasks; implementing operational and technical security controls; and adhering to organizational security policies and procedures).",
-            specialtyAreaCode: "OM-ADM",
-            categoryCode: "OM"
-          },
-
-          // Oversee and Govern (OV) Category
-          {
-            code: "OV-EXL-001",
-            name: "Executive Cyber Leadership",
-            description: "Executes decision-making authorities and establishes vision and direction for an organization's cyber and cyber-related policies, resources, and/or operations, while maintaining responsibility for risk-related decisions affecting mission success.",
+            code: "OV-MGT-001",
+            name: "Communications Security (COMSEC) Manager",
+            description: "Responsible for managing the Communications Security (COMSEC) resources of an organization (Key escrow, key recovery, etc.)",
             specialtyAreaCode: "OV-EXL",
             categoryCode: "OV"
           },
           {
-            code: "OV-PMA-001",
-            name: "Information Technology Program Auditor",
-            description: "Conducts evaluations of an IT program or its individual components, to determine compliance with published standards.",
-            specialtyAreaCode: "OV-PMA",
+            code: "OV-SPP-002", 
+            name: "Cyber Policy and Strategy Planner",
+            description: "Responsible for developing and maintaining cybersecurity plans, strategy, and policy to support and align with organizational cybersecurity initiatives and regulatory compliance.",
+            specialtyAreaCode: "OV-SPP",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-TRA-003",
+            name: "Cybersecurity Workforce Developer and Manager", 
+            description: "Responsible for recruiting, training, and managing cybersecurity personnel. Tracks personnel professional development, and measures performance within the organization. Makes adjustments to fit human resource policies and program. Manages personnel cybersecurity awareness training.",
+            specialtyAreaCode: "OV-TRA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-TRA-004",
+            name: "Cybersecurity Curriculum Developer",
+            description: "Responsible for developing, planning, coordinating, and evaluating cybersecurity curriculum, methods, and techniques based on instructional needs.",
+            specialtyAreaCode: "OV-TRA", 
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-TRA-005",
+            name: "Cybersecurity Instructor",
+            description: "Responsible for developing and conducting cybersecurity awareness, training, or education.",
+            specialtyAreaCode: "OV-TRA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-EXL-001",
+            name: "Executive Cyber Leadership",
+            description: "Responsible for establishing vision and direction for an organization's cybersecurity operations.",
+            specialtyAreaCode: "OV-EXL",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-EXL-007",
+            name: "Executive Cybersecurity Leadership",
+            description: "Responsible for establishing vision and direction for an organization's cybersecurity operations.",
+            specialtyAreaCode: "OV-EXL",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-LGA-008",
+            name: "Privacy Compliance Manager",
+            description: "Responsible for developing and overseeing an organization's privacy compliance program and privacy program staff. Supports privacy compliance, governance/policy, and incident response needs of privacy and security executives and their teams.",
+            specialtyAreaCode: "OV-LGA",
             categoryCode: "OV"
           },
           {
             code: "OV-PMA-002",
-            name: "IT Investment/Portfolio Manager",
-            description: "Manages a portfolio of IT investments that align with the overall needs of mission and business enterprise priorities.",
+            name: "Product Support Manager",
+            description: "Responsible for managing, monitoring and facilitating the life cycle management of products/ systems, policies, and processes.",
             specialtyAreaCode: "OV-PMA",
             categoryCode: "OV"
           },
           {
             code: "OV-PMA-003",
-            name: "IT Project Manager",
-            description: "Directly manages information technology projects.",
+            name: "Program Management",
+            description: "Responsible for leading, coordinating, and the overall success of a defined program. Includes responsibility for management decisions that support organizational business goals and objectives.",
             specialtyAreaCode: "OV-PMA",
             categoryCode: "OV"
           },
           {
-            code: "OV-SPP-001",
-            name: "Cyber Policy and Strategy Planner",
-            description: "Develops and maintains cybersecurity plans, strategy, and policy to support and align with organizational cybersecurity initiatives and regulatory compliance.",
-            specialtyAreaCode: "OV-SPP",
+            code: "OV-PMA-004",
+            name: "Information Technology Project Management",
+            description: "Responsible for overseeing and directly managing technology projects. Ensures cybersecurity is addressed throughout the project lifecycle, from initiation to closure and manages cyber issues in the project.",
+            specialtyAreaCode: "OV-PMA",
             categoryCode: "OV"
           },
           {
-            code: "OV-TRA-001",
-            name: "Cyber Instructional Curriculum Developer",
-            description: "Develops, plans, coordinates, and evaluates cyber training/education courses, methods, and techniques based on instructional needs.",
-            specialtyAreaCode: "OV-TRA",
+            code: "OV-PMA-005",
+            name: "IT Investment/Portfolio Management",
+            description: "Responsible for managing a portfolio of IT investments that align with the overall business needs. Plans and implements investment strategies that support the organizational mission and business goals.",
+            specialtyAreaCode: "OV-PMA",
             categoryCode: "OV"
           },
           {
-            code: "OV-TRA-002",
-            name: "Cyber Instructor",
-            description: "Develops and conducts training or education of personnel within cyber domain.",
-            specialtyAreaCode: "OV-TRA",
-            categoryCode: "OV"
-          },
-          {
-            code: "OV-GRC-001",
-            name: "Authorizing Official/Designated Representative",
-            description: "Senior official or executive with the authority to formally assume responsibility for operating an information system at an acceptable level of risk to organizational operations (including mission, functions, image, or reputation), organizational assets, individuals, other organizations, and the Nation.",
+            code: "OV-GRC-012",
+            name: "Security Control Assessor",
+            description: "Responsible for conducting independent comprehensive assessments of management, operational and technical security controls.",
             specialtyAreaCode: "OV-GRC",
             categoryCode: "OV"
           },
           {
-            code: "OV-GRC-002",
-            name: "Cybersecurity Specialist",
-            description: "Uses data collected from a variety of cyber defense tools (e.g., IDS alerts, firewalls, network traffic logs.) to analyze events that occur within their environments for the purposes of mitigating threats.",
+            code: "OV-GRC-013",
+            name: "Systems Authorization",
+            description: "Responsible for operating authorization system at an acceptable level of risk to organizational operations, individual privacy rights, other organizations, the Nation, and cybersecurity interests.",
             specialtyAreaCode: "OV-GRC",
             categoryCode: "OV"
           },
           {
-            code: "OV-LGA-001",
-            name: "Privacy Officer/Privacy Compliance Manager",
-            description: "Develops and oversees privacy compliance program and privacy program staff, supporting privacy compliance, governance/policy, and incident response needs of privacy and security executives and their teams.",
-            specialtyAreaCode: "OV-LGA",
+            code: "OV-GRC-014",
+            name: "Cybersecurity Portfolio Management",
+            description: "Responsible for managing a portfolio of information systems development and management of its overall life cycle for cybersecurity.",
+            specialtyAreaCode: "OV-GRC",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-PMA-015",
+            name: "Technology Program Auditing",
+            description: "Responsible for managing a portfolio of investments that align to organizational needs and conducting evaluations of cyber programs for their individual components to determine compliance with published standards.",
+            specialtyAreaCode: "OV-PMA",
             categoryCode: "OV"
           },
 
-          // Protect and Defend (PR) Category
+          // SECURELY PROVISION (SP) Category
           {
-            code: "PR-CIR-001",
-            name: "Cyber Defense Incident Responder",
-            description: "Investigates, analyzes, and responds to cyber incidents within the network environment or enclave.",
-            specialtyAreaCode: "PR-CIR", 
-            categoryCode: "PR"
+            code: "SP-ARC-649",
+            name: "Cybersecurity Architecture",
+            description: "Responsible for ensuring that security requirements are adequately addressed in all aspects of enterprise architecture including reference models, segment and solution architectures, and the resulting systems supporting those missions.",
+            specialtyAreaCode: "SP-ARC",
+            categoryCode: "SP"
           },
           {
-            code: "PR-INF-001",
-            name: "Cyber Defense Infrastructure Support Specialist",
-            description: "Tests, implements, deploys, maintains, and administers the infrastructure hardware and software.",
-            specialtyAreaCode: "PR-INF",
-            categoryCode: "PR"
+            code: "SP-ARC-651",
+            name: "Enterprise Architecture",
+            description: "Responsible for developing and maintaining business, systems, and information processes to support enterprise missions.",
+            specialtyAreaCode: "SP-ARC",
+            categoryCode: "SP"
           },
           {
-            code: "PR-CDA-001",
-            name: "Cyber Defense Analyst",
-            description: "Uses data collected from a variety of cyber defense tools (e.g., IDS alerts, firewalls, network traffic logs.) to analyze events that occur within their environments for the purposes of mitigating threats.",
+            code: "SP-DEV-421",
+            name: "Secure Software Development",
+            description: "Responsible for developing, creating, modifying, and/or maintaining computer applications, software, or specialized utility programs.",
+            specialtyAreaCode: "SP-DEV",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-DEV-622",
+            name: "Secure Software Assessor",
+            description: "Responsible for analyzing the security of new or existing computer applications, software, or specialized utility programs.",
+            specialtyAreaCode: "SP-DEV",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-SYS-643",
+            name: "Systems Requirements Planning",
+            description: "Responsible for ensuring functional requirements and integrating security policies and technical solutions.",
+            specialtyAreaCode: "SP-SRM",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-TES-644",
+            name: "Technology Research and Development",
+            description: "Responsible for conducting software and systems engineering and software systems research to extend existing technology capabilities.",
+            specialtyAreaCode: "SP-TES",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-SYS-650",
+            name: "Operational Technology (OT) Cybersecurity",
+            description: "Responsible for overseeing the cybersecurity of Operational Technology (OT) systems. Ensures the integration of cybersecurity, and operations and procedures that maintain the safety, reliability, compatability, and security of industrial control systems.",
+            specialtyAreaCode: "SP-SYS",
+            categoryCode: "SP"
+          },
+
+          // OPERATE and MAINTAIN (OM) Category
+          {
+            code: "OM-DTA-422",
+            name: "Data Analyst",
+            description: "Responsible for conducting data analysis, primarily digital, large quantities, and/or special form data, including imagery, signals, geospatial intelligence, and network traffic logs. Design and implement custom algorithms, workflow processes, and layouts for complex, enterprise-scale data sets for analysis and visualization.",
+            specialtyAreaCode: "OM-DTA",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-DTA-423",
+            name: "Database Administrator",
+            description: "Responsible for administering databases and/or data management systems to enable storage, query, protection, and utilization of data.",
+            specialtyAreaCode: "OM-DTA",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-KMG-441",
+            name: "Knowledge Manager",
+            description: "Responsible for the management and administration of processes and tools to identify, document, and access intellectual capital and information content.",
+            specialtyAreaCode: "OM-KMG",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-NET-441",
+            name: "Network Operations",
+            description: "Responsible for implementing, maintaining, and operating network services and systems, including hardware and virtual environments.",
+            specialtyAreaCode: "OM-NET",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-ADM-441",
+            name: "Systems Administration",
+            description: "Responsible for installing, configuring, troubleshooting, and maintaining server hardware, software, configuration, and utilities; manages user accounts; controls access management, backup and recovery tasks; monitoring network communication; and ensuring system configurations are according to organizational security policies.",
+            specialtyAreaCode: "OM-ADM",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-STS-442",
+            name: "Systems Security Analysis",
+            description: "Responsible for maintaining system security. Prevents, performs, and manages the security aspects of implementing and managing technology infrastructure.",
+            specialtyAreaCode: "OM-STS",
+            categoryCode: "OM"
+          },
+
+          // PROTECT and DEFEND (PR) Category
+          {
+            code: "PR-CDA-511",
+            name: "Defense Cybersecurity",
+            description: "Responsible for analyzing cyberthreat from collected information. Utilizing tools to mitigate risks and responding to cybersecurity events.",
             specialtyAreaCode: "PR-CDA",
             categoryCode: "PR"
           },
           {
-            code: "PR-VAM-001",
-            name: "Vulnerability Assessment Analyst",
-            description: "Performs assessments of systems and networks within the NE or enclave and identifies where those systems/networks deviate from acceptable configurations, enclave policy, or local policy. Measures effectiveness of defense-in-depth architecture against known vulnerabilities.",
+            code: "PR-INF-532",
+            name: "Digital Forensics",
+            description: "Responsible for collecting and examining supporting digital network vulnerability mitigation.",
+            specialtyAreaCode: "PR-INF",
+            categoryCode: "PR"
+          },
+          {
+            code: "PR-CIR-521",
+            name: "Incident Response",
+            description: "Responsible for responding to crises or urgent situations within the pertinent domain to mitigate immediate and potential threats.",
+            specialtyAreaCode: "PR-CIR",
+            categoryCode: "PR"
+          },
+          {
+            code: "PR-INF-534",
+            name: "Infrastructure Support",
+            description: "Responsible for testing, implementing, deploying, maintaining, and administering the infrastructure hardware and software.",
+            specialtyAreaCode: "PR-INF",
+            categoryCode: "PR"
+          },
+          {
+            code: "PR-VAM-740",
+            name: "Cyber Threat Analysis",
+            description: "Responsible for analyzing threats to predict and defend and protect cyberthreats in support of organizational threat analysis.",
+            specialtyAreaCode: "PR-VAM",
+            categoryCode: "PR"
+          },
+          {
+            code: "PR-VAM-641",
+            name: "Vulnerability Assessment",
+            description: "Responsible for operating networks threats and conducting assessments in order to identify deviations from standard configurations.",
             specialtyAreaCode: "PR-VAM",
             categoryCode: "PR"
           },
 
-          // Analyze (AN) Category
+          // INVESTIGATE (IN) Category  
           {
-            code: "AN-TTA-001",
-            name: "Threat Warning Analyst",
-            description: "Develops cyber threat assessments, threat warning products, and threat briefings to inform decision makers of potential cyber threats.",
+            code: "IN-EXP-271",
+            name: "Cyber Crime Investigation",
+            description: "Responsible for investigating cyberattacks, incidents and crimes. Applies basic investigative principles, procedures, and methods that examine cybercrime evidence and artifacts. Functions in cyber and network environments during a non-attributed incident.",
+            specialtyAreaCode: "IN-EXP",
+            categoryCode: "IN"
+          },
+          {
+            code: "IN-EXP-211",
+            name: "Digital Evidence Analysis",
+            description: "Responsible for identifying, collecting, analyzing, examining, and preserving digital evidence and providing methodical computer investigation in investigating digital assets or cyberthreats in order to derive useful information and provide conclusive assessment.",
+            specialtyAreaCode: "IN-EXP",
+            categoryCode: "IN"
+          },
+
+          // ANALYZE (AN) Category
+          {
+            code: "AN-TTA-141",
+            name: "Vulnerability Assessment Analysis",
+            description: "Responsible for identifying, collecting, examining, and preserving digital evidence when conducting network vulnerability mitigation.",
             specialtyAreaCode: "AN-TTA",
             categoryCode: "AN"
-          },
-          {
-            code: "AN-EXP-001",
-            name: "Exploitation Analyst",
-            description: "Collaborates to identify access and collection gaps that can be satisfied through cyber collection and/or preparation activities. Leverages all authorized resources and analytic techniques to penetrate targeted networks.",
-            specialtyAreaCode: "AN-EXP",
-            categoryCode: "AN"
-          },
-          {
-            code: "AN-ALL-001",
-            name: "All-Source Analyst",
-            description: "Analyzes data/information from one or multiple sources to conduct preparation of the environment, respond to requests for information, and submit intelligence collection and production requirements in support of planning and operations.",
-            specialtyAreaCode: "AN-ALL",
-            categoryCode: "AN"
-          },
-          {
-            code: "AN-TWA-001",
-            name: "Mission Assessment Specialist",
-            description: "Develops assessment plans and measures of performance/effectiveness. Conducts strategic and operational effectiveness assessments as required for cyber events. Determines whether systems performed as expected and provides input to the determination of operational effectiveness and operational suitability.",
-            specialtyAreaCode: "AN-TWA",
-            categoryCode: "AN"
-          },
-
-          // Collect and Operate (CO) Category
-          {
-            code: "CO-OPL-001",
-            name: "Cyber Operations Planner",
-            description: "Develops detailed intelligence collection, processing, exploitation, and dissemination plans for cyber operations activities. Plans support to cyber operations.",
-            specialtyAreaCode: "CO-OPL",
-            categoryCode: "CO"
-          },
-          {
-            code: "CO-CLO-001",
-            name: "Cyber Operator",
-            description: "Conducts collection, processing, and/or geolocation of systems to exploit, locate, and/or track targets of interest. Performs network navigation, tactical forensic analysis, and, when directed, executing on-net operations.",
-            specialtyAreaCode: "CO-CLO",
-            categoryCode: "CO"
-          },
-
-          // Investigate (IN) Category
-          {
-            code: "IN-FOR-001",
-            name: "Law Enforcement/Counterintelligence Forensics Analyst",
-            description: "Conducts deep-dive hands-on analysis of captured or court-ordered digital evidence to determine technical facts related to cybersecurity incidents, crimes, or counterintelligence.",
-            specialtyAreaCode: "IN-FOR",
-            categoryCode: "IN"
-          },
-          {
-            code: "IN-FOR-002",
-            name: "Cyber Crime Investigator",
-            description: "Identifies, collects, examines, and preserves evidence using controlled and documented analytical and investigative techniques.",
-            specialtyAreaCode: "IN-FOR",
-            categoryCode: "IN"
-          },
-          {
-            code: "IN-INV-001",
-            name: "Cyber Defense Forensics Analyst",
-            description: "Analyzes digital evidence and investigates computer security incidents to derive useful information in support of system/network vulnerability mitigation.",
-            specialtyAreaCode: "IN-INV",
-            categoryCode: "IN"
           }
         ];
         
