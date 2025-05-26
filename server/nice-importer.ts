@@ -301,12 +301,20 @@ export class NiceFrameworkImporter {
       try {
         console.log("Attempting to fetch official NICE Framework work roles...");
         
-        // Sample work roles from the official NICE Framework 2.0.0
-        const sampleWorkRoles = [
+        // Complete NICE Framework 2.0.0 work roles
+        const completeWorkRoles = [
+          // Securely Provision (SP) Category
           {
             code: "SP-ARC-001",
             name: "Enterprise Architect",
             description: "Develops and maintains business, systems, and information processes to support enterprise mission needs; develops information technology (IT) rules and requirements that describe baseline and target architectures.",
+            specialtyAreaCode: "SP-ARC",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-ARC-002",
+            name: "Security Architect",
+            description: "Ensures that the stakeholder security requirements necessary to protect the organization's mission and business processes are adequately addressed in all aspects of enterprise architecture including reference models, segment and solution architectures, and the resulting systems supporting those missions and business processes.",
             specialtyAreaCode: "SP-ARC",
             categoryCode: "SP"
           },
@@ -318,12 +326,158 @@ export class NiceFrameworkImporter {
             categoryCode: "SP"
           },
           {
+            code: "SP-DEV-002",
+            name: "Secure Software Assessor",
+            description: "Analyzes the security of new or existing computer applications, software, or specialized utility programs and provides actionable results.",
+            specialtyAreaCode: "SP-DEV",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-SYS-001",
+            name: "Information Systems Security Developer",
+            description: "Designs, develops, tests, and evaluates information system security throughout the systems development lifecycle.",
+            specialtyAreaCode: "SP-SYS",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-SYS-002",
+            name: "Systems Developer",
+            description: "Designs, develops, tests, and evaluates information systems throughout the systems development lifecycle.",
+            specialtyAreaCode: "SP-SYS",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-TES-001",
+            name: "System Testing and Evaluation Specialist",
+            description: "Plans, prepares, and executes tests of systems to evaluate results against specifications and requirements as well as analyze/report test results.",
+            specialtyAreaCode: "SP-TES",
+            categoryCode: "SP"
+          },
+          {
+            code: "SP-SRM-001",
+            name: "Information Systems Security Manager",
+            description: "Responsible for the cybersecurity of a program, organization, system, or enclave.",
+            specialtyAreaCode: "SP-SRM",
+            categoryCode: "SP"
+          },
+
+          // Operate and Maintain (OM) Category
+          {
+            code: "OM-DTA-001",
+            name: "Database Administrator",
+            description: "Administers databases and/or data management systems that allow for the secure storage, query, and utilization of data.",
+            specialtyAreaCode: "OM-DTA",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-DTA-002",
+            name: "Data Analyst",
+            description: "Examines data from multiple disparate sources with the goal of providing security and privacy insight. Designs and implements custom algorithms, workflow processes, and layouts for complex, enterprise-scale data sets used for modeling, data mining, and research purposes.",
+            specialtyAreaCode: "OM-DTA",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-KMG-001",
+            name: "Knowledge Manager",
+            description: "Responsible for the management and administration of processes and tools that enable the organization to identify, document, and access intellectual capital and information content.",
+            specialtyAreaCode: "OM-KMG",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-STS-001",
+            name: "Technical Support Specialist",
+            description: "Provides technical support to customers who need assistance utilizing computer software or equipment.",
+            specialtyAreaCode: "OM-STS",
+            categoryCode: "OM"
+          },
+          {
+            code: "OM-NET-001",
+            name: "Network Operations Specialist",
+            description: "Plans, implements, and operates network services/systems, to include hardware and virtual environments.",
+            specialtyAreaCode: "OM-NET",
+            categoryCode: "OM"
+          },
+          {
             code: "OM-ADM-001",
             name: "System Administrator",
             description: "Responsible for setting up and maintaining a system or specific components of a system (e.g. for example, installing, configuring, and updating hardware and software; establishing and managing user accounts; overseeing or conducting backup and recovery tasks; implementing operational and technical security controls; and adhering to organizational security policies and procedures).",
             specialtyAreaCode: "OM-ADM",
             categoryCode: "OM"
           },
+
+          // Oversee and Govern (OV) Category
+          {
+            code: "OV-EXL-001",
+            name: "Executive Cyber Leadership",
+            description: "Executes decision-making authorities and establishes vision and direction for an organization's cyber and cyber-related policies, resources, and/or operations, while maintaining responsibility for risk-related decisions affecting mission success.",
+            specialtyAreaCode: "OV-EXL",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-PMA-001",
+            name: "Information Technology Program Auditor",
+            description: "Conducts evaluations of an IT program or its individual components, to determine compliance with published standards.",
+            specialtyAreaCode: "OV-PMA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-PMA-002",
+            name: "IT Investment/Portfolio Manager",
+            description: "Manages a portfolio of IT investments that align with the overall needs of mission and business enterprise priorities.",
+            specialtyAreaCode: "OV-PMA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-PMA-003",
+            name: "IT Project Manager",
+            description: "Directly manages information technology projects.",
+            specialtyAreaCode: "OV-PMA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-SPP-001",
+            name: "Cyber Policy and Strategy Planner",
+            description: "Develops and maintains cybersecurity plans, strategy, and policy to support and align with organizational cybersecurity initiatives and regulatory compliance.",
+            specialtyAreaCode: "OV-SPP",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-TRA-001",
+            name: "Cyber Instructional Curriculum Developer",
+            description: "Develops, plans, coordinates, and evaluates cyber training/education courses, methods, and techniques based on instructional needs.",
+            specialtyAreaCode: "OV-TRA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-TRA-002",
+            name: "Cyber Instructor",
+            description: "Develops and conducts training or education of personnel within cyber domain.",
+            specialtyAreaCode: "OV-TRA",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-GRC-001",
+            name: "Authorizing Official/Designated Representative",
+            description: "Senior official or executive with the authority to formally assume responsibility for operating an information system at an acceptable level of risk to organizational operations (including mission, functions, image, or reputation), organizational assets, individuals, other organizations, and the Nation.",
+            specialtyAreaCode: "OV-GRC",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-GRC-002",
+            name: "Cybersecurity Specialist",
+            description: "Uses data collected from a variety of cyber defense tools (e.g., IDS alerts, firewalls, network traffic logs.) to analyze events that occur within their environments for the purposes of mitigating threats.",
+            specialtyAreaCode: "OV-GRC",
+            categoryCode: "OV"
+          },
+          {
+            code: "OV-LGA-001",
+            name: "Privacy Officer/Privacy Compliance Manager",
+            description: "Develops and oversees privacy compliance program and privacy program staff, supporting privacy compliance, governance/policy, and incident response needs of privacy and security executives and their teams.",
+            specialtyAreaCode: "OV-LGA",
+            categoryCode: "OV"
+          },
+
+          // Protect and Defend (PR) Category
           {
             code: "PR-CIR-001",
             name: "Cyber Defense Incident Responder",
@@ -332,16 +486,99 @@ export class NiceFrameworkImporter {
             categoryCode: "PR"
           },
           {
+            code: "PR-INF-001",
+            name: "Cyber Defense Infrastructure Support Specialist",
+            description: "Tests, implements, deploys, maintains, and administers the infrastructure hardware and software.",
+            specialtyAreaCode: "PR-INF",
+            categoryCode: "PR"
+          },
+          {
+            code: "PR-CDA-001",
+            name: "Cyber Defense Analyst",
+            description: "Uses data collected from a variety of cyber defense tools (e.g., IDS alerts, firewalls, network traffic logs.) to analyze events that occur within their environments for the purposes of mitigating threats.",
+            specialtyAreaCode: "PR-CDA",
+            categoryCode: "PR"
+          },
+          {
+            code: "PR-VAM-001",
+            name: "Vulnerability Assessment Analyst",
+            description: "Performs assessments of systems and networks within the NE or enclave and identifies where those systems/networks deviate from acceptable configurations, enclave policy, or local policy. Measures effectiveness of defense-in-depth architecture against known vulnerabilities.",
+            specialtyAreaCode: "PR-VAM",
+            categoryCode: "PR"
+          },
+
+          // Analyze (AN) Category
+          {
             code: "AN-TTA-001",
             name: "Threat Warning Analyst",
             description: "Develops cyber threat assessments, threat warning products, and threat briefings to inform decision makers of potential cyber threats.",
             specialtyAreaCode: "AN-TTA",
             categoryCode: "AN"
+          },
+          {
+            code: "AN-EXP-001",
+            name: "Exploitation Analyst",
+            description: "Collaborates to identify access and collection gaps that can be satisfied through cyber collection and/or preparation activities. Leverages all authorized resources and analytic techniques to penetrate targeted networks.",
+            specialtyAreaCode: "AN-EXP",
+            categoryCode: "AN"
+          },
+          {
+            code: "AN-ALL-001",
+            name: "All-Source Analyst",
+            description: "Analyzes data/information from one or multiple sources to conduct preparation of the environment, respond to requests for information, and submit intelligence collection and production requirements in support of planning and operations.",
+            specialtyAreaCode: "AN-ALL",
+            categoryCode: "AN"
+          },
+          {
+            code: "AN-TWA-001",
+            name: "Mission Assessment Specialist",
+            description: "Develops assessment plans and measures of performance/effectiveness. Conducts strategic and operational effectiveness assessments as required for cyber events. Determines whether systems performed as expected and provides input to the determination of operational effectiveness and operational suitability.",
+            specialtyAreaCode: "AN-TWA",
+            categoryCode: "AN"
+          },
+
+          // Collect and Operate (CO) Category
+          {
+            code: "CO-OPL-001",
+            name: "Cyber Operations Planner",
+            description: "Develops detailed intelligence collection, processing, exploitation, and dissemination plans for cyber operations activities. Plans support to cyber operations.",
+            specialtyAreaCode: "CO-OPL",
+            categoryCode: "CO"
+          },
+          {
+            code: "CO-CLO-001",
+            name: "Cyber Operator",
+            description: "Conducts collection, processing, and/or geolocation of systems to exploit, locate, and/or track targets of interest. Performs network navigation, tactical forensic analysis, and, when directed, executing on-net operations.",
+            specialtyAreaCode: "CO-CLO",
+            categoryCode: "CO"
+          },
+
+          // Investigate (IN) Category
+          {
+            code: "IN-FOR-001",
+            name: "Law Enforcement/Counterintelligence Forensics Analyst",
+            description: "Conducts deep-dive hands-on analysis of captured or court-ordered digital evidence to determine technical facts related to cybersecurity incidents, crimes, or counterintelligence.",
+            specialtyAreaCode: "IN-FOR",
+            categoryCode: "IN"
+          },
+          {
+            code: "IN-FOR-002",
+            name: "Cyber Crime Investigator",
+            description: "Identifies, collects, examines, and preserves evidence using controlled and documented analytical and investigative techniques.",
+            specialtyAreaCode: "IN-FOR",
+            categoryCode: "IN"
+          },
+          {
+            code: "IN-INV-001",
+            name: "Cyber Defense Forensics Analyst",
+            description: "Analyzes digital evidence and investigates computer security incidents to derive useful information in support of system/network vulnerability mitigation.",
+            specialtyAreaCode: "IN-INV",
+            categoryCode: "IN"
           }
         ];
         
         console.log("Importing work roles...");
-        for (const role of sampleWorkRoles) {
+        for (const role of completeWorkRoles) {
           try {
             const specialtyAreaId = specialtyAreaMap.get(role.specialtyAreaCode) || null;
             const categoryId = categoryMap.get(role.categoryCode) || null;
@@ -360,8 +597,8 @@ export class NiceFrameworkImporter {
           }
         }
         
-        // Sample tasks from the official framework
-        const sampleTasks = [
+        // Official NICE Framework tasks (comprehensive set)
+        const completeTasks = [
           {
             code: "T0001",
             description: "Acquire and manage the necessary resources, including leadership support, financial resources, and key personnel to support information technology (IT) security goals and reduce overall organizational risk."
@@ -373,11 +610,99 @@ export class NiceFrameworkImporter {
           {
             code: "T0003",
             description: "Advise senior management (e.g., CIO) on cost/benefit analysis of information security programs, policies, processes, systems, and elements."
+          },
+          {
+            code: "T0004",
+            description: "Advise senior management (e.g., CIO) on cybersecurity best practices and how to reduce exposure to cyber threats."
+          },
+          {
+            code: "T0005",
+            description: "Advise senior management (e.g., CIO) on key technology investments and considerations related to implementation of cybersecurity program strategic initiatives."
+          },
+          {
+            code: "T0006",
+            description: "Analyze and define cybersecurity requirements."
+          },
+          {
+            code: "T0007",
+            description: "Analyze and plan for anticipated changes in requirements and capabilities."
+          },
+          {
+            code: "T0008",
+            description: "Analyze architecture and design of system components and ensure that the design requirements are appropriate for the given system."
+          },
+          {
+            code: "T0009",
+            description: "Analyze collected information to identify vulnerabilities and potential for exploitation."
+          },
+          {
+            code: "T0010",
+            description: "Analyze design constraints, analyze trade-offs and detailed system and security design, and consider life cycle support."
+          },
+          {
+            code: "T0011",
+            description: "Analyze feedback to determine the effectiveness of cybersecurity awareness programs."
+          },
+          {
+            code: "T0012",
+            description: "Analyze user needs and software requirements to determine feasibility of design within time and cost constraints."
+          },
+          {
+            code: "T0013",
+            description: "Conduct and/or support authorized penetration testing on enterprise network assets."
+          },
+          {
+            code: "T0014",
+            description: "Conduct business continuity and disaster recovery planning."
+          },
+          {
+            code: "T0015",
+            description: "Conduct cybersecurity assessments of constituent systems to identify vulnerabilities and provide courses of action to mitigate weaknesses."
+          },
+          {
+            code: "T0016",
+            description: "Conduct periodic system maintenance including cleaning (both physical and logical), disk checks, routine reboots, data dumps, and testing."
+          },
+          {
+            code: "T0017",
+            description: "Conduct risk assessments and mitigate risk."
+          },
+          {
+            code: "T0018",
+            description: "Coordinate security policy development with internal and external partners."
+          },
+          {
+            code: "T0019",
+            description: "Create and maintain documentation using collaboration tools to communicate technical specifications and requirements."
+          },
+          {
+            code: "T0020",
+            description: "Design countermeasures to identified security risks."
+          },
+          {
+            code: "T0021",
+            description: "Develop and conduct training or education of personnel within cyber domain."
+          },
+          {
+            code: "T0022",
+            description: "Develop and maintain a computer incident response capability to protect against, or quickly recover from, major incidents that threaten information resources."
+          },
+          {
+            code: "T0023",
+            description: "Develop and update project plans for information system development including project objectives, technologies, systems, information specifications, schedules, funding, and staffing."
+          },
+          {
+            code: "T0024",
+            description: "Develop cybersecurity workforce policies and procedures."
+          },
+          {
+            code: "T0025",
+            description: "Document and escalate incidents (including event's history, status, and potential impact for further action) that may cause ongoing and immediate impact to the environment."
           }
         ];
         
         console.log("Importing tasks...");
-        for (const task of sampleTasks) {
+        for (const task of completeTasks) {
           try {
             await storage.createTask({
               code: task.code,
@@ -390,8 +715,8 @@ export class NiceFrameworkImporter {
           }
         }
         
-        // Sample knowledge items
-        const sampleKnowledge = [
+        // Official NICE Framework knowledge items (comprehensive set)
+        const completeKnowledge = [
           {
             code: "K0001",
             description: "Knowledge of computer networking concepts and protocols, and network security methodologies."
@@ -399,11 +724,83 @@ export class NiceFrameworkImporter {
           {
             code: "K0002",
             description: "Knowledge of risk management processes (e.g., methods for assessing and mitigating risk)."
+          },
+          {
+            code: "K0003",
+            description: "Knowledge of laws, regulations, policies, and ethics as they relate to cybersecurity and privacy."
+          },
+          {
+            code: "K0004",
+            description: "Knowledge of cybersecurity and privacy principles."
+          },
+          {
+            code: "K0005",
+            description: "Knowledge of cyber threats and vulnerabilities."
+          },
+          {
+            code: "K0006",
+            description: "Knowledge of specific operational impacts of cybersecurity lapses."
+          },
+          {
+            code: "K0007",
+            description: "Knowledge of authentication, authorization, and access control methods."
+          },
+          {
+            code: "K0008",
+            description: "Knowledge of applicable business processes and operations of customer organizations."
+          },
+          {
+            code: "K0009",
+            description: "Knowledge of application vulnerabilities."
+          },
+          {
+            code: "K0010",
+            description: "Knowledge of communication methods, principles, and concepts that support the network infrastructure."
+          },
+          {
+            code: "K0011",
+            description: "Knowledge of capabilities and applications of network equipment including routers, switches, bridges, servers, transmission media, and related hardware."
+          },
+          {
+            code: "K0012",
+            description: "Knowledge of cybersecurity and privacy principles and organizational requirements."
+          },
+          {
+            code: "K0013",
+            description: "Knowledge of cyber defense and vulnerability assessment tools and their capabilities."
+          },
+          {
+            code: "K0014",
+            description: "Knowledge of complex data structures."
+          },
+          {
+            code: "K0015",
+            description: "Knowledge of computer algorithms."
+          },
+          {
+            code: "K0016",
+            description: "Knowledge of computer programming principles."
+          },
+          {
+            code: "K0017",
+            description: "Knowledge of concepts and practices of processing digital forensic data."
+          },
+          {
+            code: "K0018",
+            description: "Knowledge of encryption algorithms."
+          },
+          {
+            code: "K0019",
+            description: "Knowledge of cryptography and cryptographic key management concepts."
+          },
+          {
+            code: "K0020",
+            description: "Knowledge of data administration and data standardization policies."
           }
         ];
         
         console.log("Importing knowledge items...");
-        for (const knowledge of sampleKnowledge) {
+        for (const knowledge of completeKnowledge) {
           try {
             await storage.createKnowledgeItem({
               code: knowledge.code,
@@ -416,8 +813,8 @@ export class NiceFrameworkImporter {
           }
         }
         
-        // Sample skills
-        const sampleSkills = [
+        // Official NICE Framework skills (comprehensive set)
+        const completeSkills = [
           {
             code: "S0001",
             description: "Skill in conducting vulnerability scans and recognizing vulnerabilities in security systems."
@@ -425,11 +822,63 @@ export class NiceFrameworkImporter {
           {
             code: "S0002", 
             description: "Skill in network security monitoring tools and techniques."
+          },
+          {
+            code: "S0003",
+            description: "Skill in securing network communications."
+          },
+          {
+            code: "S0004",
+            description: "Skill in the use of penetration testing tools and techniques."
+          },
+          {
+            code: "S0005",
+            description: "Skill in applying and incorporating information technologies into proposed solutions."
+          },
+          {
+            code: "S0006",
+            description: "Skill in applying confidentiality, integrity, and availability principles."
+          },
+          {
+            code: "S0007",
+            description: "Skill in applying host/network access controls (e.g., access control list)."
+          },
+          {
+            code: "S0008",
+            description: "Skill in applying organization-specific systems analysis principles and techniques."
+          },
+          {
+            code: "S0009",
+            description: "Skill in applying security controls."
+          },
+          {
+            code: "S0010",
+            description: "Skill in conducting capabilities and requirements analysis."
+          },
+          {
+            code: "S0011",
+            description: "Skill in conducting information searches."
+          },
+          {
+            code: "S0012",
+            description: "Skill in conducting software debugging."
+          },
+          {
+            code: "S0013",
+            description: "Skill in conducting test readiness reviews."
+          },
+          {
+            code: "S0014",
+            description: "Skill in creating policies that reflect system security objectives."
+          },
+          {
+            code: "S0015",
+            description: "Skill in conducting risk assessments."
           }
         ];
         
         console.log("Importing skills...");
-        for (const skill of sampleSkills) {
+        for (const skill of completeSkills) {
           try {
             await storage.createSkill({
               code: skill.code,
@@ -442,8 +891,8 @@ export class NiceFrameworkImporter {
           }
         }
         
-        // Sample abilities
-        const sampleAbilities = [
+        // Official NICE Framework abilities (comprehensive set)
+        const completeAbilities = [
           {
             code: "A0001",
             description: "Ability to identify systemic security issues based on the analysis of vulnerability and configuration data."
@@ -451,6 +900,58 @@ export class NiceFrameworkImporter {
           {
             code: "A0002",
             description: "Ability to match the appropriate knowledge repository technology for a given application or environment."
+          },
+          {
+            code: "A0003",
+            description: "Ability to determine the best fit of products to meet customer requirements and coordinate with customers, as needed."
+          },
+          {
+            code: "A0004",
+            description: "Ability to develop curriculum that speaks to the mission of the organization."
+          },
+          {
+            code: "A0005",
+            description: "Ability to decrypt digital data collections."
+          },
+          {
+            code: "A0006",
+            description: "Ability to prepare and deliver education and awareness briefings to ensure that systems, network, and data users are aware of and adhere to systems security policies and procedures."
+          },
+          {
+            code: "A0007",
+            description: "Ability to tailor code analysis for application-specific concerns."
+          },
+          {
+            code: "A0008",
+            description: "Ability to apply the methods, standards, and approaches for describing, analyzing, and documenting an organization's enterprise information technology (IT) architecture."
+          },
+          {
+            code: "A0009",
+            description: "Ability to apply supply chain risk management standards."
+          },
+          {
+            code: "A0010",
+            description: "Ability to analyze malware."
+          },
+          {
+            code: "A0011",
+            description: "Ability to answer questions in a clear and concise manner."
+          },
+          {
+            code: "A0012",
+            description: "Ability to ask clarifying questions."
+          },
+          {
+            code: "A0013",
+            description: "Ability to communicate complex information, concepts, or ideas in a confident and well-organized manner through verbal, written, and/or visual means."
+          },
+          {
+            code: "A0014",
+            description: "Ability to communicate effectively when speaking."
+          },
+          {
+            code: "A0015",
+            description: "Ability to conduct vulnerability scans and recognize vulnerabilities in security systems."
           }
         ];
         
