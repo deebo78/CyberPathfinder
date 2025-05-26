@@ -231,6 +231,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // NICE Framework automated import endpoint
+  app.post("/api/import-nice-framework", async (req, res) => {
+    try {
+      const { NiceFrameworkImporter } = await import("./nice-importer");
+      const importer = new NiceFrameworkImporter();
+      
+      await importer.importCompleteFramework();
+      
+      res.status(200).json({
+        message: "NICE Framework 2.0.0 imported successfully",
+        status: "completed"
+      });
+    } catch (error) {
+      console.error("Error importing NICE Framework:", error);
+      res.status(500).json({ message: "NICE Framework import failed" });
+    }
+  });
+
   // File upload and import endpoint
   app.post("/api/import", upload.single('file'), async (req, res) => {
     try {

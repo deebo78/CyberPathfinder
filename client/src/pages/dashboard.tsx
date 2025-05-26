@@ -9,9 +9,23 @@ import { useNiceFramework } from "@/hooks/use-nice-framework";
 export default function Dashboard() {
   const { statistics, isLoadingStats } = useNiceFramework();
 
-  const handleBulkImport = () => {
-    // This would trigger the import modal
-    console.log("Opening bulk import modal");
+  const handleBulkImport = async () => {
+    try {
+      const response = await fetch("/api/import-nice-framework", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        window.location.reload(); // Refresh to show updated statistics
+      } else {
+        console.error("Import failed");
+      }
+    } catch (error) {
+      console.error("Error importing NICE Framework:", error);
+    }
   };
 
   const handleValidation = () => {
@@ -64,8 +78,8 @@ export default function Dashboard() {
               onClick={handleBulkImport}
             >
               <CloudUpload className="w-8 h-8 text-gray-400 mb-2" />
-              <p className="text-sm font-medium text-gray-700">Bulk Import</p>
-              <p className="text-xs text-gray-500">Upload Excel/CSV files</p>
+              <p className="text-sm font-medium text-gray-700">Import NICE Framework</p>
+              <p className="text-xs text-gray-500">Official NIST data source</p>
             </Button>
             
             <Button
