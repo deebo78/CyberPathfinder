@@ -1,13 +1,12 @@
 import { 
-  categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills, abilities,
-  workRoleTasks, workRoleKnowledge, workRoleSkills, workRoleAbilities, importHistory,
+  categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills,
+  workRoleTasks, workRoleKnowledge, workRoleSkills, importHistory,
   type Category, type InsertCategory,
   type SpecialtyArea, type InsertSpecialtyArea,
   type WorkRole, type InsertWorkRole,
   type Task, type InsertTask,
   type KnowledgeItem, type InsertKnowledgeItem,
   type Skill, type InsertSkill,
-  type Ability, type InsertAbility,
   type ImportHistory, type InsertImportHistory
 } from "@shared/schema";
 import { db } from "./db";
@@ -57,13 +56,6 @@ export interface IStorage {
   updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill | undefined>;
   deleteSkill(id: number): Promise<boolean>;
 
-  // Abilities
-  getAbilities(): Promise<Ability[]>;
-  getAbilityById(id: number): Promise<Ability | undefined>;
-  createAbility(ability: InsertAbility): Promise<Ability>;
-  updateAbility(id: number, ability: Partial<InsertAbility>): Promise<Ability | undefined>;
-  deleteAbility(id: number): Promise<boolean>;
-
   // Search
   searchAll(query: string): Promise<any>;
 
@@ -79,7 +71,7 @@ export interface IStorage {
   bulkCreateTasks(tasks: InsertTask[]): Promise<Task[]>;
   bulkCreateKnowledgeItems(knowledgeItems: InsertKnowledgeItem[]): Promise<KnowledgeItem[]>;
   bulkCreateSkills(skills: InsertSkill[]): Promise<Skill[]>;
-  bulkCreateAbilities(abilities: InsertAbility[]): Promise<Ability[]>;
+
 }
 
 export class DatabaseStorage implements IStorage {
@@ -264,41 +256,17 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount > 0;
   }
 
-  // Abilities
-  async getAbilities(): Promise<Ability[]> {
-    return await db.select().from(abilities).orderBy(abilities.code);
-  }
 
-  async getAbilityById(id: number): Promise<Ability | undefined> {
-    const [ability] = await db.select().from(abilities).where(eq(abilities.id, id));
-    return ability || undefined;
-  }
-
-  async createAbility(ability: InsertAbility): Promise<Ability> {
-    const [created] = await db.insert(abilities).values(ability).returning();
-    return created;
-  }
-
-  async updateAbility(id: number, ability: Partial<InsertAbility>): Promise<Ability | undefined> {
-    const [updated] = await db.update(abilities).set(ability).where(eq(abilities.id, id)).returning();
-    return updated || undefined;
-  }
-
-  async deleteAbility(id: number): Promise<boolean> {
-    const result = await db.delete(abilities).where(eq(abilities.id, id));
-    return result.rowCount > 0;
-  }
 
   // Search
   async searchAll(query: string): Promise<any> {
     const searchPattern = `%${query}%`;
     
-    const [workRoleResults, taskResults, knowledgeResults, skillResults, abilityResults] = await Promise.all([
+    const [workRoleResults, taskResults, knowledgeResults, skillResults] = await Promise.all([
       db.select().from(workRoles).where(ilike(workRoles.name, searchPattern)).limit(10),
       db.select().from(tasks).where(ilike(tasks.description, searchPattern)).limit(10),
       db.select().from(knowledgeItems).where(ilike(knowledgeItems.description, searchPattern)).limit(10),
       db.select().from(skills).where(ilike(skills.description, searchPattern)).limit(10),
-      db.select().from(abilities).where(ilike(abilities.description, searchPattern)).limit(10),
     ]);
 
     return {
@@ -306,7 +274,6 @@ export class DatabaseStorage implements IStorage {
       tasks: taskResults,
       knowledge: knowledgeResults,
       skills: skillResults,
-      abilities: abilityResults,
     };
   }
 
@@ -317,7 +284,6 @@ export class DatabaseStorage implements IStorage {
       tasksCount,
       knowledgeCount,
       skillsCount,
-      abilitiesCount,
       categoriesCount,
       specialtyAreasCount,
     ] = await Promise.all([
@@ -325,7 +291,6 @@ export class DatabaseStorage implements IStorage {
       db.select({ count: count() }).from(tasks),
       db.select({ count: count() }).from(knowledgeItems),
       db.select({ count: count() }).from(skills),
-      db.select({ count: count() }).from(abilities),
       db.select({ count: count() }).from(categories),
       db.select({ count: count() }).from(specialtyAreas),
     ]);
@@ -335,7 +300,6 @@ export class DatabaseStorage implements IStorage {
       tasks: Number(tasksCount[0].count) || 0,
       knowledge: Number(knowledgeCount[0].count) || 0,
       skills: Number(skillsCount[0].count) || 0,
-      abilities: Number(abilitiesCount[0].count) || 0,
       categories: Number(categoriesCount[0].count) || 0,
       specialtyAreas: Number(specialtyAreasCount[0].count) || 0,
     };
@@ -372,10 +336,7 @@ export class DatabaseStorage implements IStorage {
     return await db.insert(skills).values(skillsList).returning();
   }
 
-  async bulkCreateAbilities(abilitiesList: InsertAbility[]): Promise<Ability[]> {
-    if (abilitiesList.length === 0) return [];
-    return await db.insert(abilities).values(abilitiesList).returning();
-  }
+
 }
 
 export const storage = new DatabaseStorage();
