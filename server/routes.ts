@@ -5,7 +5,7 @@ import { z } from "zod";
 import multer from "multer";
 import { 
   insertCategorySchema, insertSpecialtyAreaSchema, insertWorkRoleSchema, 
-  insertTaskSchema, insertKnowledgeItemSchema, insertSkillSchema, insertAbilitySchema 
+  insertTaskSchema, insertKnowledgeItemSchema, insertSkillSchema
 } from "@shared/schema";
 
 const upload = multer({ dest: 'uploads/' });
@@ -198,27 +198,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Abilities routes
-  app.get("/api/abilities", async (req, res) => {
-    try {
-      const abilities = await storage.getAbilities();
-      res.json(abilities);
-    } catch (error) {
-      console.error("Error fetching abilities:", error);
-      res.status(500).json({ message: "Failed to fetch abilities" });
-    }
-  });
 
-  app.post("/api/abilities", async (req, res) => {
-    try {
-      const ability = insertAbilitySchema.parse(req.body);
-      const created = await storage.createAbility(ability);
-      res.status(201).json(created);
-    } catch (error) {
-      console.error("Error creating ability:", error);
-      res.status(400).json({ message: "Failed to create ability" });
-    }
-  });
 
   // Import History routes
   app.get("/api/import-history", async (req, res) => {

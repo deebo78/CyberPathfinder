@@ -32,10 +32,6 @@ export const api = {
   getSkills: () => fetch("/api/skills").then((res) => res.json()),
   createSkill: (data: any) => apiRequest("POST", "/api/skills", data),
 
-  // Abilities
-  getAbilities: () => fetch("/api/abilities").then((res) => res.json()),
-  createAbility: (data: any) => apiRequest("POST", "/api/abilities", data),
-
   // Import History
   getImportHistory: () => fetch("/api/import-history").then((res) => res.json()),
 

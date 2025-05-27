@@ -5,8 +5,7 @@ import {
   type InsertWorkRole,
   type InsertTask,
   type InsertKnowledgeItem,
-  type InsertSkill,
-  type InsertAbility
+  type InsertSkill
 } from "@shared/schema";
 
 // NICE Framework official data sources

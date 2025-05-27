@@ -156,11 +156,7 @@ export class DatabaseStorage implements IStorage {
             skill: true,
           },
         },
-        workRoleAbilities: {
-          with: {
-            ability: true,
-          },
-        },
+
       },
     });
     return workRole;

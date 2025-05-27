@@ -10,7 +10,7 @@ import WorkRoles from "@/pages/work-roles";
 import Tasks from "@/pages/tasks";
 import Knowledge from "@/pages/knowledge";
 import Skills from "@/pages/skills";
-import Abilities from "@/pages/abilities";
+
 import SpecialtyAreas from "@/pages/specialty-areas";
 import Categories from "@/pages/categories";
 import Admin from "@/pages/admin";
@@ -27,7 +27,7 @@ function Router() {
           <Route path="/tasks" component={Tasks} />
           <Route path="/knowledge" component={Knowledge} />
           <Route path="/skills" component={Skills} />
-          <Route path="/abilities" component={Abilities} />
+
           <Route path="/specialty-areas" component={SpecialtyAreas} />
           <Route path="/categories" component={Categories} />
           <Route path="/admin" component={Admin} />
