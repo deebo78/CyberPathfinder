@@ -57,14 +57,6 @@ export const skills = pgTable("skills", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
-// Abilities table
-export const abilities = pgTable("abilities", {
-  id: serial("id").primaryKey(),
-  code: text("code").notNull().unique(),
-  description: text("description").notNull(),
-  createdAt: timestamp("created_at").defaultNow(),
-});
-
 // Relationship tables
 export const workRoleTasks = pgTable("work_role_tasks", {
   id: serial("id").primaryKey(),
@@ -82,12 +74,6 @@ export const workRoleSkills = pgTable("work_role_skills", {
   id: serial("id").primaryKey(),
   workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
   skillId: integer("skill_id").references(() => skills.id).notNull(),
-});
-
-export const workRoleAbilities = pgTable("work_role_abilities", {
-  id: serial("id").primaryKey(),
-  workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
-  abilityId: integer("ability_id").references(() => abilities.id).notNull(),
 });
 
 // Import History table for tracking data imports
@@ -127,7 +113,6 @@ export const workRolesRelations = relations(workRoles, ({ one, many }) => ({
   workRoleTasks: many(workRoleTasks),
   workRoleKnowledge: many(workRoleKnowledge),
   workRoleSkills: many(workRoleSkills),
-  workRoleAbilities: many(workRoleAbilities),
 }));
 
 export const tasksRelations = relations(tasks, ({ many }) => ({
@@ -142,9 +127,7 @@ export const skillsRelations = relations(skills, ({ many }) => ({
   workRoleSkills: many(workRoleSkills),
 }));
 
-export const abilitiesRelations = relations(abilities, ({ many }) => ({
-  workRoleAbilities: many(workRoleAbilities),
-}));
+
 
 export const workRoleTasksRelations = relations(workRoleTasks, ({ one }) => ({
   workRole: one(workRoles, {
@@ -179,16 +162,7 @@ export const workRoleSkillsRelations = relations(workRoleSkills, ({ one }) => ({
   }),
 }));
 
-export const workRoleAbilitiesRelations = relations(workRoleAbilities, ({ one }) => ({
-  workRole: one(workRoles, {
-    fields: [workRoleAbilities.workRoleId],
-    references: [workRoles.id],
-  }),
-  ability: one(abilities, {
-    fields: [workRoleAbilities.abilityId],
-    references: [abilities.id],
-  }),
-}));
+
 
 // Insert schemas
 export const insertCategorySchema = createInsertSchema(categories).omit({
@@ -221,10 +195,7 @@ export const insertSkillSchema = createInsertSchema(skills).omit({
   createdAt: true,
 });
 
-export const insertAbilitySchema = createInsertSchema(abilities).omit({
-  id: true,
-  createdAt: true,
-});
+
 
 export const insertImportHistorySchema = createInsertSchema(importHistory).omit({
   id: true,
