@@ -364,9 +364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         case "skills":
           data = await storage.getSkills();
           break;
-        case "abilities":
-          data = await storage.getAbilities();
-          break;
+
         default:
           return res.status(400).json({ message: "Invalid export type" });
       }
