@@ -16,7 +16,7 @@ import {
 const navigation = [
   { name: "Dashboard", href: "/", icon: Database },
   { name: "Work Roles", href: "/work-roles", icon: Briefcase },
-  { name: "ListTodo", href: "/tasks", icon: ListTodo },
+  { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Knowledge Areas", href: "/knowledge", icon: Brain },
   { name: "Skills", href: "/skills", icon: ServerCog },
   { name: "Abilities", href: "/abilities", icon: Star },

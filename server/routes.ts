@@ -285,6 +285,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
           console.error("Error processing JSON import:", error);
           res.status(500).json({ message: "JSON import failed" });
         }
+      } else if (req.file.mimetype === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' || 
+                 req.file.originalname.endsWith('.xlsx')) {
+        try {
+          const fs = await import('fs');
+          const XLSX = await import('xlsx');
+          
+          // Read the Excel file
+          const workbook = XLSX.readFile(req.file.path);
+          const sheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[sheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
+          
+          let recordsImported = 0;
+          
+          // Process based on import type
+          if (importType === 'tasks') {
+            for (const row of jsonData) {
+              try {
+                // Expect columns: Code, Description (or similar variations)
+                const code = row.Code || row.code || row['Task ID'] || row['TKS ID'];
+                const description = row.Description || row.description || row['Task Description'] || row['TKS Description'];
+                
+                if (code && description) {
+                  await storage.createTask({
+                    code: String(code),
+                    description: String(description)
+                  });
+                  recordsImported++;
+                }
+              } catch (error) {
+                console.error(`Error importing task row:`, error);
+              }
+            }
+          }
+          
+          // Update import history with actual results
+          const importHistory = await storage.createImportHistory({
+            filename: req.file.originalname,
+            importType,
+            recordsImported,
+            status: "completed",
+            metadata: { fileSize: req.file.size, mimetype: req.file.mimetype, totalRows: jsonData.length }
+          });
+          
+          // Clean up the uploaded file
+          fs.unlinkSync(req.file.path);
+          
+          res.status(200).json({
+            message: `Successfully imported ${recordsImported} ${importType}`,
+            importId: importHistory.id,
+            recordsImported,
+            status: "completed"
+          });
+          
+        } catch (error) {
+          console.error("Error processing Excel import:", error);
+          res.status(500).json({ message: "Excel import failed" });
+        }
       } else {
         // For other file types, create a placeholder import history record
         const importHistory = await storage.createImportHistory({
