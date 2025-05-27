@@ -19,7 +19,7 @@ const navigation = [
   { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Knowledge Areas", href: "/knowledge", icon: Brain },
   { name: "Skills", href: "/skills", icon: ServerCog },
-  { name: "Abilities", href: "/abilities", icon: Star },
+
   { name: "Specialty Areas", href: "/specialty-areas", icon: Layers },
   { name: "Categories", href: "/categories", icon: Grid3x3 },
 ];

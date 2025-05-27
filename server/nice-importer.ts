@@ -118,20 +118,7 @@ export class NiceFrameworkImporter {
         }
       }
       
-      // Import abilities if present
-      if (jsonData.abilities && Array.isArray(jsonData.abilities)) {
-        for (const ability of jsonData.abilities) {
-          try {
-            await storage.createAbility({
-              code: ability.code || ability.id,
-              description: ability.description || ability.text || ""
-            });
-            recordsImported++;
-          } catch (error) {
-            console.error(`Error importing ability ${ability.code}:`, error);
-          }
-        }
-      }
+
       
       // Record the successful import
       await storage.createImportHistory({
@@ -895,83 +882,7 @@ export class NiceFrameworkImporter {
           }
         }
         
-        // Official NICE Framework abilities (comprehensive set)
-        const completeAbilities = [
-          {
-            code: "A0001",
-            description: "Ability to identify systemic security issues based on the analysis of vulnerability and configuration data."
-          },
-          {
-            code: "A0002",
-            description: "Ability to match the appropriate knowledge repository technology for a given application or environment."
-          },
-          {
-            code: "A0003",
-            description: "Ability to determine the best fit of products to meet customer requirements and coordinate with customers, as needed."
-          },
-          {
-            code: "A0004",
-            description: "Ability to develop curriculum that speaks to the mission of the organization."
-          },
-          {
-            code: "A0005",
-            description: "Ability to decrypt digital data collections."
-          },
-          {
-            code: "A0006",
-            description: "Ability to prepare and deliver education and awareness briefings to ensure that systems, network, and data users are aware of and adhere to systems security policies and procedures."
-          },
-          {
-            code: "A0007",
-            description: "Ability to tailor code analysis for application-specific concerns."
-          },
-          {
-            code: "A0008",
-            description: "Ability to apply the methods, standards, and approaches for describing, analyzing, and documenting an organization's enterprise information technology (IT) architecture."
-          },
-          {
-            code: "A0009",
-            description: "Ability to apply supply chain risk management standards."
-          },
-          {
-            code: "A0010",
-            description: "Ability to analyze malware."
-          },
-          {
-            code: "A0011",
-            description: "Ability to answer questions in a clear and concise manner."
-          },
-          {
-            code: "A0012",
-            description: "Ability to ask clarifying questions."
-          },
-          {
-            code: "A0013",
-            description: "Ability to communicate complex information, concepts, or ideas in a confident and well-organized manner through verbal, written, and/or visual means."
-          },
-          {
-            code: "A0014",
-            description: "Ability to communicate effectively when speaking."
-          },
-          {
-            code: "A0015",
-            description: "Ability to conduct vulnerability scans and recognize vulnerabilities in security systems."
-          }
-        ];
-        
-        console.log("Importing abilities...");
-        for (const ability of completeAbilities) {
-          try {
-            await storage.createAbility({
-              code: ability.code,
-              description: ability.description
-            });
-            totalRecords++;
-            console.log(`Created ability: ${ability.code}`);
-          } catch (error) {
-            console.error(`Error creating ability ${ability.code}:`, error);
-          }
-        }
+        // Note: Abilities are not part of the official NICE Framework 2.0.0
         
       } catch (error) {
         console.error("Error fetching official framework data:", error);
