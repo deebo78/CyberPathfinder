@@ -289,13 +289,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
                  req.file.originalname.endsWith('.xlsx')) {
         try {
           const fs = await import('fs');
-          const XLSX = await import('xlsx');
+          const XLSX = require('xlsx');
           
           // Read the Excel file
-          const workbook = XLSX.default.readFile(req.file.path);
+          const workbook = XLSX.readFile(req.file.path);
           const sheetName = workbook.SheetNames[0];
           const worksheet = workbook.Sheets[sheetName];
-          const jsonData = XLSX.default.utils.sheet_to_json(worksheet);
+          const jsonData = XLSX.utils.sheet_to_json(worksheet);
           
           let recordsImported = 0;
           
