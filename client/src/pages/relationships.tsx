@@ -203,6 +203,11 @@ export default function Relationships() {
 
       {/* TKS Details */}
       {selectedWorkRole && workRoleDetails && (
+        <div className="mb-4 p-2 bg-gray-100 text-xs">
+          Debug: {JSON.stringify(Object.keys(workRoleDetails || {}), null, 2)}
+        </div>
+      )}
+      {selectedWorkRole && workRoleDetails && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tasks */}
           <Card>
