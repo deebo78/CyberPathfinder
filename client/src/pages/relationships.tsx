@@ -272,17 +272,17 @@ export default function Relationships() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {workRoleDetails?.skills?.slice(0, 5).map((skill: any) => (
-                <div key={skill.id} className="p-2 bg-orange-50 rounded text-sm">
-                  <Badge variant="outline" className="text-xs mb-1">{skill.code}</Badge>
+              {workRoleDetails?.workRoleSkills?.slice(0, 5).map((item: any) => (
+                <div key={item.skill.id} className="p-2 bg-orange-50 rounded text-sm">
+                  <Badge variant="outline" className="text-xs mb-1">{item.skill.code}</Badge>
                   <div className="text-xs text-muted-foreground truncate">
-                    {skill.description}
+                    {item.skill.description}
                   </div>
                 </div>
               ))}
-              {(workRoleDetails?.skills?.length ?? 0) > 5 && (
+              {(workRoleDetails?.workRoleSkills?.length ?? 0) > 5 && (
                 <div className="text-xs text-muted-foreground text-center">
-                  +{(workRoleDetails?.skills?.length ?? 0) - 5} more skills...
+                  +{(workRoleDetails?.workRoleSkills?.length ?? 0) - 5} more skills...
                 </div>
               )}
             </CardContent>
