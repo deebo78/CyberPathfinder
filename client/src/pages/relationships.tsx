@@ -204,6 +204,29 @@ export default function Relationships() {
         </div>
       )}
 
+      {/* Debug Section */}
+      {selectedWorkRole && workRoleDetails && (
+        <Card className="mb-4 bg-gray-50">
+          <CardHeader>
+            <CardTitle className="text-sm">Debug Information</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-xs space-y-2">
+              <div><strong>Data Type:</strong> {Array.isArray(workRoleDetails) ? 'Array' : 'Object'}</div>
+              <div><strong>Keys:</strong> {JSON.stringify(Object.keys(workRoleDetails || {}))}</div>
+              {workRoleDetails && (
+                <div>
+                  <strong>Sample Data:</strong>
+                  <pre className="bg-white p-2 rounded text-xs overflow-auto max-h-32">
+                    {JSON.stringify(workRoleDetails, null, 2).slice(0, 1000)}...
+                  </pre>
+                </div>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       {/* TKS Details */}
       {selectedWorkRole && workRoleDetails && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
