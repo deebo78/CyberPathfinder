@@ -10,7 +10,8 @@ import {
   Grid3x3,
   Settings,
   Download,
-  Database
+  Database,
+  Network
 } from "lucide-react";
 
 const navigation = [
@@ -22,6 +23,7 @@ const navigation = [
 
   { name: "Specialty Areas", href: "/specialty-areas", icon: Layers },
   { name: "Categories", href: "/categories", icon: Grid3x3 },
+  { name: "Relationships", href: "/relationships", icon: Network },
 ];
 
 const bottomNavigation = [
