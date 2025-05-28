@@ -87,10 +87,39 @@ export const importHistory = pgTable("import_history", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Career Tracks tables
+export const careerTracks = pgTable("career_tracks", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull().unique(),
+  description: text("description"),
+  overview: text("overview"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Many-to-many relationship between Career Tracks and Categories
+export const careerTrackCategories = pgTable("career_track_categories", {
+  id: serial("id").primaryKey(),
+  careerTrackId: integer("career_track_id").references(() => careerTracks.id).notNull(),
+  categoryId: integer("category_id").references(() => categories.id).notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Career Levels (experience stages within each track)
+export const careerLevels = pgTable("career_levels", {
+  id: serial("id").primaryKey(),
+  careerTrackId: integer("career_track_id").references(() => careerTracks.id).notNull(),
+  name: text("name").notNull(), // e.g., "Entry Level", "Mid Level", "Senior Level"
+  experienceRange: text("experience_range").notNull(), // e.g., "0-3 years", "4-7 years"
+  description: text("description"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
   specialtyAreas: many(specialtyAreas),
   workRoles: many(workRoles),
+  careerTrackCategories: many(careerTrackCategories),
 }));
 
 export const specialtyAreasRelations = relations(specialtyAreas, ({ one, many }) => ({
@@ -162,6 +191,30 @@ export const workRoleSkillsRelations = relations(workRoleSkills, ({ one }) => ({
   }),
 }));
 
+// Career Tracks Relations
+export const careerTracksRelations = relations(careerTracks, ({ many }) => ({
+  careerTrackCategories: many(careerTrackCategories),
+  careerLevels: many(careerLevels),
+}));
+
+export const careerTrackCategoriesRelations = relations(careerTrackCategories, ({ one }) => ({
+  careerTrack: one(careerTracks, {
+    fields: [careerTrackCategories.careerTrackId],
+    references: [careerTracks.id],
+  }),
+  category: one(categories, {
+    fields: [careerTrackCategories.categoryId],
+    references: [categories.id],
+  }),
+}));
+
+export const careerLevelsRelations = relations(careerLevels, ({ one }) => ({
+  careerTrack: one(careerTracks, {
+    fields: [careerLevels.careerTrackId],
+    references: [careerTracks.id],
+  }),
+}));
+
 
 
 // Insert schemas
@@ -202,6 +255,22 @@ export const insertImportHistorySchema = createInsertSchema(importHistory).omit(
   createdAt: true,
 });
 
+// Career Tracks Insert Schemas
+export const insertCareerTrackSchema = createInsertSchema(careerTracks).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCareerTrackCategorySchema = createInsertSchema(careerTrackCategories).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCareerLevelSchema = createInsertSchema(careerLevels).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type Category = typeof categories.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -225,3 +294,13 @@ export type InsertSkill = z.infer<typeof insertSkillSchema>;
 
 export type ImportHistory = typeof importHistory.$inferSelect;
 export type InsertImportHistory = z.infer<typeof insertImportHistorySchema>;
+
+// Career Tracks Types
+export type CareerTrack = typeof careerTracks.$inferSelect;
+export type InsertCareerTrack = z.infer<typeof insertCareerTrackSchema>;
+
+export type CareerTrackCategory = typeof careerTrackCategories.$inferSelect;
+export type InsertCareerTrackCategory = z.infer<typeof insertCareerTrackCategorySchema>;
+
+export type CareerLevel = typeof careerLevels.$inferSelect;
+export type InsertCareerLevel = z.infer<typeof insertCareerLevelSchema>;
