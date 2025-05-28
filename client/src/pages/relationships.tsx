@@ -26,9 +26,9 @@ interface RelationshipStats {
 }
 
 interface WorkRoleWithRelations {
-  tasks?: Array<{ id: number; code: string; description: string }>;
-  knowledgeItems?: Array<{ id: number; code: string; description: string }>;
-  skills?: Array<{ id: number; code: string; description: string }>;
+  workRoleTasks?: Array<{ task: { id: number; code: string; description: string } }>;
+  workRoleKnowledge?: Array<{ knowledgeItem: { id: number; code: string; description: string } }>;
+  workRoleSkills?: Array<{ skill: { id: number; code: string; description: string } }>;
 }
 
 export default function Relationships() {
@@ -48,7 +48,7 @@ export default function Relationships() {
   });
 
   const { data: workRoleDetails } = useQuery<WorkRoleWithRelations>({
-    queryKey: ["/api/work-roles", selectedWorkRole, "relations"],
+    queryKey: ["/api/work-roles", selectedWorkRole],
     enabled: !!selectedWorkRole,
   });
 
@@ -209,24 +209,24 @@ export default function Relationships() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-600" />
-                Tasks ({workRoleDetails.tasks?.length || 0})
+                Tasks ({workRoleDetails?.workRoleTasks?.length || 0})
               </CardTitle>
               <CardDescription>
                 Specific work activities for this role
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {workRoleDetails?.tasks?.slice(0, 5).map((task: any) => (
-                <div key={task.id} className="p-2 bg-blue-50 rounded text-sm">
-                  <Badge variant="outline" className="text-xs mb-1">{task.code}</Badge>
+              {workRoleDetails?.workRoleTasks?.slice(0, 5).map((item: any) => (
+                <div key={item.task.id} className="p-2 bg-blue-50 rounded text-sm">
+                  <Badge variant="outline" className="text-xs mb-1">{item.task.code}</Badge>
                   <div className="text-xs text-muted-foreground truncate">
-                    {task.description}
+                    {item.task.description}
                   </div>
                 </div>
               ))}
-              {(workRoleDetails?.tasks?.length ?? 0) > 5 && (
+              {(workRoleDetails?.workRoleTasks?.length ?? 0) > 5 && (
                 <div className="text-xs text-muted-foreground text-center">
-                  +{(workRoleDetails?.tasks?.length ?? 0) - 5} more tasks...
+                  +{(workRoleDetails?.workRoleTasks?.length ?? 0) - 5} more tasks...
                 </div>
               )}
             </CardContent>
@@ -237,24 +237,24 @@ export default function Relationships() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-purple-600" />
-                Knowledge ({workRoleDetails.knowledgeItems?.length || 0})
+                Knowledge ({workRoleDetails?.workRoleKnowledge?.length || 0})
               </CardTitle>
               <CardDescription>
                 Required knowledge areas
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {workRoleDetails?.knowledgeItems?.slice(0, 5).map((knowledge: any) => (
-                <div key={knowledge.id} className="p-2 bg-purple-50 rounded text-sm">
-                  <Badge variant="outline" className="text-xs mb-1">{knowledge.code}</Badge>
+              {workRoleDetails?.workRoleKnowledge?.slice(0, 5).map((item: any) => (
+                <div key={item.knowledgeItem.id} className="p-2 bg-purple-50 rounded text-sm">
+                  <Badge variant="outline" className="text-xs mb-1">{item.knowledgeItem.code}</Badge>
                   <div className="text-xs text-muted-foreground truncate">
-                    {knowledge.description}
+                    {item.knowledgeItem.description}
                   </div>
                 </div>
               ))}
-              {(workRoleDetails?.knowledgeItems?.length ?? 0) > 5 && (
+              {(workRoleDetails?.workRoleKnowledge?.length ?? 0) > 5 && (
                 <div className="text-xs text-muted-foreground text-center">
-                  +{(workRoleDetails?.knowledgeItems?.length ?? 0) - 5} more knowledge items...
+                  +{(workRoleDetails?.workRoleKnowledge?.length ?? 0) - 5} more knowledge items...
                 </div>
               )}
             </CardContent>
@@ -265,7 +265,7 @@ export default function Relationships() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Cog className="w-5 h-5 text-orange-600" />
-                Skills ({workRoleDetails.skills?.length || 0})
+                Skills ({workRoleDetails?.workRoleSkills?.length || 0})
               </CardTitle>
               <CardDescription>
                 Required technical and soft skills
