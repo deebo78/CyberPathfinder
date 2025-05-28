@@ -51,7 +51,7 @@ export default function Relationships() {
   });
 
   const { data: workRoleDetails } = useQuery<WorkRoleWithRelations>({
-    queryKey: ["/api/work-roles", selectedWorkRole],
+    queryKey: [`/api/work-roles/${selectedWorkRole}`],
     enabled: !!selectedWorkRole,
   });
 
