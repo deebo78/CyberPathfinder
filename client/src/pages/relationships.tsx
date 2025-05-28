@@ -26,6 +26,9 @@ interface RelationshipStats {
 }
 
 interface WorkRoleWithRelations {
+  id?: number;
+  code?: string;
+  name?: string;
   workRoleTasks?: Array<{ task: { id: number; code: string; description: string } }>;
   workRoleKnowledge?: Array<{ knowledgeItem: { id: number; code: string; description: string } }>;
   workRoleSkills?: Array<{ skill: { id: number; code: string; description: string } }>;
@@ -202,12 +205,94 @@ export default function Relationships() {
       )}
 
       {/* TKS Details */}
-      {selectedWorkRole && workRoleDetails && (
-        <div className="mb-4 p-2 bg-gray-100 text-xs">
-          Debug: {JSON.stringify(Object.keys(workRoleDetails || {}), null, 2)}
+      {selectedWorkRole && workRoleDetails && Array.isArray(workRoleDetails) && workRoleDetails[0] && (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Tasks */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Target className="w-5 h-5 text-blue-600" />
+                Tasks ({workRoleDetails[0]?.workRoleTasks?.length || 0})
+              </CardTitle>
+              <CardDescription>
+                Specific work activities for this role
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {workRoleDetails[0]?.workRoleTasks?.slice(0, 5).map((item: any) => (
+                <div key={item.task.id} className="p-2 bg-blue-50 rounded text-sm">
+                  <Badge variant="outline" className="text-xs mb-1">{item.task.code}</Badge>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {item.task.description}
+                  </div>
+                </div>
+              ))}
+              {(workRoleDetails[0]?.workRoleTasks?.length ?? 0) > 5 && (
+                <div className="text-xs text-muted-foreground text-center">
+                  +{(workRoleDetails[0]?.workRoleTasks?.length ?? 0) - 5} more tasks...
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Knowledge Items */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-purple-600" />
+                Knowledge ({workRoleDetails[0]?.workRoleKnowledge?.length || 0})
+              </CardTitle>
+              <CardDescription>
+                Required knowledge areas
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {workRoleDetails[0]?.workRoleKnowledge?.slice(0, 5).map((item: any) => (
+                <div key={item.knowledgeItem.id} className="p-2 bg-purple-50 rounded text-sm">
+                  <Badge variant="outline" className="text-xs mb-1">{item.knowledgeItem.code}</Badge>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {item.knowledgeItem.description}
+                  </div>
+                </div>
+              ))}
+              {(workRoleDetails[0]?.workRoleKnowledge?.length ?? 0) > 5 && (
+                <div className="text-xs text-muted-foreground text-center">
+                  +{(workRoleDetails[0]?.workRoleKnowledge?.length ?? 0) - 5} more knowledge items...
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Skills */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <Cog className="w-5 h-5 text-orange-600" />
+                Skills ({workRoleDetails[0]?.workRoleSkills?.length || 0})
+              </CardTitle>
+              <CardDescription>
+                Required technical and soft skills
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              {workRoleDetails[0]?.workRoleSkills?.slice(0, 5).map((item: any) => (
+                <div key={item.skill.id} className="p-2 bg-orange-50 rounded text-sm">
+                  <Badge variant="outline" className="text-xs mb-1">{item.skill.code}</Badge>
+                  <div className="text-xs text-muted-foreground truncate">
+                    {item.skill.description}
+                  </div>
+                </div>
+              ))}
+              {(workRoleDetails[0]?.workRoleSkills?.length ?? 0) > 5 && (
+                <div className="text-xs text-muted-foreground text-center">
+                  +{(workRoleDetails[0]?.workRoleSkills?.length ?? 0) - 5} more skills...
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
       )}
-      {selectedWorkRole && workRoleDetails && (
+      {selectedWorkRole && workRoleDetails && !Array.isArray(workRoleDetails) && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tasks */}
           <Card>
