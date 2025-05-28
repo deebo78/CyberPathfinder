@@ -136,30 +136,45 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getWorkRoleWithRelations(id: number): Promise<any> {
-    const workRole = await db.query.workRoles.findFirst({
-      where: eq(workRoles.id, id),
-      with: {
-        category: true,
-        specialtyArea: true,
-        workRoleTasks: {
-          with: {
-            task: true,
+    try {
+      const workRole = await db.query.workRoles.findFirst({
+        where: eq(workRoles.id, id),
+        with: {
+          category: true,
+          specialtyArea: true,
+          workRoleTasks: {
+            with: {
+              task: true,
+            },
+          },
+          workRoleKnowledge: {
+            with: {
+              knowledgeItem: true,
+            },
+          },
+          workRoleSkills: {
+            with: {
+              skill: true,
+            },
           },
         },
-        workRoleKnowledge: {
-          with: {
-            knowledgeItem: true,
-          },
-        },
-        workRoleSkills: {
-          with: {
-            skill: true,
-          },
-        },
-
-      },
-    });
-    return workRole;
+      });
+      
+      if (!workRole) {
+        return null;
+      }
+      
+      // Ensure the data structure is correct
+      return {
+        ...workRole,
+        workRoleTasks: workRole.workRoleTasks || [],
+        workRoleKnowledge: workRole.workRoleKnowledge || [],
+        workRoleSkills: workRole.workRoleSkills || []
+      };
+    } catch (error) {
+      console.error('Error in getWorkRoleWithRelations:', error);
+      return null;
+    }
   }
 
   async createWorkRole(workRole: InsertWorkRole): Promise<WorkRole> {

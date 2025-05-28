@@ -205,21 +205,21 @@ export default function Relationships() {
       )}
 
       {/* TKS Details */}
-      {selectedWorkRole && workRoleDetails && Array.isArray(workRoleDetails) && workRoleDetails[0] && (
+      {selectedWorkRole && workRoleDetails && (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Tasks */}
           <Card>
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-600" />
-                Tasks ({workRoleDetails[0]?.workRoleTasks?.length || 0})
+                Tasks ({workRoleDetails?.workRoleTasks?.length || 0})
               </CardTitle>
               <CardDescription>
                 Specific work activities for this role
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {workRoleDetails[0]?.workRoleTasks?.slice(0, 5).map((item: any) => (
+              {workRoleDetails?.workRoleTasks?.slice(0, 5).map((item: any) => (
                 <div key={item.task.id} className="p-2 bg-blue-50 rounded text-sm">
                   <Badge variant="outline" className="text-xs mb-1">{item.task.code}</Badge>
                   <div className="text-xs text-muted-foreground truncate">
@@ -227,9 +227,9 @@ export default function Relationships() {
                   </div>
                 </div>
               ))}
-              {(workRoleDetails[0]?.workRoleTasks?.length ?? 0) > 5 && (
+              {(workRoleDetails?.workRoleTasks?.length ?? 0) > 5 && (
                 <div className="text-xs text-muted-foreground text-center">
-                  +{(workRoleDetails[0]?.workRoleTasks?.length ?? 0) - 5} more tasks...
+                  +{(workRoleDetails?.workRoleTasks?.length ?? 0) - 5} more tasks...
                 </div>
               )}
             </CardContent>
@@ -240,14 +240,14 @@ export default function Relationships() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-purple-600" />
-                Knowledge ({workRoleDetails[0]?.workRoleKnowledge?.length || 0})
+                Knowledge ({workRoleDetails?.workRoleKnowledge?.length || 0})
               </CardTitle>
               <CardDescription>
                 Required knowledge areas
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-2">
-              {workRoleDetails[0]?.workRoleKnowledge?.slice(0, 5).map((item: any) => (
+              {workRoleDetails?.workRoleKnowledge?.slice(0, 5).map((item: any) => (
                 <div key={item.knowledgeItem.id} className="p-2 bg-purple-50 rounded text-sm">
                   <Badge variant="outline" className="text-xs mb-1">{item.knowledgeItem.code}</Badge>
                   <div className="text-xs text-muted-foreground truncate">
@@ -255,9 +255,9 @@ export default function Relationships() {
                   </div>
                 </div>
               ))}
-              {(workRoleDetails[0]?.workRoleKnowledge?.length ?? 0) > 5 && (
+              {(workRoleDetails?.workRoleKnowledge?.length ?? 0) > 5 && (
                 <div className="text-xs text-muted-foreground text-center">
-                  +{(workRoleDetails[0]?.workRoleKnowledge?.length ?? 0) - 5} more knowledge items...
+                  +{(workRoleDetails?.workRoleKnowledge?.length ?? 0) - 5} more knowledge items...
                 </div>
               )}
             </CardContent>
@@ -268,7 +268,7 @@ export default function Relationships() {
             <CardHeader>
               <CardTitle className="text-lg flex items-center gap-2">
                 <Cog className="w-5 h-5 text-orange-600" />
-                Skills ({workRoleDetails[0]?.workRoleSkills?.length || 0})
+                Skills ({workRoleDetails?.workRoleSkills?.length || 0})
               </CardTitle>
               <CardDescription>
                 Required technical and soft skills
