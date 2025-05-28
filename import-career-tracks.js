@@ -1,6 +1,6 @@
 import XLSX from 'xlsx';
-import { db } from './server/db.js';
-import { careerTracks, careerTrackCategories, categories } from './shared/schema.js';
+import { db } from './server/db.ts';
+import { careerTracks, careerTrackCategories, categories } from './shared/schema.ts';
 import { eq } from 'drizzle-orm';
 
 const careerTracksData = [
