@@ -13,6 +13,7 @@ import Skills from "@/pages/skills";
 
 import SpecialtyAreas from "@/pages/specialty-areas";
 import Categories from "@/pages/categories";
+import Relationships from "@/pages/relationships";
 import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
@@ -30,6 +31,7 @@ function Router() {
 
           <Route path="/specialty-areas" component={SpecialtyAreas} />
           <Route path="/categories" component={Categories} />
+          <Route path="/relationships" component={Relationships} />
           <Route path="/admin" component={Admin} />
           <Route component={NotFound} />
         </Switch>
