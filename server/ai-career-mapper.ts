@@ -94,8 +94,11 @@ Provide a comprehensive career analysis in JSON format with:
 6. Strength areas based on their background
 7. Areas for development
 
-DO NOT recommend Red Team Operations for entry-level or junior candidates.
-DO NOT recommend Executive Leadership CISO Track for anyone below senior level.
+CRITICAL LEVEL VALIDATION RULES:
+- If user's currentLevel is "entry" or they have less than 3 years experience: NEVER recommend Red Team Operations (ID: 4)
+- If user's currentLevel is "entry" or "mid" or they have less than 6 years experience: NEVER recommend Executive Leadership CISO Track (ID: 42)
+- Even if user mentions "hacking" or "penetration testing" interests but is entry-level, recommend SOC Operations, Digital Forensics, or Vulnerability Management instead
+- Entry-level candidates interested in offensive security should be guided toward SOC Operations first to build foundational skills
 
 Response format:
 {
@@ -132,6 +135,36 @@ Response format:
       });
 
       const analysis = JSON.parse(response.choices[0].message.content || '{}');
+      
+      // Programmatic validation to enforce level constraints
+      if (analysis.recommendations) {
+        analysis.recommendations = analysis.recommendations.filter((rec: any) => {
+          // Block Red Team Operations (ID: 4) for entry-level users
+          if (rec.trackId === 4) {
+            const isEntryLevel = profile.currentLevel === 'entry' || 
+                               (profile.experience && profile.experience.includes('1 year')) ||
+                               (profile.experience && profile.experience.includes('2 year')) ||
+                               !profile.experience?.match(/\d+/) || 
+                               parseInt(profile.experience?.match(/(\d+)/)?.[1] || '0') < 3;
+            if (isEntryLevel) {
+              return false; // Filter out Red Team for entry-level
+            }
+          }
+          
+          // Block Executive Leadership CISO Track (ID: 42) for non-senior users
+          if (rec.trackId === 42) {
+            const isBelowSenior = profile.currentLevel === 'entry' || 
+                                profile.currentLevel === 'mid' ||
+                                parseInt(profile.experience?.match(/(\d+)/)?.[1] || '0') < 6;
+            if (isBelowSenior) {
+              return false; // Filter out CISO track for non-senior
+            }
+          }
+          
+          return true;
+        });
+      }
+      
       return analysis as CareerAnalysis;
 
     } catch (error) {
