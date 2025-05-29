@@ -2,7 +2,7 @@ import XLSX from 'xlsx';
 
 try {
   // Read the SOC Operations Career Ladder Excel file
-  const workbook = XLSX.readFile('attached_assets/Track_16_Security_Automation_and_Orchestration.xlsx');
+  const workbook = XLSX.readFile('attached_assets/Track_17_Customer_Facing_Security_Roles.xlsx');
   
   // Get all sheet names
   console.log('Sheet names:', workbook.SheetNames);
