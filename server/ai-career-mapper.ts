@@ -33,8 +33,11 @@ interface CareerAnalysis {
 export class AICareerMapper {
   async analyzeUserProfile(profile: UserProfile): Promise<CareerAnalysis> {
     try {
-      // Get career tracks and NICE Framework data
-      const careerTracks = await storage.getCareerTracks();
+      // Get only the authentic 19 career tracks
+      const authenticTrackIds = [31, 4, 5, 6, 8, 2, 35, 37, 30, 41, 48, 42, 38, 43, 39, 44, 45, 14, 22];
+      const allTracks = await storage.getCareerTracks();
+      const careerTracks = allTracks.filter(track => authenticTrackIds.includes(track.id));
+      
       const categories = await storage.getCategories();
       const workRoles = await storage.getWorkRoles();
       const skills = await storage.getSkills();
