@@ -12,12 +12,14 @@ import {
   Download,
   Database,
   Network,
-  TrendingUp
+  TrendingUp,
+  Building2
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: Database },
   { name: "Career Mapping", href: "/career-mapping", icon: TrendingUp },
+  { name: "Map Vacancy", href: "/map-vacancy", icon: Building2 },
   { name: "Work Roles", href: "/work-roles", icon: Briefcase },
   { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Knowledge Areas", href: "/knowledge", icon: Brain },

@@ -11,6 +11,7 @@ import Tasks from "@/pages/tasks";
 import Knowledge from "@/pages/knowledge";
 import Skills from "@/pages/skills";
 import CareerMapping from "@/pages/career-mapping";
+import MapVacancy from "@/pages/map-vacancy";
 import SpecialtyAreas from "@/pages/specialty-areas";
 import Categories from "@/pages/categories";
 import Relationships from "@/pages/relationships";
@@ -29,6 +30,7 @@ function Router() {
           <Route path="/knowledge" component={Knowledge} />
           <Route path="/skills" component={Skills} />
           <Route path="/career-mapping" component={CareerMapping} />
+          <Route path="/map-vacancy" component={MapVacancy} />
           <Route path="/specialty-areas" component={SpecialtyAreas} />
           <Route path="/categories" component={Categories} />
           <Route path="/relationships" component={Relationships} />
