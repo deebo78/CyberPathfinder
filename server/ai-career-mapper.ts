@@ -137,16 +137,32 @@ Response format:
       const analysis = JSON.parse(response.choices[0].message.content || '{}');
       
       // Programmatic validation to enforce level constraints
+      console.log('Original recommendations:', analysis.recommendations?.map((r: any) => ({ id: r.trackId, name: r.trackName })));
+      console.log('User profile for validation:', { experience: profile.experience, currentLevel: profile.currentLevel, education: profile.education });
+      
       if (analysis.recommendations) {
         analysis.recommendations = analysis.recommendations.filter((rec: any) => {
           // Block Red Team Operations (ID: 4) for entry-level users
           if (rec.trackId === 4) {
-            const isEntryLevel = profile.currentLevel === 'entry' || 
-                               (profile.experience && profile.experience.includes('1 year')) ||
-                               (profile.experience && profile.experience.includes('2 year')) ||
-                               !profile.experience?.match(/\d+/) || 
-                               parseInt(profile.experience?.match(/(\d+)/)?.[1] || '0') < 3;
+            const experienceText = profile.experience?.toLowerCase() || '';
+            const currentLevel = profile.currentLevel?.toLowerCase() || '';
+            
+            // Check for explicit entry level indicators
+            const isEntryLevel = currentLevel === 'entry' ||
+                               currentLevel.includes('entry') ||
+                               experienceText.includes('1 year') ||
+                               experienceText.includes('one year') ||
+                               experienceText.includes('2 year') ||
+                               experienceText.includes('two year') ||
+                               experienceText.includes('high school') ||
+                               experienceText.includes('graduate') ||
+                               experienceText.includes('no experience') ||
+                               experienceText.includes('recent') ||
+                               !experienceText.match(/\d+/) ||
+                               (experienceText.match(/(\d+)/) && parseInt(experienceText.match(/(\d+)/)?.[1] || '0') < 3);
+            
             if (isEntryLevel) {
+              console.log(`Blocking Red Team for entry-level user: ${JSON.stringify(profile)}`);
               return false; // Filter out Red Team for entry-level
             }
           }
