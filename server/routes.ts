@@ -379,6 +379,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Career Mapping API endpoints
+  app.post("/api/analyze-profile", async (req, res) => {
+    try {
+      const profileSchema = z.object({
+        experience: z.string().optional(),
+        education: z.string().optional(),
+        certifications: z.string().optional(),
+        interests: z.string().optional(),
+        careerGoals: z.string().optional(),
+        currentLevel: z.string().optional()
+      });
+
+      const profile = profileSchema.parse(req.body);
+      const analysis = await aiCareerMapper.analyzeUserProfile(profile);
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error analyzing profile:", error);
+      res.status(500).json({ message: "Failed to analyze profile" });
+    }
+  });
+
+  app.get("/api/career-tracks", async (req, res) => {
+    try {
+      const tracks = await storage.getCareerTracks();
+      res.json(tracks);
+    } catch (error) {
+      console.error("Error fetching career tracks:", error);
+      res.status(500).json({ message: "Failed to fetch career tracks" });
+    }
+  });
+
+  app.get("/api/career-tracks/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      const track = await storage.getCareerTrackWithPositions(id);
+      if (!track) {
+        return res.status(404).json({ message: "Career track not found" });
+      }
+      res.json(track);
+    } catch (error) {
+      console.error("Error fetching career track:", error);
+      res.status(500).json({ message: "Failed to fetch career track" });
+    }
+  });
+
+  app.post("/api/track-recommendation/:id", async (req, res) => {
+    try {
+      const trackId = parseInt(req.params.id);
+      const profileSchema = z.object({
+        experience: z.string().optional(),
+        education: z.string().optional(),
+        certifications: z.string().optional(),
+        interests: z.string().optional(),
+        careerGoals: z.string().optional(),
+        currentLevel: z.string().optional()
+      });
+
+      const profile = profileSchema.parse(req.body);
+      const recommendation = await aiCareerMapper.getDetailedTrackRecommendation(trackId, profile);
+      res.json(recommendation);
+    } catch (error) {
+      console.error("Error getting track recommendation:", error);
+      res.status(500).json({ message: "Failed to get track recommendation" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
