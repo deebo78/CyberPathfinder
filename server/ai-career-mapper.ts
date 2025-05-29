@@ -33,10 +33,17 @@ interface CareerAnalysis {
 export class AICareerMapper {
   async analyzeUserProfile(profile: UserProfile): Promise<CareerAnalysis> {
     try {
-      // Get only the authentic 19 career tracks
+      // Get only the authentic 19 career tracks with their level constraints
       const authenticTrackIds = [31, 4, 5, 6, 8, 2, 35, 37, 30, 41, 48, 42, 38, 43, 39, 44, 45, 14, 22];
       const allTracks = await storage.getCareerTracks();
       const careerTracks = allTracks.filter(track => authenticTrackIds.includes(track.id));
+      
+      // Define level constraints for each track
+      const trackLevelConstraints = {
+        4: { minLevel: 'Mid-Level', startingLevel: 'Mid-Level' }, // Red Team Operations
+        42: { minLevel: 'Senior-Level', startingLevel: 'Senior-Level' }, // Executive Leadership CISO Track
+        // All others start at Entry-Level
+      };
       
       const categories = await storage.getCategories();
       const workRoles = await storage.getWorkRoles();
