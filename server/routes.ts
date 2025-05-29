@@ -455,6 +455,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Vacancy Mapping API endpoints
+  app.post("/api/analyze-vacancy", async (req, res) => {
+    try {
+      console.log("Received vacancy analysis request:", req.body);
+      
+      const vacancySchema = z.object({
+        jobTitle: z.string(),
+        jobDescription: z.string(),
+        requiredQualifications: z.string().optional(),
+        preferredQualifications: z.string().optional()
+      });
+
+      const jobPosting = vacancySchema.parse(req.body);
+      console.log("Parsed job posting:", jobPosting);
+      
+      const analysis = await aiVacancyMapper.analyzeJobPosting(jobPosting);
+      console.log("Vacancy analysis result:", analysis);
+      
+      res.json(analysis);
+    } catch (error) {
+      console.error("Error analyzing vacancy:", error);
+      res.status(500).json({ message: "Failed to analyze job posting" });
+    }
+  });
+
+  app.post("/api/work-role-match/:id", async (req, res) => {
+    try {
+      const workRoleId = parseInt(req.params.id);
+      const vacancySchema = z.object({
+        jobTitle: z.string(),
+        jobDescription: z.string(),
+        requiredQualifications: z.string().optional(),
+        preferredQualifications: z.string().optional()
+      });
+
+      const jobPosting = vacancySchema.parse(req.body);
+      const match = await aiVacancyMapper.getDetailedWorkRoleMatch(workRoleId, jobPosting);
+      res.json(match);
+    } catch (error) {
+      console.error("Error getting work role match:", error);
+      res.status(500).json({ message: "Failed to get work role match" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }

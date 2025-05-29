@@ -50,10 +50,10 @@ export class AIVacancyMapper {
       const workRolesSummary = workRoles.map(role => ({
         id: role.id,
         name: role.name,
-        code: role.workRoleId,
+        code: role.code,
         description: role.description,
-        category: role.category?.name || 'Unknown',
-        specialtyArea: role.specialtyArea?.name || 'Unknown'
+        categoryId: role.categoryId,
+        specialtyAreaId: role.specialtyAreaId
       }));
 
       const prompt = `
