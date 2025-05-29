@@ -7,6 +7,7 @@ import {
   insertCategorySchema, insertSpecialtyAreaSchema, insertWorkRoleSchema, 
   insertTaskSchema, insertKnowledgeItemSchema, insertSkillSchema
 } from "@shared/schema";
+import { aiCareerMapper } from "./ai-career-mapper";
 
 const upload = multer({ dest: 'uploads/' });
 

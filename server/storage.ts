@@ -1,16 +1,18 @@
 import { 
   categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills,
   workRoleTasks, workRoleKnowledge, workRoleSkills, importHistory,
+  careerTracks, careerLevels, careerPositions,
   type Category, type InsertCategory,
   type SpecialtyArea, type InsertSpecialtyArea,
   type WorkRole, type InsertWorkRole,
   type Task, type InsertTask,
   type KnowledgeItem, type InsertKnowledgeItem,
   type Skill, type InsertSkill,
-  type ImportHistory, type InsertImportHistory
+  type ImportHistory, type InsertImportHistory,
+  type CareerTrack, type CareerLevel, type CareerPosition
 } from "@shared/schema";
 import { db } from "./db";
-import { eq, ilike, desc, count, sql } from "drizzle-orm";
+import { eq, ilike, desc, count, sql, inArray } from "drizzle-orm";
 
 export interface IStorage {
   // Categories
@@ -71,6 +73,12 @@ export interface IStorage {
   bulkCreateTasks(tasks: InsertTask[]): Promise<Task[]>;
   bulkCreateKnowledgeItems(knowledgeItems: InsertKnowledgeItem[]): Promise<KnowledgeItem[]>;
   bulkCreateSkills(skills: InsertSkill[]): Promise<Skill[]>;
+
+  // Career Tracks
+  getCareerTracks(): Promise<CareerTrack[]>;
+  getCareerTrackById(id: number): Promise<CareerTrack | undefined>;
+  getCareerTrackWithPositions(id: number): Promise<any>;
+  getWorkRolesByCategory(categoryIds: number[]): Promise<WorkRole[]>;
 
 }
 
@@ -347,6 +355,39 @@ export class DatabaseStorage implements IStorage {
     return await db.insert(skills).values(skillsList).returning();
   }
 
+  async getCareerTracks(): Promise<CareerTrack[]> {
+    return await db.select().from(careerTracks);
+  }
+
+  async getCareerTrackById(id: number): Promise<CareerTrack | undefined> {
+    const [track] = await db.select().from(careerTracks).where(eq(careerTracks.id, id));
+    return track || undefined;
+  }
+
+  async getCareerTrackWithPositions(id: number): Promise<any> {
+    const track = await db.query.careerTracks.findFirst({
+      where: eq(careerTracks.id, id),
+      with: {
+        levels: {
+          orderBy: (levels, { asc }) => [asc(levels.sortOrder)],
+          with: {
+            positions: true
+          }
+        },
+        categories: {
+          with: {
+            category: true
+          }
+        }
+      }
+    });
+    return track;
+  }
+
+  async getWorkRolesByCategory(categoryIds: number[]): Promise<WorkRole[]> {
+    if (categoryIds.length === 0) return [];
+    return await db.select().from(workRoles).where(inArray(workRoles.categoryId, categoryIds));
+  }
 
 }
 
