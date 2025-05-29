@@ -66,6 +66,11 @@ export class AICareerMapper {
 
       const prompt = `You are an expert cybersecurity career advisor with deep knowledge of the NICE Cybersecurity Workforce Framework 2.0.0. Analyze the user's profile and recommend the most suitable career tracks.
 
+IMPORTANT LEVEL CONSTRAINTS:
+- Red Team Operations (ID: 4): Minimum starting level is Mid-Level (3+ years experience)
+- Executive Leadership CISO Track (ID: 42): Minimum starting level is Senior-Level (6+ years experience)
+- All other tracks: Can start at Entry-Level
+
 User Profile:
 - Experience: ${profile.experience || 'Not specified'}
 - Education: ${profile.education || 'Not specified'}
@@ -81,13 +86,16 @@ NICE Framework Categories:
 ${JSON.stringify(contextData.niceCategories, null, 2)}
 
 Provide a comprehensive career analysis in JSON format with:
-1. Top 3-5 recommended career tracks with match scores (0-100)
-2. Reasoning for each recommendation
-3. Recommended starting level for each track
+1. Top 3-5 recommended career tracks with match scores (0-100) - ONLY recommend tracks where the user meets the minimum level requirements
+2. Reasoning for each recommendation explaining why it matches their experience level
+3. Recommended starting level for each track (must respect minimum requirements)
 4. Next steps for career advancement
 5. Overall assessment of the user's profile
 6. Strength areas based on their background
 7. Areas for development
+
+DO NOT recommend Red Team Operations for entry-level or junior candidates.
+DO NOT recommend Executive Leadership CISO Track for anyone below senior level.
 
 Response format:
 {
