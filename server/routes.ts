@@ -382,6 +382,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Career Mapping API endpoints
   app.post("/api/analyze-profile", async (req, res) => {
     try {
+      console.log("Received profile analysis request:", req.body);
+      
       const profileSchema = z.object({
         experience: z.string().optional(),
         education: z.string().optional(),
@@ -392,7 +394,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
 
       const profile = profileSchema.parse(req.body);
+      console.log("Parsed profile:", profile);
+      
       const analysis = await aiCareerMapper.analyzeUserProfile(profile);
+      console.log("Analysis result:", analysis);
+      
       res.json(analysis);
     } catch (error) {
       console.error("Error analyzing profile:", error);
