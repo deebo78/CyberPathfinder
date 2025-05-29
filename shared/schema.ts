@@ -108,9 +108,21 @@ export const careerTrackCategories = pgTable("career_track_categories", {
 export const careerLevels = pgTable("career_levels", {
   id: serial("id").primaryKey(),
   careerTrackId: integer("career_track_id").references(() => careerTracks.id).notNull(),
-  name: text("name").notNull(), // e.g., "Entry Level", "Mid Level", "Senior Level"
-  experienceRange: text("experience_range").notNull(), // e.g., "0-3 years", "4-7 years"
+  name: text("name").notNull(), // e.g., "Entry-Level", "Mid-Level", "Senior-Level"
+  experienceRange: text("experience_range"), // e.g., "0-3 years", "4-7 years"
   description: text("description"),
+  sortOrder: integer("sort_order").notNull().default(0),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Career Positions (actual job titles within career levels)
+export const careerPositions = pgTable("career_positions", {
+  id: serial("id").primaryKey(),
+  careerLevelId: integer("career_level_id").references(() => careerLevels.id).notNull(),
+  jobTitle: text("job_title").notNull(), // e.g., "SOC Analyst", "Security Operations Lead"
+  niceWorkRoleId: integer("nice_work_role_id").references(() => workRoles.id), // Optional link to NICE work role
+  description: text("description"),
+  notes: text("notes"),
   sortOrder: integer("sort_order").notNull().default(0),
   createdAt: timestamp("created_at").defaultNow(),
 });
@@ -208,10 +220,22 @@ export const careerTrackCategoriesRelations = relations(careerTrackCategories, (
   }),
 }));
 
-export const careerLevelsRelations = relations(careerLevels, ({ one }) => ({
+export const careerLevelsRelations = relations(careerLevels, ({ one, many }) => ({
   careerTrack: one(careerTracks, {
     fields: [careerLevels.careerTrackId],
     references: [careerTracks.id],
+  }),
+  careerPositions: many(careerPositions),
+}));
+
+export const careerPositionsRelations = relations(careerPositions, ({ one }) => ({
+  careerLevel: one(careerLevels, {
+    fields: [careerPositions.careerLevelId],
+    references: [careerLevels.id],
+  }),
+  niceWorkRole: one(workRoles, {
+    fields: [careerPositions.niceWorkRoleId],
+    references: [workRoles.id],
   }),
 }));
 
@@ -271,6 +295,11 @@ export const insertCareerLevelSchema = createInsertSchema(careerLevels).omit({
   createdAt: true,
 });
 
+export const insertCareerPositionSchema = createInsertSchema(careerPositions).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type Category = typeof categories.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -304,3 +333,6 @@ export type InsertCareerTrackCategory = z.infer<typeof insertCareerTrackCategory
 
 export type CareerLevel = typeof careerLevels.$inferSelect;
 export type InsertCareerLevel = z.infer<typeof insertCareerLevelSchema>;
+
+export type CareerPosition = typeof careerPositions.$inferSelect;
+export type InsertCareerPosition = z.infer<typeof insertCareerPositionSchema>;
