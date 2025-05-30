@@ -401,13 +401,13 @@ export class DatabaseStorage implements IStorage {
     const track = await db.query.careerTracks.findFirst({
       where: eq(careerTracks.id, id),
       with: {
-        levels: {
-          orderBy: (levels, { asc }) => [asc(levels.sortOrder)],
+        careerLevels: {
+          orderBy: (careerLevels, { asc }) => [asc(careerLevels.sortOrder)],
           with: {
-            positions: true
+            careerPositions: true
           }
         },
-        categories: {
+        careerTrackCategories: {
           with: {
             category: true
           }
