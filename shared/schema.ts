@@ -361,6 +361,9 @@ export type InsertKnowledgeItem = z.infer<typeof insertKnowledgeItemSchema>;
 export type Skill = typeof skills.$inferSelect;
 export type InsertSkill = z.infer<typeof insertSkillSchema>;
 
+export type Certification = typeof certifications.$inferSelect;
+export type InsertCertification = z.infer<typeof insertCertificationSchema>;
+
 
 
 export type ImportHistory = typeof importHistory.$inferSelect;
