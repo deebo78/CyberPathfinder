@@ -306,27 +306,10 @@ export default function CareerTracksExplorer() {
                         {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
                       </p>
                       
-                      {/* Sample Job Titles */}
-                      <div className="mb-4">
-                        <p className="text-xs font-medium text-gray-700 mb-2">Sample Roles:</p>
-                        <div className="flex flex-wrap gap-1">
-                          {getJobTitlesForTrack(track.id).slice(0, 3).map((title, index) => (
-                            <Badge key={index} variant="secondary" className="text-xs">
-                              {title}
-                            </Badge>
-                          ))}
-                          {getJobTitlesForTrack(track.id).length > 3 && (
-                            <Badge variant="outline" className="text-xs">
-                              +{getJobTitlesForTrack(track.id).length - 3} more
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                      
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-500">
                           <Users className="h-4 w-4 mr-1" />
-                          {getJobTitlesForTrack(track.id).length} Positions
+                          Multiple Levels
                         </div>
                         <Link href={`/career-tracks/${track.id}`}>
                           <Button variant="outline" size="sm" className="group-hover:bg-blue-600 group-hover:text-white transition-colors">
