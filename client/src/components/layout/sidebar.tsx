@@ -13,7 +13,8 @@ import {
   Database,
   Network,
   TrendingUp,
-  Building2
+  Building2,
+  Award
 } from "lucide-react";
 
 const navigation = [
@@ -21,6 +22,7 @@ const navigation = [
   { name: "Career Mapping", href: "/career-mapping", icon: TrendingUp },
   { name: "Map Vacancy", href: "/map-vacancy", icon: Building2 },
   { name: "Career Tracks", href: "/career-tracks", icon: Star },
+  { name: "Certification Mapping", href: "/certification-mapping", icon: Award },
   { name: "Work Roles", href: "/work-roles", icon: Briefcase },
   { name: "Tasks", href: "/tasks", icon: ListTodo },
   { name: "Knowledge Areas", href: "/knowledge", icon: Brain },
