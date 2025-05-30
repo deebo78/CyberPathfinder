@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopNavigation } from "@/components/layout/top-navigation";
+import MainNavigation from "@/components/layout/main-navigation";
 import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import WorkRoles from "@/pages/work-roles";
@@ -33,6 +34,7 @@ function Router() {
     "/career-tracks"
   ];
   const shouldShowSidebar = !isLandingPage && !noSidebarPages.some(page => location.startsWith(page));
+  const shouldShowMainNav = noSidebarPages.some(page => location.startsWith(page));
   
   if (isLandingPage) {
     return (
@@ -49,23 +51,26 @@ function Router() {
       <TopNavigation />
       {shouldShowSidebar && <Sidebar />}
       <div className="flex-1 overflow-auto">
-        <Switch>
-          <Route path="/dashboard" component={Dashboard} />
-          <Route path="/career-mapping" component={CareerMapping} />
-          <Route path="/map-vacancy" component={MapVacancy} />
-          <Route path="/career-tracks/:id" component={CareerTrackDetail} />
-          <Route path="/career-tracks" component={CareerTracksExplorer} />
-          <Route path="/certification-mapping" component={CertificationMapping} />
-          <Route path="/work-roles" component={WorkRoles} />
-          <Route path="/tasks" component={Tasks} />
-          <Route path="/knowledge" component={Knowledge} />
-          <Route path="/skills" component={Skills} />
-          <Route path="/specialty-areas" component={SpecialtyAreas} />
-          <Route path="/categories" component={Categories} />
-          <Route path="/relationships" component={Relationships} />
-          <Route path="/admin" component={Admin} />
-          <Route component={NotFound} />
-        </Switch>
+        {shouldShowMainNav && <MainNavigation />}
+        <div className={shouldShowMainNav ? "p-6" : ""}>
+          <Switch>
+            <Route path="/dashboard" component={Dashboard} />
+            <Route path="/career-mapping" component={CareerMapping} />
+            <Route path="/map-vacancy" component={MapVacancy} />
+            <Route path="/career-tracks/:id" component={CareerTrackDetail} />
+            <Route path="/career-tracks" component={CareerTracksExplorer} />
+            <Route path="/certification-mapping" component={CertificationMapping} />
+            <Route path="/work-roles" component={WorkRoles} />
+            <Route path="/tasks" component={Tasks} />
+            <Route path="/knowledge" component={Knowledge} />
+            <Route path="/skills" component={Skills} />
+            <Route path="/specialty-areas" component={SpecialtyAreas} />
+            <Route path="/categories" component={Categories} />
+            <Route path="/relationships" component={Relationships} />
+            <Route path="/admin" component={Admin} />
+            <Route component={NotFound} />
+          </Switch>
+        </div>
       </div>
     </div>
   );
