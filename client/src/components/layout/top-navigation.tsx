@@ -17,7 +17,7 @@ export function TopNavigation() {
             <div className="flex items-center">
               <div className="flex-shrink-0 flex items-center">
                 <Database className="text-primary text-2xl mr-3" />
-                <h1 className="text-xl font-medium text-gray-900">NICE Framework DB</h1>
+                <h1 className="text-xl font-medium text-gray-900">CyberPathfinder</h1>
               </div>
             </div>
             <div className="flex items-center space-x-4">
