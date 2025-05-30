@@ -14,6 +14,7 @@ import Skills from "@/pages/skills";
 import CareerMapping from "@/pages/career-mapping";
 import MapVacancy from "@/pages/map-vacancy";
 import CareerTracksExplorer from "@/pages/career-tracks-explorer";
+import CareerTrackDetail from "@/pages/career-track-detail";
 import SpecialtyAreas from "@/pages/specialty-areas";
 import Categories from "@/pages/categories";
 import Relationships from "@/pages/relationships";
@@ -43,6 +44,7 @@ function Router() {
           <Route path="/dashboard" component={Dashboard} />
           <Route path="/career-mapping" component={CareerMapping} />
           <Route path="/map-vacancy" component={MapVacancy} />
+          <Route path="/career-tracks/:id" component={CareerTrackDetail} />
           <Route path="/career-tracks" component={CareerTracksExplorer} />
           <Route path="/work-roles" component={WorkRoles} />
           <Route path="/tasks" component={Tasks} />

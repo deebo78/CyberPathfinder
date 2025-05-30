@@ -424,7 +424,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/career-tracks/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
-      const track = await storage.getCareerTrackWithPositions(id);
+      const track = await storage.getCareerTrackById(id);
       if (!track) {
         return res.status(404).json({ message: "Career track not found" });
       }
