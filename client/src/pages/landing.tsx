@@ -191,24 +191,10 @@ export default function Landing() {
         {/* Call to Action */}
         <div className="text-center bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-12 text-white">
           <h2 className="text-3xl font-bold mb-4">Ready to Navigate Your Cybersecurity Future?</h2>
-          <p className="text-xl mb-8 opacity-90">
+          <p className="text-xl opacity-90">
             Whether you're seeking your next career move or looking to hire top talent, 
             start with the industry-standard NICE Framework.
           </p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/career-mapping">
-              <Button size="lg" variant="secondary" className="text-gray-900">
-                <TrendingUp className="h-5 w-5 mr-2" />
-                Start Career Mapping
-              </Button>
-            </Link>
-            <Link href="/map-vacancy">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900">
-                <Building2 className="h-5 w-5 mr-2" />
-                Analyze Job Posting
-              </Button>
-            </Link>
-          </div>
         </div>
       </div>
     </div>
