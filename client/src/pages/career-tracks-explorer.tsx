@@ -83,6 +83,33 @@ export default function CareerTracksExplorer() {
     queryKey: ["/api/certifications"],
   });
 
+  // Fetch job titles for each track
+  const getJobTitlesForTrack = (trackId: number) => {
+    const jobTitlesMap: { [key: number]: string[] } = {
+      37: ["Cloud Security Support Technician", "Cloud Security Analyst", "Cloud Security Engineer", "Cloud Security Architect", "Chief Cloud Security Officer"],
+      22: ["Digital Evidence Technician", "Cybercrime Investigator", "Forensic Analyst Lead", "Cybercrime Operations Manager", "Director of Cybercrime & Digital Investigations"],
+      35: ["Security Engineer", "Systems Security Analyst", "Cybersecurity Architect", "Lead Security Architect", "Chief Security Architect"],
+      2: ["Threat Intelligence Analyst", "Senior Threat Intelligence Analyst", "Threat Intelligence Manager", "Director of Threat Intelligence"],
+      31: ["SOC Analyst", "Security Analyst", "Senior SOC Analyst", "SOC Manager", "Director of Security Operations"],
+      4: ["Penetration Tester", "Red Team Operator", "Senior Red Team Lead", "Red Team Manager", "Director of Offensive Security"],
+      5: ["Vulnerability Analyst", "Security Assessment Specialist", "Senior Vulnerability Manager", "Director of Vulnerability Management"],
+      6: ["Digital Forensics Technician", "Digital Forensics Analyst", "Senior Forensics Investigator", "Forensics Manager", "Director of Digital Forensics"],
+      8: ["GRC Analyst", "Compliance Specialist", "Risk Manager", "Senior GRC Manager", "Chief Risk Officer"],
+      30: ["Identity Analyst", "IAM Specialist", "Senior Identity Architect", "IAM Manager", "Director of Identity & Access Management"],
+      41: ["OT Security Specialist", "Industrial Control Systems Analyst", "Senior OT Security Engineer", "OT Security Manager"],
+      48: ["Security Educator", "Training Specialist", "Senior Training Manager", "Director of Security Training"],
+      42: ["CISO", "Deputy CISO", "Chief Security Officer", "VP of Cybersecurity"],
+      38: ["Security Project Manager", "Program Manager", "Senior Program Manager", "Director of Security Programs"],
+      43: ["Security Researcher", "Security Tool Developer", "Senior Research Engineer", "Director of Security Research"],
+      39: ["Security Automation Engineer", "DevSecOps Engineer", "Senior Automation Architect", "Director of Security Engineering"],
+      44: ["Security Consultant", "Customer Success Manager", "Senior Solutions Architect", "Director of Customer Security"],
+      45: ["Privacy Analyst", "Compliance Officer", "Privacy Manager", "Chief Privacy Officer"],
+      14: ["DevSecOps Engineer", "Application Security Engineer", "Senior AppSec Architect", "Director of Application Security"]
+    };
+    
+    return jobTitlesMap[trackId] || ["Cybersecurity Professional", "Senior Cybersecurity Specialist", "Security Manager"];
+  };
+
   const filteredTracks = (careerTracks as CareerTrack[])?.filter((track: CareerTrack) =>
     track.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     track.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -266,9 +293,6 @@ export default function CareerTracksExplorer() {
                         <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
                           <Icon className="h-6 w-6 text-white" />
                         </div>
-                        <Badge variant="outline" className="text-xs">
-                          Track {track.id}
-                        </Badge>
                       </div>
                       <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
                         {track.name}
@@ -281,10 +305,28 @@ export default function CareerTracksExplorer() {
                       <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                         {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
                       </p>
+                      
+                      {/* Sample Job Titles */}
+                      <div className="mb-4">
+                        <p className="text-xs font-medium text-gray-700 mb-2">Sample Roles:</p>
+                        <div className="flex flex-wrap gap-1">
+                          {getJobTitlesForTrack(track.id).slice(0, 3).map((title, index) => (
+                            <Badge key={index} variant="secondary" className="text-xs">
+                              {title}
+                            </Badge>
+                          ))}
+                          {getJobTitlesForTrack(track.id).length > 3 && (
+                            <Badge variant="outline" className="text-xs">
+                              +{getJobTitlesForTrack(track.id).length - 3} more
+                            </Badge>
+                          )}
+                        </div>
+                      </div>
+                      
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-500">
                           <Users className="h-4 w-4 mr-1" />
-                          Multiple Levels
+                          {getJobTitlesForTrack(track.id).length} Positions
                         </div>
                         <Link href={`/career-tracks/${track.id}`}>
                           <Button variant="outline" size="sm" className="group-hover:bg-blue-600 group-hover:text-white transition-colors">
