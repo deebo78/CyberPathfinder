@@ -14,10 +14,12 @@ import {
   Network,
   TrendingUp,
   Building2,
-  Award
+  Award,
+  Home
 } from "lucide-react";
 
 const navigation = [
+  { name: "Home", href: "/", icon: Home },
   { name: "Dashboard", href: "/dashboard", icon: Database },
   { name: "Career Mapping", href: "/career-mapping", icon: TrendingUp },
   { name: "Map Vacancy", href: "/map-vacancy", icon: Building2 },
