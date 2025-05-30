@@ -57,6 +57,20 @@ export const skills = pgTable("skills", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Certifications table
+export const certifications = pgTable("certifications", {
+  id: serial("id").primaryKey(),
+  code: text("code").notNull().unique(),
+  name: text("name").notNull(),
+  description: text("description"),
+  issuer: text("issuer"),
+  level: text("level"), // Foundation, Associate, Professional, Expert
+  domain: text("domain"), // General, Technical, Management, Governance
+  renewalPeriod: text("renewal_period"), // e.g., "3 years", "Annual"
+  prerequisites: text("prerequisites"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relationship tables
 export const workRoleTasks = pgTable("work_role_tasks", {
   id: serial("id").primaryKey(),
@@ -74,6 +88,13 @@ export const workRoleSkills = pgTable("work_role_skills", {
   id: serial("id").primaryKey(),
   workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
   skillId: integer("skill_id").references(() => skills.id).notNull(),
+});
+
+export const workRoleCertifications = pgTable("work_role_certifications", {
+  id: serial("id").primaryKey(),
+  workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
+  certificationId: integer("certification_id").references(() => certifications.id).notNull(),
+  required: boolean("required").default(false), // true if required, false if preferred
 });
 
 // Import History table for tracking data imports
@@ -154,6 +175,7 @@ export const workRolesRelations = relations(workRoles, ({ one, many }) => ({
   workRoleTasks: many(workRoleTasks),
   workRoleKnowledge: many(workRoleKnowledge),
   workRoleSkills: many(workRoleSkills),
+  workRoleCertifications: many(workRoleCertifications),
 }));
 
 export const tasksRelations = relations(tasks, ({ many }) => ({
@@ -166,6 +188,21 @@ export const knowledgeItemsRelations = relations(knowledgeItems, ({ many }) => (
 
 export const skillsRelations = relations(skills, ({ many }) => ({
   workRoleSkills: many(workRoleSkills),
+}));
+
+export const certificationsRelations = relations(certifications, ({ many }) => ({
+  workRoleCertifications: many(workRoleCertifications),
+}));
+
+export const workRoleCertificationsRelations = relations(workRoleCertifications, ({ one }) => ({
+  workRole: one(workRoles, {
+    fields: [workRoleCertifications.workRoleId],
+    references: [workRoles.id],
+  }),
+  certification: one(certifications, {
+    fields: [workRoleCertifications.certificationId],
+    references: [certifications.id],
+  }),
 }));
 
 
@@ -268,6 +305,11 @@ export const insertKnowledgeItemSchema = createInsertSchema(knowledgeItems).omit
 });
 
 export const insertSkillSchema = createInsertSchema(skills).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCertificationSchema = createInsertSchema(certifications).omit({
   id: true,
   createdAt: true,
 });
