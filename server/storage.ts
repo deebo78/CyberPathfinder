@@ -1,7 +1,7 @@
 import { 
   categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills,
   workRoleTasks, workRoleKnowledge, workRoleSkills, importHistory,
-  careerTracks, careerLevels, careerPositions,
+  careerTracks, careerLevels, careerPositions, certifications,
   type Category, type InsertCategory,
   type SpecialtyArea, type InsertSpecialtyArea,
   type WorkRole, type InsertWorkRole,
@@ -9,7 +9,8 @@ import {
   type KnowledgeItem, type InsertKnowledgeItem,
   type Skill, type InsertSkill,
   type ImportHistory, type InsertImportHistory,
-  type CareerTrack, type CareerLevel, type CareerPosition
+  type CareerTrack, type CareerLevel, type CareerPosition,
+  type Certification, type InsertCertification
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, ilike, desc, count, sql, inArray } from "drizzle-orm";
@@ -57,6 +58,13 @@ export interface IStorage {
   createSkill(skill: InsertSkill): Promise<Skill>;
   updateSkill(id: number, skill: Partial<InsertSkill>): Promise<Skill | undefined>;
   deleteSkill(id: number): Promise<boolean>;
+
+  // Certifications
+  getCertifications(): Promise<Certification[]>;
+  getCertificationById(id: number): Promise<Certification | undefined>;
+  getCertificationsByLevel(level: string): Promise<Certification[]>;
+  getCertificationsByIssuer(issuer: string): Promise<Certification[]>;
+  createCertification(certification: InsertCertification): Promise<Certification>;
 
   // Search
   searchAll(query: string): Promise<any>;
@@ -275,7 +283,32 @@ export class DatabaseStorage implements IStorage {
     return result.rowCount > 0;
   }
 
+  // Certifications
+  async getCertifications(): Promise<Certification[]> {
+    return await db.select().from(certifications).orderBy(certifications.issuer, certifications.name);
+  }
 
+  async getCertificationById(id: number): Promise<Certification | undefined> {
+    const [certification] = await db.select().from(certifications).where(eq(certifications.id, id));
+    return certification || undefined;
+  }
+
+  async getCertificationsByLevel(level: string): Promise<Certification[]> {
+    return await db.select().from(certifications)
+      .where(eq(certifications.level, level))
+      .orderBy(certifications.issuer, certifications.name);
+  }
+
+  async getCertificationsByIssuer(issuer: string): Promise<Certification[]> {
+    return await db.select().from(certifications)
+      .where(eq(certifications.issuer, issuer))
+      .orderBy(certifications.name);
+  }
+
+  async createCertification(certification: InsertCertification): Promise<Certification> {
+    const [created] = await db.insert(certifications).values(certification).returning();
+    return created;
+  }
 
   // Search
   async searchAll(query: string): Promise<any> {

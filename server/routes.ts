@@ -5,7 +5,8 @@ import { z } from "zod";
 import multer from "multer";
 import { 
   insertCategorySchema, insertSpecialtyAreaSchema, insertWorkRoleSchema, 
-  insertTaskSchema, insertKnowledgeItemSchema, insertSkillSchema
+  insertTaskSchema, insertKnowledgeItemSchema, insertSkillSchema,
+  insertCertificationSchema
 } from "@shared/schema";
 import { aiCareerMapper } from "./ai-career-mapper";
 import { aiVacancyMapper } from "./ai-vacancy-mapper";
@@ -496,6 +497,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error getting work role match:", error);
       res.status(500).json({ message: "Failed to get work role match" });
+    }
+  });
+
+  // Certifications routes
+  app.get("/api/certifications", async (req, res) => {
+    try {
+      const certifications = await storage.getCertifications();
+      res.json(certifications);
+    } catch (error) {
+      console.error("Error fetching certifications:", error);
+      res.status(500).json({ message: "Failed to fetch certifications" });
+    }
+  });
+
+  app.get("/api/certifications/by-level/:level", async (req, res) => {
+    try {
+      const level = req.params.level;
+      const certifications = await storage.getCertificationsByLevel(level);
+      res.json(certifications);
+    } catch (error) {
+      console.error("Error fetching certifications by level:", error);
+      res.status(500).json({ message: "Failed to fetch certifications by level" });
+    }
+  });
+
+  app.get("/api/certifications/by-issuer/:issuer", async (req, res) => {
+    try {
+      const issuer = req.params.issuer;
+      const certifications = await storage.getCertificationsByIssuer(issuer);
+      res.json(certifications);
+    } catch (error) {
+      console.error("Error fetching certifications by issuer:", error);
+      res.status(500).json({ message: "Failed to fetch certifications by issuer" });
     }
   });
 
