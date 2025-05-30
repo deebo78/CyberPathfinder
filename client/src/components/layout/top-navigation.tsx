@@ -1,8 +1,9 @@
 import { useState } from "react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImportModal } from "@/components/modals/import-modal";
-import { Database, Search, Upload, UserCircle } from "lucide-react";
+import { Database, Search, Upload, UserCircle, Settings } from "lucide-react";
 
 export function TopNavigation() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -34,6 +35,12 @@ export function TopNavigation() {
                 <Upload className="w-4 h-4 mr-2" />
                 Import Data
               </Button>
+              <Link href="/admin">
+                <Button variant="outline">
+                  <Settings className="w-4 h-4 mr-2" />
+                  Admin
+                </Button>
+              </Link>
               <div className="relative">
                 <button className="flex items-center text-gray-700 hover:text-gray-900">
                   <UserCircle className="w-8 h-8" />
