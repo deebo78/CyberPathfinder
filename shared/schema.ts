@@ -148,6 +148,16 @@ export const careerPositions = pgTable("career_positions", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Career Level Certifications (recommended certifications for each career level)
+export const careerLevelCertifications = pgTable("career_level_certifications", {
+  id: serial("id").primaryKey(),
+  careerLevelId: integer("career_level_id").references(() => careerLevels.id).notNull(),
+  certificationId: integer("certification_id").references(() => certifications.id).notNull(),
+  priority: integer("priority").default(1), // 1 = primary, 2 = secondary, etc.
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
   specialtyAreas: many(specialtyAreas),
@@ -263,6 +273,7 @@ export const careerLevelsRelations = relations(careerLevels, ({ one, many }) => 
     references: [careerTracks.id],
   }),
   careerPositions: many(careerPositions),
+  careerLevelCertifications: many(careerLevelCertifications),
 }));
 
 export const careerPositionsRelations = relations(careerPositions, ({ one }) => ({
@@ -273,6 +284,17 @@ export const careerPositionsRelations = relations(careerPositions, ({ one }) => 
   niceWorkRole: one(workRoles, {
     fields: [careerPositions.niceWorkRoleId],
     references: [workRoles.id],
+  }),
+}));
+
+export const careerLevelCertificationsRelations = relations(careerLevelCertifications, ({ one }) => ({
+  careerLevel: one(careerLevels, {
+    fields: [careerLevelCertifications.careerLevelId],
+    references: [careerLevels.id],
+  }),
+  certification: one(certifications, {
+    fields: [careerLevelCertifications.certificationId],
+    references: [certifications.id],
   }),
 }));
 
@@ -338,6 +360,11 @@ export const insertCareerLevelSchema = createInsertSchema(careerLevels).omit({
 });
 
 export const insertCareerPositionSchema = createInsertSchema(careerPositions).omit({
+  id: true,
+  createdAt: true,
+});
+
+export const insertCareerLevelCertificationSchema = createInsertSchema(careerLevelCertifications).omit({
   id: true,
   createdAt: true,
 });
