@@ -26,6 +26,14 @@ function Router() {
   const [location] = useLocation();
   const isLandingPage = location === "/";
   
+  // Pages that should not show the sidebar - main user-facing features
+  const noSidebarPages = [
+    "/career-mapping",
+    "/map-vacancy", 
+    "/career-tracks"
+  ];
+  const shouldShowSidebar = !isLandingPage && !noSidebarPages.some(page => location.startsWith(page));
+  
   if (isLandingPage) {
     return (
       <div className="min-h-screen">
@@ -39,7 +47,7 @@ function Router() {
   return (
     <div className="flex h-screen pt-16">
       <TopNavigation />
-      <Sidebar />
+      {shouldShowSidebar && <Sidebar />}
       <div className="flex-1 overflow-auto">
         <Switch>
           <Route path="/dashboard" component={Dashboard} />
