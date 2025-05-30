@@ -38,6 +38,18 @@ interface CareerTrack {
   overview: string;
 }
 
+interface Certification {
+  id: number;
+  code: string;
+  name: string;
+  description: string;
+  issuer: string;
+  level: string;
+  domain: string;
+  renewalPeriod: string;
+  prerequisites: string;
+}
+
 const trackIcons: { [key: string]: any } = {
   "SOC Operations": Shield,
   "Red Team Operations": Target,
@@ -67,6 +79,10 @@ export default function CareerTracksExplorer() {
     queryKey: ["/api/career-tracks"],
   });
 
+  const { data: certifications, isLoading: certificationsLoading } = useQuery({
+    queryKey: ["/api/certifications"],
+  });
+
   const filteredTracks = (careerTracks as CareerTrack[])?.filter((track: CareerTrack) =>
     track.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     track.description?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -86,6 +102,71 @@ export default function CareerTracksExplorer() {
       "bg-fuchsia-500", "bg-slate-500", "bg-zinc-500"
     ];
     return colors[trackName.length % colors.length];
+  };
+
+  const getRelevantCertifications = (trackName: string, level: string) => {
+    if (!certifications) return [];
+    
+    const certs = certifications as Certification[];
+    
+    // Define certification mapping for career tracks
+    const trackCertMap: { [key: string]: { [key: string]: string[] } } = {
+      "SOC Operations": {
+        "Foundation": ["COMP-SEC+", "COMP-NET+", "MS-SC-900", "GIAC-GSEC"],
+        "Associate": ["COMP-CYSA+", "ISC2-SSCP", "MS-SC-200"],
+        "Professional": ["ISC2-CISSP", "GIAC-GCIH", "GIAC-GCFA"],
+        "Expert": ["COMP-CASP+", "GIAC-GSLC"]
+      },
+      "Red Team Operations": {
+        "Associate": ["COMP-PENTEST+", "EC-CEH"],
+        "Professional": ["EC-ECSA", "GIAC-GPEN", "EC-CHFI"],
+        "Expert": ["COMP-CASP+", "GIAC-GSLC"]
+      },
+      "Vulnerability Management": {
+        "Foundation": ["COMP-SEC+", "COMP-NET+"],
+        "Associate": ["COMP-CYSA+", "COMP-PENTEST+"],
+        "Professional": ["ISC2-CISSP", "GIAC-GPEN"],
+        "Expert": ["COMP-CASP+"]
+      },
+      "Digital Forensics": {
+        "Associate": ["COMP-SEC+", "GIAC-GSEC"],
+        "Professional": ["EC-CHFI", "GIAC-GCFA", "GIAC-GCIH"],
+        "Expert": ["COMP-CASP+", "GIAC-GSLC"]
+      },
+      "GRC Risk Compliance": {
+        "Foundation": ["COMP-SEC+", "ISF-CISMP"],
+        "Professional": ["ISACA-CISA", "ISACA-CISM", "ISACA-CRISC", "ISC2-CISSP"],
+        "Expert": ["GIAC-GSLC"]
+      },
+      "Cloud and Infrastructure Security": {
+        "Foundation": ["CSA-CCSK", "MS-SC-900"],
+        "Associate": ["COMP-SEC+", "MS-SC-300"],
+        "Professional": ["ISC2-CCSP", "AWS-SEC-SPEC", "CISCO-CCNP-SEC"],
+        "Expert": ["COMP-CASP+", "ISC2-CISSP-ISSAP"]
+      },
+      "Identity and Access Management": {
+        "Foundation": ["MS-SC-900"],
+        "Associate": ["MS-SC-300", "COMP-SEC+"],
+        "Professional": ["ISC2-CISSP", "ISC2-CCSP"],
+        "Expert": ["COMP-CASP+"]
+      }
+    };
+
+    const trackCerts = trackCertMap[trackName];
+    if (!trackCerts) {
+      // Default certifications for tracks not specifically mapped
+      const defaultByLevel: { [key: string]: string[] } = {
+        "Foundation": ["COMP-SEC+", "COMP-NET+", "MS-SC-900"],
+        "Associate": ["COMP-CYSA+", "ISC2-SSCP", "GIAC-GSEC"],
+        "Professional": ["ISC2-CISSP", "GIAC-GCIH", "ISACA-CISM"],
+        "Expert": ["COMP-CASP+", "GIAC-GSLC"]
+      };
+      const relevantCodes = defaultByLevel[level] || [];
+      return certs.filter(cert => relevantCodes.includes(cert.code));
+    }
+
+    const relevantCodes = trackCerts[level] || [];
+    return certs.filter(cert => relevantCodes.includes(cert.code));
   };
 
   if (isLoading) {
@@ -152,57 +233,211 @@ export default function CareerTracksExplorer() {
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">750K+</div>
-              <div className="text-sm text-gray-600">Open Positions</div>
+              <div className="text-2xl font-bold text-orange-600">{certifications ? (certifications as Certification[]).length : 0}</div>
+              <div className="text-sm text-gray-600">Certifications</div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Career Tracks Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredTracks.map((track: CareerTrack) => {
-            const Icon = getTrackIcon(track.name);
-            const colorClass = getTrackColor(track.name);
-            
-            return (
-              <Card key={track.id} className="hover:shadow-lg transition-all cursor-pointer group">
+        {/* Main Content Tabs */}
+        <Tabs defaultValue="tracks" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="tracks" className="flex items-center space-x-2">
+              <TrendingUp className="h-4 w-4" />
+              <span>Career Tracks</span>
+            </TabsTrigger>
+            <TabsTrigger value="certifications" className="flex items-center space-x-2">
+              <Award className="h-4 w-4" />
+              <span>Certifications Guide</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="tracks" className="mt-6">
+            {/* Career Tracks Grid */}
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTracks.map((track: CareerTrack) => {
+                const Icon = getTrackIcon(track.name);
+                const colorClass = getTrackColor(track.name);
+                
+                return (
+                  <Card key={track.id} className="hover:shadow-lg transition-all cursor-pointer group">
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                          <Icon className="h-6 w-6 text-white" />
+                        </div>
+                        <Badge variant="outline" className="text-xs">
+                          Track {track.id}
+                        </Badge>
+                      </div>
+                      <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                        {track.name}
+                      </CardTitle>
+                      <CardDescription className="text-sm">
+                        {track.description}
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                        {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
+                      </p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Users className="h-4 w-4 mr-1" />
+                          Multiple Levels
+                        </div>
+                        <Link href={`/career-tracks/${track.id}`}>
+                          <Button variant="outline" size="sm" className="group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                            Explore
+                            <ArrowRight className="h-4 w-4 ml-1" />
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="certifications" className="mt-6">
+            {/* Certification Guide */}
+            <div className="space-y-8">
+              {/* Certification Overview */}
+              <Card>
                 <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                      <Icon className="h-6 w-6 text-white" />
-                    </div>
-                    <Badge variant="outline" className="text-xs">
-                      Track {track.id}
-                    </Badge>
-                  </div>
-                  <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                    {track.name}
+                  <CardTitle className="flex items-center space-x-2">
+                    <Award className="h-5 w-5 text-yellow-600" />
+                    <span>Cybersecurity Certifications by Career Level</span>
                   </CardTitle>
-                  <CardDescription className="text-sm">
-                    {track.description}
+                  <CardDescription>
+                    Professional certifications recommended for different career stages in cybersecurity
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                    {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Users className="h-4 w-4 mr-1" />
-                      Multiple Levels
-                    </div>
-                    <Link href={`/career-tracks/${track.id}`}>
-                      <Button variant="outline" size="sm" className="group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        Explore
-                        <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
-                    </Link>
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {["Foundation", "Associate", "Professional", "Expert"].map((level) => {
+                      const levelCerts = certifications ? 
+                        (certifications as Certification[]).filter(cert => cert.level === level) : [];
+                      
+                      return (
+                        <div key={level} className="text-center p-4 bg-gray-50 rounded-lg">
+                          <div className="text-2xl font-bold text-blue-600">{levelCerts.length}</div>
+                          <div className="text-sm text-gray-600">{level} Level</div>
+                        </div>
+                      );
+                    })}
                   </div>
                 </CardContent>
               </Card>
-            );
-          })}
-        </div>
+
+              {/* Certification by Level */}
+              {["Foundation", "Associate", "Professional", "Expert"].map((level) => {
+                const levelCerts = certifications ? 
+                  (certifications as Certification[]).filter(cert => cert.level === level) : [];
+                
+                if (levelCerts.length === 0) return null;
+
+                return (
+                  <Card key={level}>
+                    <CardHeader>
+                      <CardTitle className="flex items-center space-x-2">
+                        <BookOpen className="h-5 w-5 text-blue-600" />
+                        <span>{level} Level Certifications</span>
+                      </CardTitle>
+                      <CardDescription>
+                        Recommended certifications for {level.toLowerCase()} cybersecurity professionals
+                      </CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {levelCerts.map((cert) => (
+                          <div key={cert.id} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                            <div className="flex items-start justify-between mb-2">
+                              <div className="flex-1">
+                                <h4 className="font-medium text-gray-900 mb-1">{cert.name}</h4>
+                                <p className="text-sm text-gray-600 mb-2">{cert.issuer}</p>
+                                <Badge variant="outline" className="text-xs">
+                                  {cert.domain}
+                                </Badge>
+                              </div>
+                            </div>
+                            <p className="text-sm text-gray-500 mb-3 line-clamp-2">
+                              {cert.description}
+                            </p>
+                            <div className="space-y-1 text-xs text-gray-400">
+                              <div className="flex items-center space-x-1">
+                                <Clock className="h-3 w-3" />
+                                <span>Renewal: {cert.renewalPeriod}</span>
+                              </div>
+                              {cert.prerequisites && cert.prerequisites !== "None" && (
+                                <div className="text-xs text-orange-600">
+                                  Prerequisites: {cert.prerequisites}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+
+              {/* Track-Specific Certification Recommendations */}
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center space-x-2">
+                    <Target className="h-5 w-5 text-green-600" />
+                    <span>Track-Specific Certification Pathways</span>
+                  </CardTitle>
+                  <CardDescription>
+                    Certification recommendations tailored to specific career tracks
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-6">
+                    {filteredTracks.slice(0, 6).map((track: CareerTrack) => {
+                      const Icon = getTrackIcon(track.name);
+                      const levels = ["Foundation", "Associate", "Professional", "Expert"];
+                      
+                      return (
+                        <div key={track.id} className="border rounded-lg p-4">
+                          <div className="flex items-center space-x-3 mb-4">
+                            <Icon className="h-5 w-5 text-blue-600" />
+                            <h4 className="font-medium text-gray-900">{track.name}</h4>
+                          </div>
+                          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                            {levels.map((level) => {
+                              const relevantCerts = getRelevantCertifications(track.name, level);
+                              
+                              return (
+                                <div key={level} className="bg-gray-50 rounded p-3">
+                                  <h5 className="font-medium text-sm text-gray-700 mb-2">{level}</h5>
+                                  <div className="space-y-1">
+                                    {relevantCerts.length > 0 ? (
+                                      relevantCerts.map((cert) => (
+                                        <Badge key={cert.id} variant="secondary" className="text-xs block mb-1">
+                                          {cert.code}
+                                        </Badge>
+                                      ))
+                                    ) : (
+                                      <span className="text-xs text-gray-400">No specific recommendations</span>
+                                    )}
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
 
         {filteredTracks.length === 0 && searchTerm && (
           <div className="text-center py-12">
