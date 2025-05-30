@@ -1,10 +1,11 @@
-import { Switch, Route } from "wouter";
+import { Switch, Route, useLocation } from "wouter";
 import { queryClient } from "./lib/queryClient";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Sidebar } from "@/components/layout/sidebar";
 import { TopNavigation } from "@/components/layout/top-navigation";
+import Landing from "@/pages/landing";
 import Dashboard from "@/pages/dashboard";
 import WorkRoles from "@/pages/work-roles";
 import Tasks from "@/pages/tasks";
@@ -12,6 +13,7 @@ import Knowledge from "@/pages/knowledge";
 import Skills from "@/pages/skills";
 import CareerMapping from "@/pages/career-mapping";
 import MapVacancy from "@/pages/map-vacancy";
+import CareerTracksExplorer from "@/pages/career-tracks-explorer";
 import SpecialtyAreas from "@/pages/specialty-areas";
 import Categories from "@/pages/categories";
 import Relationships from "@/pages/relationships";
@@ -19,18 +21,33 @@ import Admin from "@/pages/admin";
 import NotFound from "@/pages/not-found";
 
 function Router() {
+  const [location] = useLocation();
+  const isLandingPage = location === "/";
+  
+  if (isLandingPage) {
+    return (
+      <div className="min-h-screen">
+        <Switch>
+          <Route path="/" component={Landing} />
+        </Switch>
+      </div>
+    );
+  }
+
   return (
     <div className="flex h-screen pt-16">
+      <TopNavigation />
       <Sidebar />
       <div className="flex-1 overflow-auto">
         <Switch>
-          <Route path="/" component={Dashboard} />
+          <Route path="/dashboard" component={Dashboard} />
+          <Route path="/career-mapping" component={CareerMapping} />
+          <Route path="/map-vacancy" component={MapVacancy} />
+          <Route path="/career-tracks" component={CareerTracksExplorer} />
           <Route path="/work-roles" component={WorkRoles} />
           <Route path="/tasks" component={Tasks} />
           <Route path="/knowledge" component={Knowledge} />
           <Route path="/skills" component={Skills} />
-          <Route path="/career-mapping" component={CareerMapping} />
-          <Route path="/map-vacancy" component={MapVacancy} />
           <Route path="/specialty-areas" component={SpecialtyAreas} />
           <Route path="/categories" component={Categories} />
           <Route path="/relationships" component={Relationships} />
@@ -47,7 +64,6 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className="min-h-screen bg-gray-50 font-roboto">
-          <TopNavigation />
           <Toaster />
           <Router />
         </div>
