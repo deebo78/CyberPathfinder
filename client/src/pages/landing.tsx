@@ -59,11 +59,11 @@ export default function Landing() {
           <div className="flex items-center justify-center mb-6">
             <Shield className="h-12 w-12 text-blue-600 mr-3" />
             <h1 className="text-4xl md:text-6xl font-bold text-gray-900">
-              NICE Framework
+              CyberPathfinder
             </h1>
           </div>
           <p className="text-xl md:text-2xl text-gray-600 mb-2">
-            Cybersecurity Workforce Navigator
+            NICE Framework Career Navigator
           </p>
           <p className="text-lg text-gray-500 max-w-3xl mx-auto mb-8">
             Navigate the NICE Cybersecurity Workforce Framework with intelligent career mapping 
