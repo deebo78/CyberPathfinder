@@ -206,138 +206,14 @@ export default function CareerTrackDetail() {
   const Icon = getTrackIcon(trackData.name);
   const colorClass = getTrackColor(trackData.name);
 
-  // Get job titles for each level of this track
-  const getJobTitlesForTrackAndLevel = (trackId: number, levelIndex: number) => {
-    const jobTitlesMap: { [key: number]: string[][] } = {
-      37: [
-        ["Cloud Security Support Technician", "IT Support Specialist"],
-        ["Cloud Security Analyst", "Infrastructure Security Analyst"],
-        ["Cloud Security Engineer", "Infrastructure Security Engineer"],
-        ["Cloud Security Architect", "Senior Cloud Security Engineer"],
-        ["Chief Cloud Security Officer", "Director of Infrastructure Security"]
-      ],
-      22: [
-        ["Digital Evidence Technician"],
-        ["Cybercrime Investigator"],
-        ["Forensic Analyst Lead"],
-        ["Cybercrime Operations Manager"],
-        ["Director of Cybercrime & Digital Investigations"]
-      ],
-      35: [
-        ["Security Engineer"],
-        ["Systems Security Analyst"],
-        ["Cybersecurity Architect"],
-        ["Lead Security Architect"],
-        ["Chief Security Architect", "Director of Enterprise Security"]
-      ],
-      2: [
-        ["Threat Intelligence Analyst"],
-        ["Senior Threat Intelligence Analyst"],
-        ["Threat Intelligence Manager"],
-        ["Director of Threat Intelligence"]
-      ],
-      31: [
-        ["SOC Analyst"],
-        ["Security Analyst", "Senior SOC Analyst"],
-        ["SOC Manager"],
-        ["Director of Security Operations"]
-      ],
-      4: [
-        [],
-        ["Penetration Tester"],
-        ["Red Team Operator", "Senior Red Team Lead"],
-        ["Red Team Manager"],
-        ["Director of Offensive Security"]
-      ],
-      5: [
-        ["Vulnerability Analyst"],
-        ["Security Assessment Specialist"],
-        ["Senior Vulnerability Manager"],
-        ["Director of Vulnerability Management"]
-      ],
-      6: [
-        ["Digital Forensics Technician"],
-        ["Digital Forensics Analyst"],
-        ["Senior Forensics Investigator"],
-        ["Forensics Manager"],
-        ["Director of Digital Forensics"]
-      ],
-      8: [
-        ["GRC Analyst"],
-        ["Compliance Specialist"],
-        ["Risk Manager"],
-        ["Senior GRC Manager"],
-        ["Chief Risk Officer"]
-      ],
-      30: [
-        ["Identity Analyst"],
-        ["IAM Specialist"],
-        ["Senior Identity Architect"],
-        ["IAM Manager"],
-        ["Director of Identity & Access Management"]
-      ],
-      41: [
-        ["OT Security Specialist"],
-        ["Industrial Control Systems Analyst"],
-        ["Senior OT Security Engineer"],
-        ["OT Security Manager"]
-      ],
-      48: [
-        ["Security Educator"],
-        ["Training Specialist"],
-        ["Senior Training Manager"],
-        ["Director of Security Training"]
-      ],
-      42: [
-        [],
-        [],
-        ["CISO", "Deputy CISO"],
-        ["Chief Security Officer"],
-        ["VP of Cybersecurity"]
-      ],
-      38: [
-        ["Security Project Manager"],
-        ["Program Manager"],
-        ["Senior Program Manager"],
-        ["Director of Security Programs"]
-      ],
-      43: [
-        ["Security Researcher"],
-        ["Security Tool Developer"],
-        ["Senior Research Engineer"],
-        ["Director of Security Research"]
-      ],
-      39: [
-        ["Security Automation Engineer"],
-        ["DevSecOps Engineer"],
-        ["Senior Automation Architect"],
-        ["Director of Security Engineering"]
-      ],
-      44: [
-        ["Security Consultant"],
-        ["Customer Success Manager"],
-        ["Senior Solutions Architect"],
-        ["Director of Customer Security"]
-      ],
-      45: [
-        ["Privacy Analyst"],
-        ["Compliance Officer"],
-        ["Privacy Manager"],
-        ["Chief Privacy Officer"]
-      ],
-      14: [
-        ["DevSecOps Engineer"],
-        ["Application Security Engineer"],
-        ["Senior AppSec Architect"],
-        ["Director of Application Security"]
-      ]
-    };
+  // Get job titles from authentic database data
+  const getJobTitlesForLevel = (levelName: string) => {
+    if (!trackData.careerLevels) return [];
     
-    const trackTitles = jobTitlesMap[trackId];
-    if (!trackTitles || levelIndex >= trackTitles.length) {
-      return [];
-    }
-    return trackTitles[levelIndex];
+    const level = trackData.careerLevels.find((l: any) => l.name === levelName);
+    if (!level || !level.careerPositions) return [];
+    
+    return level.careerPositions.map((position: any) => position.jobTitle);
   };
 
   // Career levels for progression display
@@ -399,7 +275,7 @@ export default function CareerTrackDetail() {
           <CardContent>
             <div className="space-y-4">
               {careerLevels.map((level, index) => {
-                const jobTitles = getJobTitlesForTrackAndLevel(trackData.id, index);
+                const jobTitles = getJobTitlesForLevel(level.level);
                 return (
                   <div key={level.level} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
                     <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
@@ -419,7 +295,7 @@ export default function CareerTrackDetail() {
                         <div className="mt-3">
                           <p className="text-xs font-medium text-gray-700 mb-2">Typical Job Titles:</p>
                           <div className="flex flex-wrap gap-1">
-                            {jobTitles.map((title, titleIndex) => (
+                            {jobTitles.map((title: string, titleIndex: number) => (
                               <Badge key={titleIndex} variant="secondary" className="text-xs">
                                 {title}
                               </Badge>
