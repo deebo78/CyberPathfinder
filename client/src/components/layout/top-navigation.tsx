@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ImportModal } from "@/components/modals/import-modal";
@@ -8,6 +8,12 @@ import { Database, Search, Upload, UserCircle, Settings } from "lucide-react";
 export function TopNavigation() {
   const [searchQuery, setSearchQuery] = useState("");
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+  const [location] = useLocation();
+  
+  // Hide admin tools on main user-facing pages
+  const userFacingPages = ["/career-mapping", "/map-vacancy", "/career-tracks"];
+  const isUserFacingPage = userFacingPages.some(page => location.startsWith(page));
+  const showAdminTools = !isUserFacingPage;
 
   return (
     <>
@@ -21,31 +27,37 @@ export function TopNavigation() {
               </div>
             </div>
             <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Input
-                  type="text"
-                  placeholder="Global search..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-64 pl-10"
-                />
-                <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              </div>
-              <Button onClick={() => setIsImportModalOpen(true)}>
-                <Upload className="w-4 h-4 mr-2" />
-                Import Data
-              </Button>
-              <Link href="/admin">
-                <Button variant="outline">
-                  <Settings className="w-4 h-4 mr-2" />
-                  Admin
-                </Button>
-              </Link>
-              <div className="relative">
-                <button className="flex items-center text-gray-700 hover:text-gray-900">
-                  <UserCircle className="w-8 h-8" />
-                </button>
-              </div>
+              {showAdminTools && (
+                <>
+                  <div className="relative">
+                    <Input
+                      type="text"
+                      placeholder="Global search..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-64 pl-10"
+                    />
+                    <Search className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                  </div>
+                  <Button onClick={() => setIsImportModalOpen(true)}>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Import Data
+                  </Button>
+                  <div className="relative">
+                    <button className="flex items-center text-gray-700 hover:text-gray-900">
+                      <UserCircle className="w-8 h-8" />
+                    </button>
+                  </div>
+                </>
+              )}
+              {!showAdminTools && (
+                <Link href="/admin">
+                  <Button variant="outline">
+                    <Settings className="w-4 h-4 mr-2" />
+                    Admin
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>
