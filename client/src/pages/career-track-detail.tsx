@@ -218,11 +218,11 @@ export default function CareerTrackDetail() {
 
   // Career levels for progression display
   const careerLevels = [
-    { level: "Entry-Level", experience: "0-2 years", description: "Starting positions requiring basic cybersecurity knowledge" },
-    { level: "Mid-Level", experience: "2-5 years", description: "Intermediate roles with specialized responsibilities" },
-    { level: "Senior-Level", experience: "5-8 years", description: "Advanced positions with leadership and mentoring duties" },
-    { level: "Expert-Level", experience: "8+ years", description: "Subject matter expert roles with strategic influence" },
-    { level: "Executive-Level", experience: "10+ years", description: "Leadership positions setting organizational direction" }
+    { level: "Entry-Level", experience: "0-3 years", description: "Starting positions requiring basic cybersecurity knowledge" },
+    { level: "Mid-Level", experience: "4-7 years", description: "Intermediate roles with specialized responsibilities" },
+    { level: "Senior-Level", experience: "8-12 years", description: "Advanced positions with leadership and mentoring duties" },
+    { level: "Expert-Level", experience: "12+ years", description: "Subject matter expert roles with strategic influence" },
+    { level: "Executive-Level", experience: "15+ years", description: "Leadership positions setting organizational direction" }
   ];
 
   return (
