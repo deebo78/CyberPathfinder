@@ -404,7 +404,13 @@ export class DatabaseStorage implements IStorage {
         careerLevels: {
           orderBy: (careerLevels, { asc }) => [asc(careerLevels.sortOrder)],
           with: {
-            careerPositions: true
+            careerPositions: true,
+            careerLevelCertifications: {
+              orderBy: (careerLevelCertifications, { asc }) => [asc(careerLevelCertifications.priority)],
+              with: {
+                certification: true
+              }
+            }
           }
         },
         careerTrackCategories: {
