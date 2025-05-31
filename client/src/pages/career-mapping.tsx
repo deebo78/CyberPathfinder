@@ -98,7 +98,7 @@ export default function CareerMapping() {
   return (
     <div className="container mx-auto p-6 space-y-6">
       <div className="text-center space-y-2">
-        <h1 className="text-3xl font-bold">AI Career Pathway Mapper</h1>
+        <h1 className="text-3xl font-bold">Launch Your Career!</h1>
         <p className="text-muted-foreground max-w-2xl mx-auto">
           Discover your ideal cybersecurity career path based on your experience, education, and goals. 
           Get personalized recommendations aligned with the NICE Framework.
