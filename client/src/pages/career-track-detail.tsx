@@ -350,50 +350,7 @@ export default function CareerTrackDetail() {
           </CardContent>
         </Card>
 
-        {/* Certification Recommendations */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle className="flex items-center space-x-2">
-              <Award className="h-5 w-5 text-yellow-600" />
-              <span>Recommended Certifications</span>
-            </CardTitle>
-            <CardDescription>
-              Professional certifications relevant to this career track at different experience levels
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {["Foundation", "Associate", "Professional", "Expert"].map((level) => {
-                const relevantCerts = getRelevantCertifications(trackData.name, level);
-                
-                return (
-                  <div key={level} className="space-y-3">
-                    <h4 className="font-medium text-gray-900 border-b pb-2">{level} Level</h4>
-                    <div className="space-y-2">
-                      {relevantCerts.length > 0 ? (
-                        relevantCerts.map((cert) => (
-                          <div key={cert.id} className="p-3 border rounded-lg hover:shadow-md transition-shadow">
-                            <div className="font-medium text-sm text-gray-900 mb-1">{cert.name}</div>
-                            <div className="text-xs text-gray-600 mb-2">{cert.issuer}</div>
-                            <Badge variant="outline" className="text-xs">
-                              {cert.code}
-                            </Badge>
-                            <div className="flex items-center space-x-1 mt-2 text-xs text-gray-400">
-                              <Clock className="h-3 w-3" />
-                              <span>Renewal: {cert.renewalPeriod}</span>
-                            </div>
-                          </div>
-                        ))
-                      ) : (
-                        <p className="text-sm text-gray-400 italic">General cybersecurity certifications recommended</p>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+
 
         {/* Next Steps */}
         <Card>
