@@ -62,9 +62,6 @@ export default function Landing() {
               CyberPathfinder
             </h1>
           </div>
-          <p className="text-xl md:text-2xl text-gray-600 mb-2">
-            NICE Framework Career Navigator
-          </p>
           <p className="text-lg text-gray-500 max-w-3xl mx-auto mb-8">
             Navigate the NICE Cybersecurity Workforce Framework with intelligent career mapping 
             and organizational talent matching powered by authentic framework data.
