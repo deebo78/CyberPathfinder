@@ -5,33 +5,33 @@ import ws from 'ws';
 neonConfig.webSocketConstructor = ws;
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
 
-async function importGRCWithCerts() {
-  console.log('Starting GRC import with certifications...');
+async function importCybersecurityArchitectureWithCerts() {
+  console.log('Starting Cybersecurity Architecture import with certifications...');
 
   try {
-    // Read the GRC track file
-    const workbook = XLSX.readFile('attached_assets/Track_5_GRC_Risk_Compliance.xlsx');
+    // Read the Cybersecurity Architecture track file
+    const workbook = XLSX.readFile('attached_assets/Track_6_Cybersecurity_Architecture_Engineering.xlsx');
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const data = XLSX.utils.sheet_to_json(worksheet);
 
     console.log(`Processing ${data.length} career level entries`);
 
-    // Find the GRC track
+    // Find the Cybersecurity Architecture track
     const trackResult = await pool.query(
-      "SELECT id FROM career_tracks WHERE name ILIKE '%GRC%' OR name ILIKE '%Governance%' OR name ILIKE '%Risk%' OR name ILIKE '%Compliance%'"
+      "SELECT id FROM career_tracks WHERE name ILIKE '%Architecture%' OR name ILIKE '%Engineering%'"
     );
 
     if (trackResult.rows.length === 0) {
-      console.log('GRC track not found, creating it...');
+      console.log('Cybersecurity Architecture track not found, creating it...');
       const insertResult = await pool.query(
         "INSERT INTO career_tracks (name, description) VALUES ($1, $2) RETURNING id",
-        ['GRC (Governance, Risk, Compliance)', 'Governance, Risk, and Compliance career track focusing on organizational security policies, risk management, and regulatory compliance']
+        ['Cybersecurity Architecture & Engineering', 'Design and implement secure systems architecture and engineering solutions for enterprise environments']
       );
       var trackId = insertResult.rows[0].id;
     } else {
       var trackId = trackResult.rows[0].id;
-      console.log(`Found GRC track with ID: ${trackId}`);
+      console.log(`Found Cybersecurity Architecture track with ID: ${trackId}`);
     }
 
     // Get all certifications for mapping
@@ -42,11 +42,12 @@ async function importGRCWithCerts() {
       certMap.set(cert.name.toLowerCase(), cert.id);
       // Add common variations
       if (cert.name.includes('CISSP')) certMap.set('cissp', cert.id);
-      if (cert.name.includes('CISM')) certMap.set('cism', cert.id);
-      if (cert.name.includes('CISA')) certMap.set('cisa', cert.id);
+      if (cert.name.includes('SABSA')) certMap.set('sabsa', cert.id);
+      if (cert.name.includes('TOGAF')) certMap.set('togaf', cert.id);
       if (cert.name.includes('Security+')) certMap.set('security+', cert.id);
-      if (cert.name.includes('CRISC')) certMap.set('crisc', cert.id);
-      if (cert.name.includes('CGEIT')) certMap.set('cgeit', cert.id);
+      if (cert.name.includes('CISSP')) certMap.set('cissp', cert.id);
+      if (cert.name.includes('AWS')) certMap.set('aws', cert.id);
+      if (cert.name.includes('Azure')) certMap.set('azure', cert.id);
     });
 
     for (const row of data) {
@@ -126,13 +127,13 @@ async function importGRCWithCerts() {
       }
     }
 
-    console.log('\nGRC import with certifications completed successfully!');
+    console.log('\nCybersecurity Architecture import with certifications completed successfully!');
 
   } catch (error) {
-    console.error('Error importing GRC track:', error);
+    console.error('Error importing Cybersecurity Architecture track:', error);
   } finally {
     await pool.end();
   }
 }
 
-importGRCWithCerts();
+importCybersecurityArchitectureWithCerts();
