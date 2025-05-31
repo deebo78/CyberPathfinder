@@ -206,6 +206,37 @@ export default function CareerTrackDetail() {
   const Icon = getTrackIcon(trackData.name);
   const colorClass = getTrackColor(trackData.name);
 
+  // Helper functions defined first
+  const getExperienceForLevel = (levelName: string) => {
+    if (levelName.toLowerCase().includes('entry') || levelName.toLowerCase().includes('analyst') || levelName.toLowerCase().includes('technician')) {
+      return "0-3 years";
+    } else if (levelName.toLowerCase().includes('mid') || levelName.toLowerCase().includes('specialist') || levelName.toLowerCase().includes('engineer')) {
+      return "4-7 years";
+    } else if (levelName.toLowerCase().includes('senior') || levelName.toLowerCase().includes('manager') || levelName.toLowerCase().includes('lead')) {
+      return "8-12 years";
+    } else if (levelName.toLowerCase().includes('expert') || levelName.toLowerCase().includes('architect') || levelName.toLowerCase().includes('principal')) {
+      return "12+ years";
+    } else if (levelName.toLowerCase().includes('executive') || levelName.toLowerCase().includes('director') || levelName.toLowerCase().includes('chief') || levelName.toLowerCase().includes('vp')) {
+      return "15+ years";
+    }
+    return "Experience varies";
+  };
+
+  const getDescriptionForLevel = (levelName: string) => {
+    if (levelName.toLowerCase().includes('entry') || levelName.toLowerCase().includes('analyst') || levelName.toLowerCase().includes('technician')) {
+      return "Starting positions requiring foundational knowledge and skills";
+    } else if (levelName.toLowerCase().includes('mid') || levelName.toLowerCase().includes('specialist') || levelName.toLowerCase().includes('engineer')) {
+      return "Intermediate roles with specialized responsibilities and some autonomy";
+    } else if (levelName.toLowerCase().includes('senior') || levelName.toLowerCase().includes('manager') || levelName.toLowerCase().includes('lead')) {
+      return "Advanced positions with leadership, mentoring, and strategic responsibilities";
+    } else if (levelName.toLowerCase().includes('expert') || levelName.toLowerCase().includes('architect') || levelName.toLowerCase().includes('principal')) {
+      return "Subject matter expert roles with significant strategic influence";
+    } else if (levelName.toLowerCase().includes('executive') || levelName.toLowerCase().includes('director') || levelName.toLowerCase().includes('chief') || levelName.toLowerCase().includes('vp')) {
+      return "Leadership positions setting organizational direction and strategy";
+    }
+    return "Professional role in this career track";
+  };
+
   // Get job titles from authentic database data
   const getJobTitlesForLevel = (levelName: string) => {
     if (!trackData.careerLevels) return [];
@@ -216,8 +247,12 @@ export default function CareerTrackDetail() {
     return level.careerPositions.map((position: any) => position.jobTitle);
   };
 
-  // Career levels for progression display
-  const careerLevels = [
+  // Use actual career levels from database instead of hardcoded ones
+  const careerLevels = trackData.careerLevels ? trackData.careerLevels.map((level: any) => ({
+    level: level.name,
+    experience: getExperienceForLevel(level.name),
+    description: getDescriptionForLevel(level.name)
+  })) : [
     { level: "Entry-Level", experience: "0-3 years", description: "Starting positions requiring basic cybersecurity knowledge" },
     { level: "Mid-Level", experience: "4-7 years", description: "Intermediate roles with specialized responsibilities" },
     { level: "Senior-Level", experience: "8-12 years", description: "Advanced positions with leadership and mentoring duties" },
