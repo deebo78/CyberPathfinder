@@ -1,7 +1,7 @@
 import { 
   categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills,
   workRoleTasks, workRoleKnowledge, workRoleSkills, importHistory,
-  careerTracks, careerLevels, careerPositions, certifications,
+  careerTracks, careerLevels, careerPositions, certifications, careerLevelCertifications,
   type Category, type InsertCategory,
   type SpecialtyArea, type InsertSpecialtyArea,
   type WorkRole, type InsertWorkRole,
@@ -87,6 +87,12 @@ export interface IStorage {
   getCareerTrackById(id: number): Promise<CareerTrack | undefined>;
   getCareerTrackWithPositions(id: number): Promise<any>;
   getWorkRolesByCategory(categoryIds: number[]): Promise<WorkRole[]>;
+
+  // Relational navigation methods
+  getCareerLevelsByCertification(certificationId: number): Promise<any[]>;
+  getTracksByCertification(certificationId: number): Promise<any[]>;
+  getCertificationsByCareerLevel(careerLevelId: number): Promise<any[]>;
+  getCertificationsWithMappings(): Promise<any[]>;
 
 }
 
@@ -426,6 +432,79 @@ export class DatabaseStorage implements IStorage {
   async getWorkRolesByCategory(categoryIds: number[]): Promise<WorkRole[]> {
     if (categoryIds.length === 0) return [];
     return await db.select().from(workRoles).where(inArray(workRoles.categoryId, categoryIds));
+  }
+
+  // Relational navigation methods implementation
+  async getCareerLevelsByCertification(certificationId: number): Promise<any[]> {
+    return await db.query.careerLevels.findMany({
+      where: (careerLevels, { exists }) => exists(
+        db.select()
+          .from(careerLevelCertifications)
+          .where(
+            sql`${careerLevelCertifications.careerLevelId} = ${careerLevels.id} AND ${careerLevelCertifications.certificationId} = ${certificationId}`
+          )
+      ),
+      with: {
+        careerTrack: true,
+        careerLevelCertifications: {
+          with: {
+            certification: true
+          }
+        }
+      }
+    });
+  }
+
+  async getTracksByCertification(certificationId: number): Promise<any[]> {
+    return await db.query.careerTracks.findMany({
+      where: (careerTracks, { exists }) => exists(
+        db.select()
+          .from(careerLevels)
+          .innerJoin(careerLevelCertifications, eq(careerLevels.id, careerLevelCertifications.careerLevelId))
+          .where(
+            sql`${careerLevels.careerTrackId} = ${careerTracks.id} AND ${careerLevelCertifications.certificationId} = ${certificationId}`
+          )
+      ),
+      with: {
+        careerLevels: {
+          where: (careerLevels, { exists }) => exists(
+            db.select()
+              .from(careerLevelCertifications)
+              .where(
+                sql`${careerLevelCertifications.careerLevelId} = ${careerLevels.id} AND ${careerLevelCertifications.certificationId} = ${certificationId}`
+              )
+          )
+        }
+      }
+    });
+  }
+
+  async getCertificationsByCareerLevel(careerLevelId: number): Promise<any[]> {
+    return await db.query.certifications.findMany({
+      where: (certifications, { exists }) => exists(
+        db.select()
+          .from(careerLevelCertifications)
+          .where(
+            sql`${careerLevelCertifications.certificationId} = ${certifications.id} AND ${careerLevelCertifications.careerLevelId} = ${careerLevelId}`
+          )
+      )
+    });
+  }
+
+  async getCertificationsWithMappings(): Promise<any[]> {
+    return await db.query.certifications.findMany({
+      with: {
+        careerLevelCertifications: {
+          with: {
+            careerLevel: {
+              with: {
+                careerTrack: true
+              }
+            }
+          }
+        }
+      }
+    });
   }
 
 }

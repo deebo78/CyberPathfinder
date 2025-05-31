@@ -381,6 +381,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Relational navigation endpoints
+  app.get("/api/certifications/:id/career-levels", async (req, res) => {
+    try {
+      const certificationId = parseInt(req.params.id);
+      const careerLevels = await storage.getCareerLevelsByCertification(certificationId);
+      res.json(careerLevels);
+    } catch (error) {
+      console.error("Error fetching career levels for certification:", error);
+      res.status(500).json({ message: "Failed to fetch career levels" });
+    }
+  });
+
+  app.get("/api/certifications/:id/tracks", async (req, res) => {
+    try {
+      const certificationId = parseInt(req.params.id);
+      const tracks = await storage.getTracksByCertification(certificationId);
+      res.json(tracks);
+    } catch (error) {
+      console.error("Error fetching tracks for certification:", error);
+      res.status(500).json({ message: "Failed to fetch tracks" });
+    }
+  });
+
+  app.get("/api/career-levels/:id/certifications", async (req, res) => {
+    try {
+      const careerLevelId = parseInt(req.params.id);
+      const certifications = await storage.getCertificationsByCareerLevel(careerLevelId);
+      res.json(certifications);
+    } catch (error) {
+      console.error("Error fetching certifications for career level:", error);
+      res.status(500).json({ message: "Failed to fetch certifications" });
+    }
+  });
+
+  app.get("/api/certifications-with-mappings", async (req, res) => {
+    try {
+      const certifications = await storage.getCertificationsWithMappings();
+      res.json(certifications);
+    } catch (error) {
+      console.error("Error fetching certifications with mappings:", error);
+      res.status(500).json({ message: "Failed to fetch certifications with mappings" });
+    }
+  });
+
   // Career Mapping API endpoints
   app.post("/api/analyze-profile", async (req, res) => {
     try {
