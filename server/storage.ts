@@ -492,19 +492,36 @@ export class DatabaseStorage implements IStorage {
   }
 
   async getCertificationsWithMappings(): Promise<any[]> {
-    return await db.query.certifications.findMany({
-      with: {
-        careerLevelCertifications: {
-          with: {
-            careerLevel: {
-              with: {
-                careerTrack: true
-              }
-            }
-          }
-        }
-      }
-    });
+    // Use direct SQL query to get certifications with their mappings
+    const result = await db.execute(sql`
+      SELECT 
+        c.id,
+        c.code,
+        c.name,
+        c.issuer,
+        c.level,
+        c.description,
+        COALESCE(
+          json_agg(
+            json_build_object(
+              'trackId', ct.id,
+              'trackName', ct.name,
+              'careerLevelId', cl.id,
+              'careerLevelName', cl.name,
+              'priority', clc.priority
+            )
+          ) FILTER (WHERE ct.id IS NOT NULL),
+          '[]'::json
+        ) as mappings
+      FROM certifications c
+      LEFT JOIN career_level_certifications clc ON c.id = clc.certification_id
+      LEFT JOIN career_levels cl ON clc.career_level_id = cl.id  
+      LEFT JOIN career_tracks ct ON cl.career_track_id = ct.id
+      GROUP BY c.id, c.code, c.name, c.issuer, c.level, c.description
+      ORDER BY c.name
+    `);
+    
+    return result.rows;
   }
 
 }

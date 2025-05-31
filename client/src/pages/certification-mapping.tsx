@@ -30,68 +30,17 @@ interface CareerTrack {
 export default function CertificationMapping() {
   const [searchTerm, setSearchTerm] = useState("");
 
-  const { data: certifications, isLoading: certificationsLoading } = useQuery({
-    queryKey: ["/api/certifications"],
+  const { data: certificationsWithMappings, isLoading: certificationsLoading } = useQuery({
+    queryKey: ["/api/certifications-with-mappings"],
   });
 
-  const { data: careerTracks, isLoading: tracksLoading } = useQuery({
-    queryKey: ["/api/career-tracks"],
-  });
-
-  // Mapping of certifications to career tracks based on authentic data
-  const certificationTrackMapping: { [key: string]: string[] } = {
-    "COMP-SEC+": ["SOC Operations", "Vulnerability Management", "Digital Forensics", "GRC Risk Compliance", "Cloud and Infrastructure Security"],
-    "COMP-CYSA+": ["SOC Operations", "Threat Intelligence", "Vulnerability Management"],
-    "COMP-PENTEST+": ["Red Team Operations", "Vulnerability Management"],
-    "COMP-CASP+": ["Cybersecurity Architecture Engineering", "Executive Leadership CISO Track"],
-    "ISC2-CISSP": ["Executive Leadership CISO Track", "GRC Risk Compliance", "Cybersecurity Architecture Engineering"],
-    "ISC2-CCSP": ["Cloud and Infrastructure Security"],
-    "GIAC-GSEC": ["SOC Operations", "Digital Forensics"],
-    "GIAC-GCIH": ["SOC Operations", "Digital Forensics", "Cybercrime Investigation"],
-    "GIAC-GPEN": ["Red Team Operations", "Vulnerability Management"],
-    "GIAC-GSLC": ["Executive Leadership CISO Track", "Program and Project Management"],
-    "EC-CEH": ["Red Team Operations", "Vulnerability Management"],
-    "EC-CHFI": ["Digital Forensics", "Cybercrime Investigation"],
-    "ISACA-CISA": ["GRC Risk Compliance", "Program and Project Management"],
-    "ISACA-CISM": ["Executive Leadership CISO Track", "GRC Risk Compliance"],
-    "AWS-SEC-SPEC": ["Cloud and Infrastructure Security"],
-    "MS-SC-900": ["Cloud and Infrastructure Security", "Identity and Access Management"],
-    "MS-SC-300": ["Identity and Access Management", "Cloud and Infrastructure Security"],
-    "CISCO-CCNP-SEC": ["Cybersecurity Architecture Engineering", "Cloud and Infrastructure Security"]
-  };
-
-  // Get job titles for a certification across all mapped tracks
-  const getJobTitlesForCertification = (certCode: string): string[] => {
-    const mappedTrackNames = certificationTrackMapping[certCode] || [];
-    const jobTitles: string[] = [];
-    
-    if (careerTracks) {
-      mappedTrackNames.forEach(trackName => {
-        const track = careerTracks.find((t: CareerTrack) => t.name === trackName);
-        if (track && track.careerLevels) {
-          track.careerLevels.forEach(level => {
-            if (level.careerPositions) {
-              level.careerPositions.forEach(position => {
-                if (!jobTitles.includes(position.jobTitle)) {
-                  jobTitles.push(position.jobTitle);
-                }
-              });
-            }
-          });
-        }
-      });
-    }
-    
-    return jobTitles.slice(0, 6); // Limit to first 6 unique job titles
-  };
-
-  const filteredCertifications = certifications?.filter((cert: Certification) =>
+  const filteredCertifications = certificationsWithMappings?.filter((cert: any) =>
     cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cert.code.toLowerCase().includes(searchTerm.toLowerCase()) ||
     cert.issuer.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
 
-  if (certificationsLoading || tracksLoading) {
+  if (certificationsLoading) {
     return (
       <div className="container mx-auto px-6 py-8">
         <div className="text-center">
@@ -136,7 +85,7 @@ export default function CertificationMapping() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{certifications?.length || 0}</div>
+              <div className="text-2xl font-bold text-blue-600">{certificationsWithMappings?.length || 0}</div>
               <div className="text-sm text-gray-600">Total Certifications</div>
             </CardContent>
           </Card>
@@ -160,11 +109,12 @@ export default function CertificationMapping() {
           </Card>
         </div>
 
-        {/* Certification Cards with Mapping */}
+        {/* Certification Cards with Authentic Mapping */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {filteredCertifications.map((cert: Certification) => {
-            const mappedTracks = certificationTrackMapping[cert.code] || [];
-            const jobTitles = getJobTitlesForCertification(cert.code);
+          {filteredCertifications.map((cert: any) => {
+            const mappings = cert.mappings || [];
+            const uniqueTracks = [...new Map(mappings.map((m: any) => [m.trackId, m])).values()];
+            const uniqueJobTitles = [...new Set(mappings.map((m: any) => m.careerLevelName))];
             
             return (
               <Card key={cert.id} className="hover:shadow-lg transition-all">
@@ -195,53 +145,58 @@ export default function CertificationMapping() {
                   </p>
 
                   {/* Mapped Career Tracks */}
-                  {mappedTracks.length > 0 && (
+                  {uniqueTracks.length > 0 && (
                     <div className="mb-4">
                       <div className="flex items-center mb-2">
                         <Target className="h-4 w-4 mr-1 text-blue-600" />
                         <p className="text-xs font-medium text-gray-700">Relevant Career Tracks:</p>
                       </div>
                       <div className="flex flex-wrap gap-1 mb-3">
-                        {mappedTracks.slice(0, 3).map((trackName, index) => (
-                          <Badge key={index} variant="outline" className="text-xs">
-                            {trackName}
+                        {uniqueTracks.slice(0, 3).map((track: any, index: number) => (
+                          <Badge 
+                            key={index} 
+                            variant="outline" 
+                            className="text-xs cursor-pointer hover:bg-blue-50"
+                            onClick={() => window.location.href = `/career-tracks/${track.trackId}`}
+                          >
+                            {track.trackName}
                           </Badge>
                         ))}
-                        {mappedTracks.length > 3 && (
+                        {uniqueTracks.length > 3 && (
                           <Badge variant="outline" className="text-xs">
-                            +{mappedTracks.length - 3} more
+                            +{uniqueTracks.length - 3} more
                           </Badge>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {/* Job Titles */}
-                  {jobTitles.length > 0 && (
+                  {/* Career Levels */}
+                  {uniqueJobTitles.length > 0 && (
                     <div>
                       <div className="flex items-center mb-2">
                         <Users className="h-4 w-4 mr-1 text-green-600" />
-                        <p className="text-xs font-medium text-gray-700">Common Job Titles:</p>
+                        <p className="text-xs font-medium text-gray-700">Career Levels:</p>
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {jobTitles.slice(0, 4).map((title, index) => (
+                        {uniqueJobTitles.slice(0, 4).map((title: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs">
                             {title}
                           </Badge>
                         ))}
-                        {jobTitles.length > 4 && (
+                        {uniqueJobTitles.length > 4 && (
                           <Badge variant="outline" className="text-xs">
-                            +{jobTitles.length - 4} more
+                            +{uniqueJobTitles.length - 4} more
                           </Badge>
                         )}
                       </div>
                     </div>
                   )}
 
-                  {mappedTracks.length === 0 && (
+                  {mappings.length === 0 && (
                     <div className="text-center py-4">
                       <p className="text-xs text-gray-500">
-                        No specific career track mapping available
+                        No career track mapping available yet
                       </p>
                     </div>
                   )}
