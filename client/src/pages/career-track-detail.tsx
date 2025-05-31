@@ -290,49 +290,58 @@ export default function CareerTrackDetail() {
                       </div>
                       <p className="text-sm text-gray-600 mb-3">{level.description}</p>
                       
-                      {/* Display authentic job titles for this level */}
-                      {jobTitles.length > 0 && (
-                        <div className="mt-3">
-                          <p className="text-xs font-medium text-gray-700 mb-2">Typical Job Titles:</p>
-                          <div className="flex flex-wrap gap-1">
-                            {jobTitles.map((title: string, titleIndex: number) => (
-                              <Badge key={titleIndex} variant="secondary" className="text-xs">
-                                {title}
-                              </Badge>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Display authentic certifications for this level */}
-                      {trackData.careerLevels && (() => {
-                        const levelData = trackData.careerLevels.find((l: any) => l.name === level.level);
-                        const certifications = levelData?.careerLevelCertifications || [];
-                        
-                        if (certifications.length > 0) {
-                          return (
-                            <div className="mt-3">
-                              <p className="text-xs font-medium text-gray-700 mb-2">
-                                <Award className="h-3 w-3 inline mr-1" />
-                                Recommended Certifications:
+                      <div className="flex items-start justify-between gap-4">
+                        {/* Job Titles on the left */}
+                        <div className="flex-1">
+                          {jobTitles.length > 0 && (
+                            <div>
+                              <p className="text-xs font-medium text-gray-700 mb-2 flex items-center">
+                                <Users className="h-3 w-3 mr-1" />
+                                Typical Job Titles:
                               </p>
                               <div className="flex flex-wrap gap-1">
-                                {certifications.map((certMapping: any, certIndex: number) => (
-                                  <Badge 
-                                    key={certIndex} 
-                                    variant="outline" 
-                                    className="text-xs cursor-pointer hover:bg-yellow-50"
-                                    title={certMapping.certification.name}
-                                  >
-                                    {certMapping.certification.code}
+                                {jobTitles.map((title: string, titleIndex: number) => (
+                                  <Badge key={titleIndex} variant="secondary" className="text-xs">
+                                    {title}
                                   </Badge>
                                 ))}
                               </div>
                             </div>
-                          );
-                        }
-                        return null;
-                      })()}
+                          )}
+                        </div>
+
+                        {/* Certifications on the right */}
+                        <div className="flex-1">
+                          {trackData.careerLevels && (() => {
+                            const levelData = trackData.careerLevels.find((l: any) => l.name === level.level);
+                            const certifications = levelData?.careerLevelCertifications || [];
+                            
+                            if (certifications.length > 0) {
+                              return (
+                                <div className="text-right">
+                                  <p className="text-xs font-medium text-gray-700 mb-2 flex items-center justify-end">
+                                    <Award className="h-3 w-3 mr-1" />
+                                    Recommended Certifications:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1 justify-end">
+                                    {certifications.map((certMapping: any, certIndex: number) => (
+                                      <Badge 
+                                        key={certIndex} 
+                                        variant="outline" 
+                                        className="text-xs cursor-pointer hover:bg-yellow-50 border-yellow-200"
+                                        title={certMapping.certification.name}
+                                      >
+                                        {certMapping.certification.code}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
+                        </div>
+                      </div>
                     </div>
                   </div>
                 );
