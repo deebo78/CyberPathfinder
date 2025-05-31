@@ -306,16 +306,24 @@ export default function CareerTrackDetail() {
 
                       {/* Display authentic certifications for this level */}
                       {trackData.careerLevels && (() => {
-                        const level = trackData.careerLevels.find((l: any) => l.name === careerLevels[index].level);
-                        const certifications = level?.careerLevelCertifications || [];
+                        const levelData = trackData.careerLevels.find((l: any) => l.name === level.level);
+                        const certifications = levelData?.careerLevelCertifications || [];
                         
                         if (certifications.length > 0) {
                           return (
                             <div className="mt-3">
-                              <p className="text-xs font-medium text-gray-700 mb-2">Recommended Certifications:</p>
+                              <p className="text-xs font-medium text-gray-700 mb-2">
+                                <Award className="h-3 w-3 inline mr-1" />
+                                Recommended Certifications:
+                              </p>
                               <div className="flex flex-wrap gap-1">
                                 {certifications.map((certMapping: any, certIndex: number) => (
-                                  <Badge key={certIndex} variant="outline" className="text-xs">
+                                  <Badge 
+                                    key={certIndex} 
+                                    variant="outline" 
+                                    className="text-xs cursor-pointer hover:bg-yellow-50"
+                                    title={certMapping.certification.name}
+                                  >
                                     {certMapping.certification.code}
                                   </Badge>
                                 ))}
