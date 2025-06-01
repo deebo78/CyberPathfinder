@@ -330,42 +330,62 @@ export default function CareerTracksExplorer() {
           </TabsList>
 
           <TabsContent value="tracks" className="mt-6">
-            {/* Career Tracks by Category - Horizontal Layout */}
+            {/* Category Navigation - Horizontal */}
+            <div className="flex flex-wrap gap-2 mb-8 justify-center">
+              {Object.entries(organizedTracks).map(([categoryName, tracks]) => {
+                if (tracks.length === 0) return null;
+                
+                return (
+                  <button
+                    key={categoryName}
+                    onClick={() => document.getElementById(categoryName.replace(/\s+/g, '-').toLowerCase())?.scrollIntoView({ behavior: 'smooth' })}
+                    className="px-4 py-2 bg-white border border-gray-300 rounded-lg hover:bg-blue-50 hover:border-blue-300 transition-colors text-sm font-medium"
+                  >
+                    {categoryName}
+                    <span className="ml-2 text-xs text-gray-500">({tracks.length})</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Career Tracks by Category - Vertical Layout */}
             <div className="space-y-12">
               {Object.entries(organizedTracks).map(([categoryName, tracks]) => {
                 if (tracks.length === 0) return null;
                 
                 return (
-                  <div key={categoryName} className="space-y-4">
-                    <div className="flex items-center space-x-3 border-b border-gray-200 pb-2">
-                      <h2 className="text-2xl font-bold text-gray-900">{categoryName}</h2>
-                      <Badge variant="outline" className="text-sm font-medium">
-                        {tracks.length} track{tracks.length !== 1 ? 's' : ''}
-                      </Badge>
+                  <div 
+                    key={categoryName} 
+                    id={categoryName.replace(/\s+/g, '-').toLowerCase()}
+                    className="space-y-4"
+                  >
+                    <div className="text-center">
+                      <h2 className="text-3xl font-bold text-gray-900 mb-2">{categoryName}</h2>
+                      <div className="w-24 h-1 bg-blue-600 mx-auto rounded-full"></div>
                     </div>
                     
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                       {tracks.map((track: CareerTrack) => {
                         const Icon = getTrackIcon(track.name);
                         const colorClass = getTrackColor(track.name);
                         
                         return (
                           <Link key={track.id} href={`/career-tracks/${track.id}`}>
-                            <Card className="hover:shadow-md transition-all cursor-pointer group h-full border-l-4 border-l-transparent hover:border-l-blue-500">
-                              <CardContent className="p-4">
-                                <div className="flex items-center space-x-3 mb-3">
-                                  <div className={`w-8 h-8 ${colorClass} rounded-md flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                                    <Icon className="h-4 w-4 text-white" />
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <h3 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
-                                      {track.name}
-                                    </h3>
-                                  </div>
+                            <Card className="hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden">
+                              <CardContent className="p-3 text-center">
+                                <div className={`w-10 h-10 ${colorClass} rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform`}>
+                                  <Icon className="h-5 w-5 text-white" />
                                 </div>
-                                <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
-                                  {track.description || "Comprehensive career pathway with multiple progression levels."}
-                                </p>
+                                <h3 className="font-semibold text-xs text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                                  {track.name}
+                                </h3>
+                                
+                                {/* Hover tooltip */}
+                                <div className="absolute inset-0 bg-white bg-opacity-95 p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
+                                  <p className="text-xs text-gray-700 text-center leading-relaxed">
+                                    {track.description || "Comprehensive career pathway with multiple progression levels and specialized roles."}
+                                  </p>
+                                </div>
                               </CardContent>
                             </Card>
                           </Link>
