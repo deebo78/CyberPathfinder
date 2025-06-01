@@ -330,44 +330,41 @@ export default function CareerTracksExplorer() {
           </TabsList>
 
           <TabsContent value="tracks" className="mt-6">
-            {/* Career Tracks by Category */}
-            <div className="space-y-8">
+            {/* Career Tracks by Category - Horizontal Layout */}
+            <div className="space-y-12">
               {Object.entries(organizedTracks).map(([categoryName, tracks]) => {
                 if (tracks.length === 0) return null;
                 
                 return (
                   <div key={categoryName} className="space-y-4">
-                    <div className="flex items-center space-x-3">
-                      <h2 className="text-xl font-semibold text-gray-900">{categoryName}</h2>
-                      <Badge variant="secondary" className="text-sm">
+                    <div className="flex items-center space-x-3 border-b border-gray-200 pb-2">
+                      <h2 className="text-2xl font-bold text-gray-900">{categoryName}</h2>
+                      <Badge variant="outline" className="text-sm font-medium">
                         {tracks.length} track{tracks.length !== 1 ? 's' : ''}
                       </Badge>
                     </div>
                     
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
                       {tracks.map((track: CareerTrack) => {
                         const Icon = getTrackIcon(track.name);
                         const colorClass = getTrackColor(track.name);
                         
                         return (
                           <Link key={track.id} href={`/career-tracks/${track.id}`}>
-                            <Card className="hover:shadow-lg transition-all cursor-pointer group h-full">
-                              <CardHeader>
-                                <div className="flex items-start justify-between">
-                                  <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                                    <Icon className="h-6 w-6 text-white" />
+                            <Card className="hover:shadow-md transition-all cursor-pointer group h-full border-l-4 border-l-transparent hover:border-l-blue-500">
+                              <CardContent className="p-4">
+                                <div className="flex items-center space-x-3 mb-3">
+                                  <div className={`w-8 h-8 ${colorClass} rounded-md flex items-center justify-center group-hover:scale-110 transition-transform`}>
+                                    <Icon className="h-4 w-4 text-white" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <h3 className="font-semibold text-sm text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                                      {track.name}
+                                    </h3>
                                   </div>
                                 </div>
-                                <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                                  {track.name}
-                                </CardTitle>
-                                <CardDescription className="text-sm">
-                                  {track.description}
-                                </CardDescription>
-                              </CardHeader>
-                              <CardContent>
-                                <p className="text-sm text-gray-600 line-clamp-3">
-                                  {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
+                                <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">
+                                  {track.description || "Comprehensive career pathway with multiple progression levels."}
                                 </p>
                               </CardContent>
                             </Card>
