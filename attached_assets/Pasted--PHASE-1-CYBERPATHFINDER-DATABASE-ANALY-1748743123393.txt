@@ -1,0 +1,266 @@
+-- =====================================================
+-- PHASE 1: CYBERPATHFINDER DATABASE ANALYSIS QUERIES
+-- =====================================================
+-- Run these queries to understand the current state before cleanup
+
+-- =====================================================
+-- 1. CAREER TRACKS ANALYSIS
+-- =====================================================
+
+-- 1.1 List all career tracks with certification counts
+SELECT 
+    ct.id,
+    ct.name,
+    COUNT(DISTINCT clc.certification_id) as cert_count,
+    COUNT(DISTINCT cl.id) as level_count,
+    COUNT(DISTINCT cp.id) as position_count,
+    STRING_AGG(DISTINCT cat.code, ', ') as categories
+FROM career_tracks ct
+LEFT JOIN career_levels cl ON ct.id = cl.career_track_id
+LEFT JOIN career_level_certifications clc ON cl.id = clc.career_level_id
+LEFT JOIN career_positions cp ON cl.id = cp.career_level_id
+LEFT JOIN career_track_categories ctc ON ct.id = ctc.career_track_id
+LEFT JOIN categories cat ON ctc.category_id = cat.id
+GROUP BY ct.id, ct.name
+ORDER BY ct.id;
+
+-- 1.2 Identify the 19 keeper tracks (with certifications)
+SELECT id, name, 'KEEP' as action
+FROM career_tracks
+WHERE id IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+ORDER BY name;
+
+-- 1.3 Identify tracks to be deleted
+SELECT id, name, 'DELETE' as action
+FROM career_tracks
+WHERE id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+ORDER BY id;
+
+-- =====================================================
+-- 2. CERTIFICATION MAPPINGS ANALYSIS
+-- =====================================================
+
+-- 2.1 Find certifications that will be orphaned when we delete tracks
+SELECT 
+    ct.id as track_id,
+    ct.name as track_name,
+    cl.name as level_name,
+    c.code as cert_code,
+    c.name as cert_name,
+    clc.priority,
+    clc.notes
+FROM career_tracks ct
+JOIN career_levels cl ON ct.id = cl.career_track_id
+JOIN career_level_certifications clc ON cl.id = clc.career_level_id
+JOIN certifications c ON clc.certification_id = c.id
+WHERE ct.id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+ORDER BY ct.name, cl.sort_order, clc.priority;
+
+-- 2.2 Identify potential duplicate tracks that need cert merging
+WITH track_comparison AS (
+    SELECT 
+        'Cloud and Infrastructure Security (37)' as keeper_track,
+        'Cloud Security (16)' as duplicate_track,
+        37 as keeper_id,
+        16 as duplicate_id
+    UNION ALL
+    SELECT 'Customer Facing Security Roles (46)', 'Customer-Facing Security Roles (30)', 46, 30
+    UNION ALL
+    SELECT 'Cybersecurity Architecture & Engineering (35)', 'Cybersecurity Architecture (13)', 35, 13
+    UNION ALL
+    SELECT 'Cybersecurity Education & Training (41)', 'Cybersecurity Education (23)', 41, 23
+    UNION ALL
+    SELECT 'Executive Leadership CISO Track (42)', 'Executive Leadership (CISO Path) (25)', 42, 25
+    UNION ALL
+    SELECT 'Identity and Access Management (38)', 'Identity & Access Management (IAM) (19)', 38, 19
+    UNION ALL
+    SELECT 'Program and Project Management (43)', 'Program & Project Management (24)', 43, 24
+    UNION ALL
+    SELECT 'Privacy Policy Legal Affairs (48)', 'Privacy & Data Protection (11)', 48, 11
+    UNION ALL
+    SELECT 'Security Automation and Orchestration (45)', 'Security Automation & Orchestration (28)', 45, 28
+    UNION ALL
+    SELECT 'Technology Research and Tool Development (44)', 'Technology Research & Innovation (26)', 44, 26
+)
+SELECT 
+    tc.keeper_track,
+    tc.duplicate_track,
+    COUNT(DISTINCT clc_dup.certification_id) as certs_in_duplicate
+FROM track_comparison tc
+LEFT JOIN career_levels cl_dup ON tc.duplicate_id = cl_dup.career_track_id
+LEFT JOIN career_level_certifications clc_dup ON cl_dup.id = clc_dup.career_level_id
+GROUP BY tc.keeper_track, tc.duplicate_track;
+
+-- =====================================================
+-- 3. CAREER LEVELS ANALYSIS
+-- =====================================================
+
+-- 3.1 Check career level structure for keeper tracks
+SELECT 
+    ct.id as track_id,
+    ct.name as track_name,
+    COUNT(cl.id) as level_count,
+    STRING_AGG(cl.name, ' -> ' ORDER BY cl.sort_order) as level_progression
+FROM career_tracks ct
+LEFT JOIN career_levels cl ON ct.id = cl.career_track_id
+WHERE ct.id IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+GROUP BY ct.id, ct.name
+ORDER BY ct.name;
+
+-- 3.2 Identify career levels that will be deleted
+SELECT 
+    cl.id as level_id,
+    ct.id as track_id,
+    ct.name as track_name,
+    cl.name as level_name,
+    COUNT(cp.id) as positions_affected,
+    COUNT(clc.id) as certifications_affected
+FROM career_levels cl
+JOIN career_tracks ct ON cl.career_track_id = ct.id
+LEFT JOIN career_positions cp ON cl.id = cp.career_level_id
+LEFT JOIN career_level_certifications clc ON cl.id = clc.career_level_id
+WHERE ct.id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+GROUP BY cl.id, ct.id, ct.name, cl.name
+ORDER BY ct.id, cl.sort_order;
+
+-- =====================================================
+-- 4. CERTIFICATIONS ANALYSIS
+-- =====================================================
+
+-- 4.1 Find duplicate certifications
+WITH cert_analysis AS (
+    SELECT 
+        code,
+        name,
+        COUNT(*) as count,
+        STRING_AGG(CAST(id AS TEXT), ', ') as ids
+    FROM certifications
+    GROUP BY code, name
+    HAVING COUNT(*) > 1
+)
+SELECT * FROM cert_analysis;
+
+-- 4.2 Find suspicious certification entries
+SELECT id, code, name, issuer
+FROM certifications
+WHERE 
+    code IN ('POLICY', 'AND-LEAD', 'UNKNOWN')
+    OR name LIKE '%(%'
+    OR LENGTH(code) < 3
+    OR issuer = 'Various'
+ORDER BY code;
+
+-- 4.3 Find certifications with similar names (potential duplicates)
+SELECT 
+    c1.id as id1,
+    c1.code as code1,
+    c1.name as name1,
+    c2.id as id2,
+    c2.code as code2,
+    c2.name as name2
+FROM certifications c1
+JOIN certifications c2 ON c1.id < c2.id
+WHERE 
+    (c1.name LIKE '%CISSP%' AND c2.name LIKE '%CISSP%')
+    OR (c1.name LIKE '%CISM%' AND c2.name LIKE '%CISM%')
+    OR (c1.name LIKE '%CEH%' AND c2.name LIKE '%CEH%')
+    OR (c1.name LIKE '%CCISO%' AND c2.name LIKE '%CCISO%')
+    OR (LOWER(c1.name) = LOWER(c2.name))
+ORDER BY c1.name;
+
+-- =====================================================
+-- 5. WORK ROLES ANALYSIS
+-- =====================================================
+
+-- 5.1 Count work roles by category (should be 41 total)
+SELECT 
+    c.code as category_code,
+    c.name as category_name,
+    COUNT(wr.id) as role_count,
+    STRING_AGG(wr.code, ', ' ORDER BY wr.code) as role_codes
+FROM categories c
+LEFT JOIN work_roles wr ON c.id = wr.category_id
+GROUP BY c.code, c.name
+ORDER BY c.code;
+
+-- 5.2 Total work roles count
+SELECT COUNT(*) as total_work_roles FROM work_roles;
+
+-- =====================================================
+-- 6. IMPACT ANALYSIS SUMMARY
+-- =====================================================
+
+-- 6.1 Summary of what will be affected
+WITH impact_summary AS (
+    SELECT 'Career Tracks to Delete' as item, COUNT(*) as count
+    FROM career_tracks
+    WHERE id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+    
+    UNION ALL
+    
+    SELECT 'Career Levels to Delete', COUNT(*)
+    FROM career_levels cl
+    JOIN career_tracks ct ON cl.career_track_id = ct.id
+    WHERE ct.id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+    
+    UNION ALL
+    
+    SELECT 'Career Positions to Update/Delete', COUNT(*)
+    FROM career_positions cp
+    JOIN career_levels cl ON cp.career_level_id = cl.id
+    JOIN career_tracks ct ON cl.career_track_id = ct.id
+    WHERE ct.id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+    
+    UNION ALL
+    
+    SELECT 'Certification Mappings to Move', COUNT(*)
+    FROM career_level_certifications clc
+    JOIN career_levels cl ON clc.career_level_id = cl.id
+    JOIN career_tracks ct ON cl.career_track_id = ct.id
+    WHERE ct.id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+    
+    UNION ALL
+    
+    SELECT 'Duplicate Certifications to Clean', COUNT(*)
+    FROM (
+        SELECT code, COUNT(*) as cnt
+        FROM certifications
+        GROUP BY code
+        HAVING COUNT(*) > 1
+    ) dups
+)
+SELECT * FROM impact_summary;
+
+-- =====================================================
+-- 7. DATA PRESERVATION QUERIES
+-- =====================================================
+
+-- 7.1 Backup certification mappings from tracks to be deleted
+SELECT 
+    ct.id as old_track_id,
+    ct.name as old_track_name,
+    cl.name as level_name,
+    c.id as cert_id,
+    c.code as cert_code,
+    c.name as cert_name,
+    clc.priority,
+    clc.notes,
+    CASE 
+        WHEN ct.name LIKE '%Cloud%' THEN 37
+        WHEN ct.name LIKE '%Customer%Facing%' THEN 46
+        WHEN ct.name LIKE '%Architecture%' AND ct.id = 13 THEN 35
+        WHEN ct.name LIKE '%Education%' AND ct.id = 23 THEN 41
+        WHEN ct.name LIKE '%Executive%' AND ct.id = 25 THEN 42
+        WHEN ct.name LIKE '%Identity%' AND ct.id = 19 THEN 38
+        WHEN ct.name LIKE '%Program%' AND ct.id = 24 THEN 43
+        WHEN ct.name LIKE '%Privacy%' AND ct.id = 11 THEN 48
+        WHEN ct.name LIKE '%Automation%' AND ct.id = 28 THEN 45
+        WHEN ct.name LIKE '%Research%' AND ct.id = 26 THEN 44
+        ELSE NULL
+    END as suggested_new_track_id
+FROM career_tracks ct
+JOIN career_levels cl ON ct.id = cl.career_track_id
+JOIN career_level_certifications clc ON cl.id = clc.career_level_id
+JOIN certifications c ON clc.certification_id = c.id
+WHERE ct.id NOT IN (31, 4, 5, 6, 8, 35, 14, 37, 38, 39, 22, 41, 42, 43, 44, 45, 46, 2, 48)
+ORDER BY ct.name, cl.sort_order;
