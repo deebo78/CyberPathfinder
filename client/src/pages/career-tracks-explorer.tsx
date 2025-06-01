@@ -303,14 +303,9 @@ export default function CareerTracksExplorer() {
                         </CardDescription>
                       </CardHeader>
                       <CardContent>
-                        <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                        <p className="text-sm text-gray-600 line-clamp-3">
                           {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
                         </p>
-                        
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Users className="h-4 w-4 mr-1" />
-                          Multiple Levels
-                        </div>
                       </CardContent>
                     </Card>
                   </Link>
