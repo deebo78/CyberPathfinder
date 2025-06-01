@@ -287,39 +287,39 @@ export default function CareerTracksExplorer() {
                 const colorClass = getTrackColor(track.name);
                 
                 return (
-                  <Card key={track.id} className="hover:shadow-lg transition-all cursor-pointer group">
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                          <Icon className="h-6 w-6 text-white" />
+                  <Link key={track.id} href={`/career-tracks/${track.id}`}>
+                    <Card className="hover:shadow-lg transition-all cursor-pointer group h-full">
+                      <CardHeader>
+                        <div className="flex items-start justify-between">
+                          <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                            <Icon className="h-6 w-6 text-white" />
+                          </div>
                         </div>
-                      </div>
-                      <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                        {track.name}
-                      </CardTitle>
-                      <CardDescription className="text-sm">
-                        {track.description}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-600 mb-4 line-clamp-3">
-                        {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
-                      </p>
-                      
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-sm text-gray-500">
-                          <Users className="h-4 w-4 mr-1" />
-                          Multiple Levels
-                        </div>
-                        <Link href={`/career-tracks/${track.id}`}>
-                          <Button variant="outline" size="sm" className="group-hover:bg-blue-600 group-hover:text-white transition-colors">
+                        <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                          {track.name}
+                        </CardTitle>
+                        <CardDescription className="text-sm">
+                          {track.description}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <p className="text-sm text-gray-600 mb-4 line-clamp-3">
+                          {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
+                        </p>
+                        
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center text-sm text-gray-500">
+                            <Users className="h-4 w-4 mr-1" />
+                            Multiple Levels
+                          </div>
+                          <div className="flex items-center text-sm text-blue-600 group-hover:text-blue-800">
                             Explore
                             <ArrowRight className="h-4 w-4 ml-1" />
-                          </Button>
-                        </Link>
-                      </div>
-                    </CardContent>
-                  </Card>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 );
               })}
             </div>
