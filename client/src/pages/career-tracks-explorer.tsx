@@ -110,10 +110,60 @@ export default function CareerTracksExplorer() {
     return jobTitlesMap[trackId] || ["Cybersecurity Professional", "Senior Cybersecurity Specialist", "Security Manager"];
   };
 
+  const organizeTracksByCategory = (tracks: CareerTrack[]) => {
+    const categories = {
+      "Defensive Operations": [
+        "SOC Operations",
+        "Threat Intelligence", 
+        "Digital Forensics",
+        "Cybercrime Investigation",
+        "Vulnerability Management"
+      ],
+      "Offensive Security": [
+        "Red Team Operations"
+      ],
+      "Architecture & Engineering": [
+        "Cybersecurity Architecture & Engineering",
+        "Secure Software Development",
+        "Cloud and Infrastructure Security",
+        "OT (Operational Technology) Security",
+        "Security Automation and Orchestration"
+      ],
+      "Identity & Access": [
+        "Identity and Access Management"
+      ],
+      "Governance & Risk": [
+        "GRC (Governance, Risk, Compliance)",
+        "Privacy Policy Legal Affairs"
+      ],
+      "Leadership & Management": [
+        "Executive Leadership CISO Track",
+        "Program and Project Management"
+      ],
+      "Education & Innovation": [
+        "Cybersecurity Education & Training",
+        "Technology Research and Tool Development",
+        "Customer Facing Security Roles"
+      ]
+    };
+
+    const organized: { [key: string]: CareerTrack[] } = {};
+    
+    Object.entries(categories).forEach(([category, trackNames]) => {
+      organized[category] = tracks.filter(track => 
+        trackNames.some(name => track.name.includes(name.replace(/&/g, 'and')))
+      );
+    });
+
+    return organized;
+  };
+
   const filteredTracks = (careerTracks as CareerTrack[])?.filter((track: CareerTrack) =>
     track.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     track.description?.toLowerCase().includes(searchTerm.toLowerCase())
   ) || [];
+
+  const organizedTracks = organizeTracksByCategory(filteredTracks);
 
   const getTrackIcon = (trackName: string) => {
     const IconComponent = trackIcons[trackName] || Shield;
@@ -280,35 +330,52 @@ export default function CareerTracksExplorer() {
           </TabsList>
 
           <TabsContent value="tracks" className="mt-6">
-            {/* Career Tracks Grid */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredTracks.map((track: CareerTrack) => {
-                const Icon = getTrackIcon(track.name);
-                const colorClass = getTrackColor(track.name);
+            {/* Career Tracks by Category */}
+            <div className="space-y-8">
+              {Object.entries(organizedTracks).map(([categoryName, tracks]) => {
+                if (tracks.length === 0) return null;
                 
                 return (
-                  <Link key={track.id} href={`/career-tracks/${track.id}`}>
-                    <Card className="hover:shadow-lg transition-all cursor-pointer group h-full">
-                      <CardHeader>
-                        <div className="flex items-start justify-between">
-                          <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
-                            <Icon className="h-6 w-6 text-white" />
-                          </div>
-                        </div>
-                        <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
-                          {track.name}
-                        </CardTitle>
-                        <CardDescription className="text-sm">
-                          {track.description}
-                        </CardDescription>
-                      </CardHeader>
-                      <CardContent>
-                        <p className="text-sm text-gray-600 line-clamp-3">
-                          {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
-                        </p>
-                      </CardContent>
-                    </Card>
-                  </Link>
+                  <div key={categoryName} className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <h2 className="text-xl font-semibold text-gray-900">{categoryName}</h2>
+                      <Badge variant="secondary" className="text-sm">
+                        {tracks.length} track{tracks.length !== 1 ? 's' : ''}
+                      </Badge>
+                    </div>
+                    
+                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      {tracks.map((track: CareerTrack) => {
+                        const Icon = getTrackIcon(track.name);
+                        const colorClass = getTrackColor(track.name);
+                        
+                        return (
+                          <Link key={track.id} href={`/career-tracks/${track.id}`}>
+                            <Card className="hover:shadow-lg transition-all cursor-pointer group h-full">
+                              <CardHeader>
+                                <div className="flex items-start justify-between">
+                                  <div className={`w-12 h-12 ${colorClass} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform`}>
+                                    <Icon className="h-6 w-6 text-white" />
+                                  </div>
+                                </div>
+                                <CardTitle className="text-lg group-hover:text-blue-600 transition-colors">
+                                  {track.name}
+                                </CardTitle>
+                                <CardDescription className="text-sm">
+                                  {track.description}
+                                </CardDescription>
+                              </CardHeader>
+                              <CardContent>
+                                <p className="text-sm text-gray-600 line-clamp-3">
+                                  {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
+                                </p>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                        );
+                      })}
+                    </div>
+                  </div>
                 );
               })}
             </div>
