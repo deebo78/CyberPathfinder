@@ -307,15 +307,9 @@ export default function CareerTracksExplorer() {
                           {track.overview || "Comprehensive career pathway with multiple progression levels and specialized roles."}
                         </p>
                         
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center text-sm text-gray-500">
-                            <Users className="h-4 w-4 mr-1" />
-                            Multiple Levels
-                          </div>
-                          <div className="flex items-center text-sm text-blue-600 group-hover:text-blue-800">
-                            Explore
-                            <ArrowRight className="h-4 w-4 ml-1" />
-                          </div>
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Users className="h-4 w-4 mr-1" />
+                          Multiple Levels
                         </div>
                       </CardContent>
                     </Card>
