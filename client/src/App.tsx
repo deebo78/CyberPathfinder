@@ -21,6 +21,7 @@ import SpecialtyAreas from "@/pages/specialty-areas";
 import Categories from "@/pages/categories";
 import Relationships from "@/pages/relationships";
 import Admin from "@/pages/admin";
+import TestPage from "@/pages/test-page";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -68,6 +69,7 @@ function Router() {
             <Route path="/categories" component={Categories} />
             <Route path="/relationships" component={Relationships} />
             <Route path="/admin" component={Admin} />
+            <Route path="/test" component={TestPage} />
             <Route component={NotFound} />
           </Switch>
         </div>
