@@ -59,7 +59,7 @@ function Router() {
           <Switch>
             <Route path="/dashboard" component={Dashboard} />
             <Route path="/career-mapping" component={CareerMapping} />
-            <Route path="/map-vacancy" component={MapVacancyNew} />
+            <Route path="/map-vacancy" component={MapVacancy} />
             <Route path="/career-tracks/:id" component={CareerTrackDetail} />
             <Route path="/career-tracks" component={CareerTracksExplorer} />
             <Route path="/certification-mapping" component={CertificationMapping} />
