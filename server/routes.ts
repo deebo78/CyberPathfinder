@@ -432,9 +432,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // File upload endpoint for job posting analysis
   app.post("/api/extract-document", upload.single('file'), async (req: MulterRequest, res) => {
     try {
+      console.log("File upload request received");
+      
       if (!req.file) {
+        console.log("No file in request");
         return res.status(400).json({ message: "No file uploaded" });
       }
+
+      console.log("File details:", {
+        originalname: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size,
+        path: req.file.path
+      });
 
       const fs = await import('fs');
       const path = await import('path');
@@ -444,17 +454,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const fileExtension = path.extname(req.file.originalname).toLowerCase();
       
       try {
+        console.log("Attempting to read file:", filePath);
+        
         if (fileExtension === '.txt' || req.file.mimetype.startsWith('text/')) {
-          // Handle text files
+          console.log("Reading as text file");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
         } else {
-          // For other file types, try reading as text (basic fallback)
-          // In production, you'd use libraries like pdf-parse or mammoth for proper extraction
+          console.log("Reading as fallback text (may not work for binary files)");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
         }
         
+        console.log("Extracted text length:", extractedText.length);
+        console.log("First 100 chars:", extractedText.substring(0, 100));
+        
         // Clean up the uploaded file
         await fs.promises.unlink(filePath);
+        console.log("File cleanup complete");
         
         // Extract potential job title from first line or filename
         const lines = extractedText.split('\n').filter(line => line.trim());
@@ -468,22 +483,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
             // Use filename without extension as title
             jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
           }
+        } else {
+          jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
         }
         
-        res.json({
+        const result = {
           jobTitle,
           jobDescription: extractedText,
           filename: req.file.originalname
+        };
+        
+        console.log("Sending response:", { 
+          jobTitle: result.jobTitle,
+          descriptionLength: result.jobDescription.length,
+          filename: result.filename
         });
         
-      } catch (readError) {
+        res.json(result);
+        
+      } catch (readError: any) {
+        console.error("File read error:", readError);
         // Clean up file on error
         try {
           await fs.promises.unlink(filePath);
         } catch (unlinkError) {
           console.error("Error cleaning up file:", unlinkError);
         }
-        throw readError;
+        
+        // More specific error handling
+        const errorMessage = readError?.message || String(readError);
+        if (errorMessage.includes('EISDIR')) {
+          return res.status(400).json({ message: "Uploaded item is a directory, not a file" });
+        } else if (errorMessage.includes('ENOENT')) {
+          return res.status(400).json({ message: "File not found after upload" });
+        } else {
+          return res.status(400).json({ message: "Cannot read file - may be binary format. Please use text files (.txt) or paste content manually." });
+        }
       }
       
     } catch (error) {

@@ -139,6 +139,7 @@ export default function MapVacancy() {
         }
         
         const result = await response.json();
+        console.log('File extraction result:', result);
         
         // Auto-populate fields with extracted content
         if (result.jobTitle && !jobTitle.trim()) {
