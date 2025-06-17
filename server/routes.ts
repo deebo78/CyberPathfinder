@@ -1,8 +1,12 @@
-import type { Express } from "express";
+import type { Express, Request } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import multer from "multer";
+
+interface MulterRequest extends Request {
+  file?: Express.Multer.File;
+}
 import { 
   insertCategorySchema, insertSpecialtyAreaSchema, insertWorkRoleSchema, 
   insertTaskSchema, insertKnowledgeItemSchema, insertSkillSchema,
@@ -422,6 +426,69 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error fetching certifications with mappings:", error);
       res.status(500).json({ message: "Failed to fetch certifications with mappings" });
+    }
+  });
+
+  // File upload endpoint for job posting analysis
+  app.post("/api/extract-document", upload.single('file'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No file uploaded" });
+      }
+
+      const fs = await import('fs');
+      const path = await import('path');
+      
+      let extractedText = '';
+      const filePath = req.file.path;
+      const fileExtension = path.extname(req.file.originalname).toLowerCase();
+      
+      try {
+        if (fileExtension === '.txt' || req.file.mimetype.startsWith('text/')) {
+          // Handle text files
+          extractedText = await fs.promises.readFile(filePath, 'utf-8');
+        } else {
+          // For other file types, try reading as text (basic fallback)
+          // In production, you'd use libraries like pdf-parse or mammoth for proper extraction
+          extractedText = await fs.promises.readFile(filePath, 'utf-8');
+        }
+        
+        // Clean up the uploaded file
+        await fs.promises.unlink(filePath);
+        
+        // Extract potential job title from first line or filename
+        const lines = extractedText.split('\n').filter(line => line.trim());
+        let jobTitle = '';
+        
+        if (lines.length > 0) {
+          const firstLine = lines[0].trim();
+          if (firstLine.length < 100 && !firstLine.toLowerCase().includes('job description')) {
+            jobTitle = firstLine;
+          } else {
+            // Use filename without extension as title
+            jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
+          }
+        }
+        
+        res.json({
+          jobTitle,
+          jobDescription: extractedText,
+          filename: req.file.originalname
+        });
+        
+      } catch (readError) {
+        // Clean up file on error
+        try {
+          await fs.promises.unlink(filePath);
+        } catch (unlinkError) {
+          console.error("Error cleaning up file:", unlinkError);
+        }
+        throw readError;
+      }
+      
+    } catch (error) {
+      console.error("Error extracting document:", error);
+      res.status(500).json({ message: "Failed to extract text from document" });
     }
   });
 

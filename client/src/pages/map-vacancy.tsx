@@ -120,11 +120,47 @@ export default function MapVacancy() {
     },
   });
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       setFile(selectedFile);
-      // TODO: Parse file content for job description
+      
+      const formData = new FormData();
+      formData.append('file', selectedFile);
+      
+      try {
+        const response = await fetch('/api/extract-document', {
+          method: 'POST',
+          body: formData,
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to extract document content');
+        }
+        
+        const result = await response.json();
+        
+        // Auto-populate fields with extracted content
+        if (result.jobTitle && !jobTitle.trim()) {
+          setJobTitle(result.jobTitle);
+        }
+        if (result.jobDescription) {
+          setJobDescription(result.jobDescription);
+        }
+        
+        toast({
+          title: "File Processed",
+          description: `Successfully extracted content from ${result.filename}`,
+        });
+        
+      } catch (error) {
+        console.error('File upload error:', error);
+        toast({
+          title: "File Processing Failed",
+          description: "Could not extract text from the uploaded file. Please try a different format or paste the content manually.",
+          variant: "destructive",
+        });
+      }
     }
   };
 
