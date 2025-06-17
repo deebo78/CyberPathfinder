@@ -723,7 +723,7 @@ export default function MapVacancy() {
             <Card>
               <CardContent className="pt-6">
                 <div className="text-center text-gray-500">
-                  <Upload className="h-12 w-12 mx-auto mb-4" />
+                  <Target className="h-12 w-12 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold mb-2">Ready to Analyze</h3>
                   <p>Enter job posting details and click "Analyze Job Posting" to see NICE Framework matches.</p>
                 </div>

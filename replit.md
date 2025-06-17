@@ -118,11 +118,10 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Database Cleanup**: Removed 37 legacy job-specific positions and 132 orphaned certification mappings
 - **Standardization Complete**: All 19 career tracks now display consistent 5-level progression structure
 
-### June 17, 2025 - File Upload & Scoring System Fixes
-- **File Upload Resolution**: Fixed critical API routing issue preventing file uploads from working in development environment
-- **Text File Support**: Implemented working file upload with automatic text extraction and field population
-- **PDF Handling**: Added proper error messaging for PDF files with clear conversion instructions
-- **Token Limit Protection**: Prevented AI analysis failures by restricting large binary content uploads
+### June 17, 2025 - Interface Simplification & Scoring System Enhancement
+- **File Upload Removed**: Temporarily removed file upload feature from Map Vacancy page to simplify user experience
+- **Manual Input Focus**: Streamlined interface to use copy/paste workflow for job posting content
+- **Token Limit Protection**: Prevented AI analysis failures from oversized content uploads
 - **Transparent Scoring System**: Added detailed scoring breakdown showing base scores, point deductions, and calculation methodology
 - **Mathematical Consistency**: Implemented validation to prevent contradictory scores (e.g., high scores with severe issues)
 
