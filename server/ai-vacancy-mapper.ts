@@ -116,14 +116,20 @@ Career Progression Levels (standard across tracks):
 - Expert-Level: 10+ years experience, technical leadership, expert certifications
 - Executive-Level: 15+ years experience, strategic leadership, executive responsibilities
 
-CONSISTENCY ANALYSIS CRITERIA:
-- Role Scope Conflicts: Combining incompatible responsibilities (e.g., hands-on technical + strategic leadership)
-- Experience Misalignment: Requirements inconsistent with stated level (e.g., 10+ years for "junior" role)
-- Education Contradictions: Conflicting degree requirements across sections
-- Certification Confusion: Mixing entry-level and expert certifications for same role
-- Skills Overload: Unrealistic breadth of technical skills for single position
-- Compensation Misalignment: Salary ranges inconsistent with experience/responsibility level
-- Redundant Requirements: Duplicate or overlapping qualifications stated multiple times
+CONSISTENCY ANALYSIS CRITERIA & SCORING:
+- Role Scope Conflicts: Combining incompatible responsibilities (-15 to -25 points)
+- Experience Misalignment: Requirements inconsistent with stated level (-10 to -20 points)
+- Education Contradictions: Conflicting degree requirements (-5 to -15 points)
+- Certification Confusion: Mixing entry-level and expert certifications (-10 to -20 points)
+- Skills Overload: Unrealistic breadth of technical skills (-15 to -25 points)
+- Compensation Misalignment: Salary ranges inconsistent with experience/responsibility (-10 to -15 points)
+- Redundant Requirements: Duplicate or overlapping qualifications (-5 to -10 points)
+
+SCORING METHODOLOGY:
+- Start with base score of 100
+- Deduct points for each identified issue based on severity
+- Final score ranges: 90-100 (excellent), 75-89 (good), 60-74 (fair), 40-59 (poor), 0-39 (critical issues)
+- Severity levels: high (score <60), medium (60-79), low (80+)
 
 RESPONSE FORMAT (JSON only):
 {
@@ -197,9 +203,24 @@ RESPONSE FORMAT (JSON only):
       "Recommendations to increase candidate pool and diversity"
     ],
     "overallConsistencyScore": 85,
-    "severityLevel": "low"
+    "severityLevel": "low",
+    "scoringBreakdown": {
+      "baseScore": 100,
+      "deductions": [
+        {"category": "Skills Overload", "points": -10, "reason": "Specific explanation"},
+        {"category": "Redundant Requirements", "points": -5, "reason": "Specific explanation"}
+      ],
+      "finalScore": 85
+    }
   }
 }
+
+CRITICAL SCORING INSTRUCTIONS:
+1. BE MATHEMATICALLY CONSISTENT: If you identify unrealistic expectations or conflicts, the score MUST reflect this (typically 60-74 for fair, 40-59 for poor)
+2. MATCH SEVERITY TO SCORE: high severity = <60, medium = 60-79, low = 80+
+3. EXPLAIN DEDUCTIONS: Show exact point deductions in scoringBreakdown
+4. BE HONEST: If no significant issues exist, score should be 90+ with minimal/no issues listed
+5. AVOID CONTRADICTIONS: Don't flag "unrealistic expectations" with an 85% score - this is illogical
 
 Important: Ensure roleConsistencyAnalysis provides genuine value by identifying real inconsistencies. If the job posting is well-written and consistent, indicate this clearly rather than manufacturing issues.`;
 

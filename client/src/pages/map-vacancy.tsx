@@ -44,6 +44,15 @@ interface VacancyAnalysis {
     recommendedImprovements: string[];
     overallConsistencyScore: number;
     severityLevel: 'low' | 'medium' | 'high';
+    scoringBreakdown?: {
+      baseScore: number;
+      deductions: Array<{
+        category: string;
+        points: number;
+        reason: string;
+      }>;
+      finalScore: number;
+    };
   };
 }
 
@@ -609,7 +618,32 @@ export default function MapVacancy() {
                         </span>
                       </div>
                       <Progress value={analysis.roleConsistencyAnalysis.overallConsistencyScore} className="mb-3" />
-                      <p className="text-sm text-gray-700">{analysis.roleConsistencyAnalysis.summary}</p>
+                      <p className="text-sm text-gray-700 mb-3">{analysis.roleConsistencyAnalysis.summary}</p>
+                      
+                      {analysis.roleConsistencyAnalysis.scoringBreakdown && (
+                        <div className="bg-gray-50 border border-gray-200 rounded p-3">
+                          <h5 className="text-xs font-semibold text-gray-700 mb-2">Scoring Breakdown</h5>
+                          <div className="text-xs text-gray-600 space-y-1">
+                            <div className="flex justify-between">
+                              <span>Base Score:</span>
+                              <span className="font-medium">{analysis.roleConsistencyAnalysis.scoringBreakdown.baseScore}</span>
+                            </div>
+                            {analysis.roleConsistencyAnalysis.scoringBreakdown.deductions.map((deduction, i) => (
+                              <div key={i} className="border-l-2 border-red-200 pl-2 py-1">
+                                <div className="flex justify-between">
+                                  <span className="text-red-600">{deduction.category}:</span>
+                                  <span className="font-medium text-red-600">{deduction.points}</span>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1">{deduction.reason}</p>
+                              </div>
+                            ))}
+                            <div className="border-t pt-1 flex justify-between font-semibold">
+                              <span>Final Score:</span>
+                              <span>{analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore}%</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* Issues Found */}
