@@ -95,10 +95,11 @@ export default function MapVacancy() {
     onSuccess: (result) => {
       console.log("Analysis result received:", result);
       console.log("Role consistency analysis:", result.roleConsistencyAnalysis);
+      console.log("Full result object keys:", Object.keys(result));
       setAnalysis(result);
       toast({
-        title: "Analysis Complete",
-        description: "Job posting has been mapped to NICE Framework work roles.",
+        title: "Analysis Complete", 
+        description: `Analysis complete. Consistency data: ${result.roleConsistencyAnalysis ? 'included' : 'missing'}`,
       });
     },
     onError: (error) => {
@@ -559,15 +560,18 @@ export default function MapVacancy() {
                 </CardContent>
               </Card>
 
-              {/* TEST: Always show this section */}
-              <Card className="bg-red-100 border-2 border-red-500">
+              {/* Debug section - visible during results */}
+              <Card className="bg-yellow-50 border-2 border-yellow-400">
                 <CardContent className="pt-6">
-                  <p className="text-lg font-bold text-red-800">
-                    🔍 FRONTEND UPDATE TEST: If you see this, the frontend is updated
+                  <p className="text-lg font-bold text-yellow-800">
+                    Debug: Frontend is updated - timestamp: {new Date().toLocaleTimeString()}
+                  </p>
+                  <p className="text-sm text-yellow-700 mt-2">
+                    Analysis received: {analysis ? 'Yes' : 'No'}
                   </p>
                   {analysis && (
-                    <p className="text-sm text-red-700 mt-2">
-                      Analysis data exists. Consistency analysis: {analysis.roleConsistencyAnalysis ? 'Available' : 'Missing'}
+                    <p className="text-sm text-yellow-700">
+                      Consistency analysis data: {analysis.roleConsistencyAnalysis ? 'Available' : 'Missing'}
                     </p>
                   )}
                 </CardContent>
