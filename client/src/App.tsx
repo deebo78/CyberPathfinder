@@ -32,7 +32,8 @@ function Router() {
   const noSidebarPages = [
     "/career-mapping",
     "/map-vacancy", 
-    "/career-tracks"
+    "/career-tracks",
+    "/test"
   ];
   const shouldShowSidebar = !isLandingPage && !noSidebarPages.some(page => location.startsWith(page));
   const shouldShowMainNav = noSidebarPages.some(page => location.startsWith(page));

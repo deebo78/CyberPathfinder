@@ -152,6 +152,11 @@ export default function MapVacancy() {
         <p className="text-gray-600">
           Analyze job postings and map them to NICE Framework work roles to find qualified candidates.
         </p>
+        <div className="mt-4 p-4 bg-orange-100 border-2 border-orange-500 rounded-lg">
+          <p className="text-orange-800 font-bold">
+            🚨 FRONTEND UPDATE INDICATOR - Page timestamp: {new Date().toLocaleTimeString()}
+          </p>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
