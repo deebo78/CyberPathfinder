@@ -559,16 +559,19 @@ export default function MapVacancy() {
                 </CardContent>
               </Card>
 
-              {/* Role Consistency Analysis - Enhanced Job Posting Feedback */}
-              {analysis && (
-                <Card className="bg-blue-50 border border-blue-200">
-                  <CardContent className="pt-6">
-                    <p className="text-sm text-blue-700">
-                      Debug: Analysis object exists. Consistency analysis: {analysis.roleConsistencyAnalysis ? 'Available' : 'Missing'}
+              {/* TEST: Always show this section */}
+              <Card className="bg-red-100 border-2 border-red-500">
+                <CardContent className="pt-6">
+                  <p className="text-lg font-bold text-red-800">
+                    🔍 FRONTEND UPDATE TEST: If you see this, the frontend is updated
+                  </p>
+                  {analysis && (
+                    <p className="text-sm text-red-700 mt-2">
+                      Analysis data exists. Consistency analysis: {analysis.roleConsistencyAnalysis ? 'Available' : 'Missing'}
                     </p>
-                  </CardContent>
-                </Card>
-              )}
+                  )}
+                </CardContent>
+              </Card>
               {analysis.roleConsistencyAnalysis && (
                 <Card className="border-l-4 border-l-yellow-500">
                   <CardHeader>
