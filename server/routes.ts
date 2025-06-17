@@ -429,6 +429,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Test endpoint to verify routing
+  app.get("/api/test", (req, res) => {
+    res.json({ message: "API routing is working", timestamp: Date.now() });
+  });
+
   // File upload endpoint for job posting analysis
   app.post("/api/extract-document", upload.single('file'), async (req: MulterRequest, res) => {
     try {

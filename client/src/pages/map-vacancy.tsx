@@ -129,13 +129,19 @@ export default function MapVacancy() {
       formData.append('file', selectedFile);
       
       try {
+        console.log('Sending file upload request...');
         const response = await fetch('/api/extract-document', {
           method: 'POST',
           body: formData,
         });
         
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (!response.ok) {
-          throw new Error('Failed to extract document content');
+          const errorText = await response.text();
+          console.error('Response error:', errorText);
+          throw new Error(`Failed to extract document content: ${response.status} ${errorText}`);
         }
         
         const result = await response.json();
