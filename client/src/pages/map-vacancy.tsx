@@ -8,8 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
-import { Upload, Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
+import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -81,7 +80,7 @@ export default function MapVacancy() {
   const [jobDescription, setJobDescription] = useState("");
   const [requiredQualifications, setRequiredQualifications] = useState("");
   const [preferredQualifications, setPreferredQualifications] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+
   const [analysis, setAnalysis] = useState<VacancyAnalysis | null>(null);
   const { toast } = useToast();
 
@@ -120,56 +119,7 @@ export default function MapVacancy() {
     },
   });
 
-  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-      
-      const formData = new FormData();
-      formData.append('file', selectedFile);
-      
-      try {
-        console.log('Sending file upload request...');
-        const response = await fetch('/api/extract-document', {
-          method: 'POST',
-          body: formData,
-        });
-        
-        console.log('Response status:', response.status);
-        console.log('Response ok:', response.ok);
-        
-        if (!response.ok) {
-          const errorText = await response.text();
-          console.error('Response error:', errorText);
-          throw new Error(`Failed to extract document content: ${response.status} ${errorText}`);
-        }
-        
-        const result = await response.json();
-        console.log('File extraction result:', result);
-        
-        // Auto-populate fields with extracted content
-        if (result.jobTitle && !jobTitle.trim()) {
-          setJobTitle(result.jobTitle);
-        }
-        if (result.jobDescription) {
-          setJobDescription(result.jobDescription);
-        }
-        
-        toast({
-          title: "File Processed",
-          description: `Successfully extracted content from ${result.filename}`,
-        });
-        
-      } catch (error) {
-        console.error('File upload error:', error);
-        toast({
-          title: "File Processing Failed",
-          description: "Could not extract text from the uploaded file. Please try a different format or paste the content manually.",
-          variant: "destructive",
-        });
-      }
-    }
-  };
+
 
   const handleAnalyze = () => {
     if (!jobTitle.trim() || !jobDescription.trim()) {
@@ -221,7 +171,7 @@ export default function MapVacancy() {
                 Job Posting Details
               </CardTitle>
               <CardDescription>
-                Enter the job details or upload a job posting document
+                Enter the job posting details to analyze against NICE Framework work roles
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -268,24 +218,7 @@ export default function MapVacancy() {
                 />
               </div>
 
-              <Separator />
 
-              <div>
-                <Label htmlFor="file">Or Upload Job Posting</Label>
-                <div className="mt-2">
-                  <Input
-                    id="file"
-                    type="file"
-                    onChange={handleFileUpload}
-                    accept=".txt,.doc,.docx,.pdf"
-                  />
-                  {file && (
-                    <p className="text-sm text-gray-600 mt-1">
-                      Selected: {file.name}
-                    </p>
-                  )}
-                </div>
-              </div>
 
               <Button
                 onClick={handleAnalyze}
