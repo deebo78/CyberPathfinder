@@ -93,6 +93,8 @@ export default function MapVacancy() {
       return response.json();
     },
     onSuccess: (result) => {
+      console.log("Analysis result received:", result);
+      console.log("Role consistency analysis:", result.roleConsistencyAnalysis);
       setAnalysis(result);
       toast({
         title: "Analysis Complete",
@@ -557,7 +559,16 @@ export default function MapVacancy() {
                 </CardContent>
               </Card>
 
-              {/* Role Consistency Analysis */}
+              {/* Role Consistency Analysis - Enhanced Job Posting Feedback */}
+              {analysis && (
+                <Card className="bg-blue-50 border border-blue-200">
+                  <CardContent className="pt-6">
+                    <p className="text-sm text-blue-700">
+                      Debug: Analysis object exists. Consistency analysis: {analysis.roleConsistencyAnalysis ? 'Available' : 'Missing'}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
               {analysis.roleConsistencyAnalysis && (
                 <Card className="border-l-4 border-l-yellow-500">
                   <CardHeader>
