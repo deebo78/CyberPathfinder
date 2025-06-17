@@ -108,6 +108,21 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Data Import**: Batch processing scripts for initial data population
 - **Backup Strategy**: Regular database exports for data protection
 
+## Recent Changes
+
+### January 16, 2025 - Map Vacancy Feature Enhancement
+- **Role Consistency Analysis**: Added comprehensive job posting analysis that identifies conflicts, unrealistic expectations, and redundant requirements
+- **AI-Powered Recommendations**: Enhanced OpenAI GPT-4o prompts to provide actionable improvement suggestions for job postings
+- **Interactive UI Components**: Built comprehensive consistency analysis dashboard with color-coded severity levels
+- **Data Integrity Fix**: Resolved critical issue where career tracks showed legacy job positions mixed with standardized levels
+- **Database Cleanup**: Removed 37 legacy job-specific positions and 132 orphaned certification mappings
+- **Standardization Complete**: All 19 career tracks now display consistent 5-level progression structure
+
+### January 16, 2025 - UI/UX Improvements
+- **Category Organization**: Reorganized 19 career tracks into 7 logical categories (Defensive Operations, Offensive Security, etc.)
+- **Horizontal Layout**: Implemented compact card design with hover descriptions for better navigation
+- **Career Level Consistency**: Fixed Threat Intelligence and 6 other tracks that incorrectly showed 10+ levels instead of 5
+
 ## Changelog
 
 - June 17, 2025. Initial setup
