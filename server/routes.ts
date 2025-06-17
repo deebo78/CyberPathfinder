@@ -15,7 +15,12 @@ import {
 import { aiCareerMapper } from "./ai-career-mapper";
 import { aiVacancyMapper } from "./ai-vacancy-mapper";
 
-const upload = multer({ dest: 'uploads/' });
+const upload = multer({ 
+  dest: 'uploads/',
+  limits: {
+    fileSize: 10 * 1024 * 1024 // 10MB limit
+  }
+});
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Statistics endpoint
@@ -435,33 +440,40 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload endpoint for job posting analysis
-  app.post("/api/extract-document", upload.single('file'), async (req: MulterRequest, res) => {
-    try {
-      console.log("File upload request received");
-      
-      if (!req.file) {
-        console.log("No file in request");
-        return res.status(400).json({ message: "No file uploaded" });
+  app.post("/api/extract-document", (req, res) => {
+    upload.single('file')(req, res, async (err) => {
+      if (err) {
+        console.error("Multer error:", err);
+        return res.status(400).json({ message: "File upload error: " + err.message });
       }
 
-      console.log("File details:", {
-        originalname: req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        path: req.file.path
-      });
+      try {
+        console.log("File upload request received");
+        
+        const multerReq = req as MulterRequest;
+        if (!multerReq.file) {
+          console.log("No file in request");
+          return res.status(400).json({ message: "No file uploaded" });
+        }
 
-      const fs = await import('fs');
-      const path = await import('path');
-      
-      let extractedText = '';
-      const filePath = req.file.path;
-      const fileExtension = path.extname(req.file.originalname).toLowerCase();
+        console.log("File details:", {
+          originalname: multerReq.file.originalname,
+          mimetype: multerReq.file.mimetype,
+          size: multerReq.file.size,
+          path: multerReq.file.path
+        });
+
+        const fs = await import('fs');
+        const path = await import('path');
+        
+        let extractedText = '';
+        const filePath = multerReq.file.path;
+        const fileExtension = path.extname(multerReq.file.originalname).toLowerCase();
       
       try {
         console.log("Attempting to read file:", filePath);
         
-        if (fileExtension === '.txt' || req.file.mimetype.startsWith('text/')) {
+        if (fileExtension === '.txt' || multerReq.file.mimetype.startsWith('text/')) {
           console.log("Reading as text file");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
         } else {
@@ -486,16 +498,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             jobTitle = firstLine;
           } else {
             // Use filename without extension as title
-            jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
+            jobTitle = path.basename(multerReq.file.originalname, path.extname(multerReq.file.originalname));
           }
         } else {
-          jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
+          jobTitle = path.basename(multerReq.file.originalname, path.extname(multerReq.file.originalname));
         }
         
         const result = {
           jobTitle,
           jobDescription: extractedText,
-          filename: req.file.originalname
+          filename: multerReq.file.originalname
         };
         
         console.log("Sending response:", { 
@@ -524,12 +536,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } else {
           return res.status(400).json({ message: "Cannot read file - may be binary format. Please use text files (.txt) or paste content manually." });
         }
+        }
+        
+      } catch (error) {
+        console.error("Error extracting document:", error);
+        res.status(500).json({ message: "Failed to extract text from document" });
       }
-      
-    } catch (error) {
-      console.error("Error extracting document:", error);
-      res.status(500).json({ message: "Failed to extract text from document" });
-    }
+    });
   });
 
   // Career Mapping API endpoints

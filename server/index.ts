@@ -66,9 +66,6 @@ if (process.env.NODE_ENV === 'production') {
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 
-// Handle multipart/form-data for file uploads specifically on API routes
-app.use('/api', express.raw({ type: 'multipart/form-data', limit: '10mb' }));
-
 app.use((req, res, next) => {
   const start = Date.now();
   const path = req.path;
