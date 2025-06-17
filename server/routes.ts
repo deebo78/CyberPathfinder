@@ -3,6 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import multer from "multer";
+// PDF parsing will be added later - for now handle text files
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -466,11 +467,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       try {
         console.log("Attempting to read file:", filePath);
         
-        if (fileExtension === '.txt' || req.file.mimetype.startsWith('text/')) {
+        if (fileExtension === '.pdf' || req.file.mimetype === 'application/pdf') {
+          console.log("PDF file detected - returning error for now");
+          return res.status(400).json({ 
+            message: "PDF files require conversion. Please save your PDF as a .txt file or copy/paste the content directly into the job description field." 
+          });
+        } else if (fileExtension === '.txt' || req.file.mimetype.startsWith('text/')) {
           console.log("Reading as text file");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
         } else {
-          console.log("Reading as fallback text (may not work for binary files)");
+          console.log("Unsupported file format - trying as text fallback");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
         }
         
