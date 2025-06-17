@@ -1,0 +1,117 @@
+# CyberPathfinder - Cybersecurity Career Mapping Platform
+
+## Overview
+
+CyberPathfinder is a comprehensive web application designed to help cybersecurity professionals navigate career paths within the industry. The platform maps NICE Framework work roles to career tracks, provides certification guidance, and offers structured career progression paths from entry-level to executive positions across 19+ specialized cybersecurity domains.
+
+## System Architecture
+
+### Frontend Architecture
+- **Framework**: React with TypeScript
+- **UI Library**: Shadcn/ui components built on Radix UI primitives
+- **Styling**: Tailwind CSS with CSS variables for theming
+- **Build Tool**: Vite for fast development and optimized production builds
+- **Component Structure**: Modern component-based architecture with reusable UI components
+
+### Backend Architecture
+- **Runtime**: Node.js 20
+- **Database ORM**: Drizzle ORM for type-safe database operations
+- **Database**: PostgreSQL 16 (Neon serverless)
+- **API Architecture**: RESTful API design with Express.js-like structure
+- **Development Server**: Integrated development server supporting hot reload
+
+### Data Storage Solutions
+- **Primary Database**: PostgreSQL with comprehensive schema for cybersecurity career data
+- **Connection Pooling**: Neon serverless connection pooling for scalability
+- **Schema Management**: Drizzle Kit for migrations and schema evolution
+- **Data Import**: Excel/CSV processing capabilities for bulk data operations
+
+## Key Components
+
+### Career Track System
+- **19+ Specialized Tracks**: SOC Operations, Red Team, Digital Forensics, GRC, Cloud Security, etc.
+- **5-Level Progression**: Entry → Mid → Senior → Expert → Executive
+- **NICE Framework Integration**: Maps to official NICE work roles and categories
+- **Certification Mapping**: Links relevant certifications to each career level
+
+### Certification Database
+- **180+ Certifications**: Comprehensive database of cybersecurity certifications
+- **Issuer Management**: Tracks certification providers (CompTIA, GIAC, CISSP, etc.)
+- **Renewal Tracking**: Manages certification validity periods and renewal requirements
+- **Level Classification**: Foundation, Associate, Professional, Expert, Executive levels
+
+### NICE Framework Integration
+- **Work Roles**: Complete NICE work role definitions and codes
+- **Categories**: 7 NICE categories (Protection & Defense, Investigation, etc.)
+- **Specialty Areas**: Detailed specialty area mappings
+- **Tasks & KSAs**: Knowledge, Skills, Abilities, and Task mappings
+
+### Data Import System
+- **Excel Processing**: XLSX file parsing for career track data
+- **Batch Import Scripts**: Automated import processes for large datasets
+- **Data Validation**: Ensures data integrity during import operations
+- **Duplicate Detection**: Identifies and manages duplicate entries
+
+## Data Flow
+
+### User Journey Flow
+1. Users explore career tracks by domain or interest
+2. System displays 5-level progression path for selected track
+3. Each level shows relevant certifications, work roles, and requirements
+4. Users can navigate between related tracks and certifications
+
+### Data Management Flow
+1. Raw career data imported via Excel files
+2. Data processed and validated through import scripts
+3. Relationships established between tracks, levels, certifications
+4. Frontend queries optimized data through Drizzle ORM
+
+### Certification Mapping Flow
+1. Certifications extracted from track-specific Excel files
+2. Fuzzy matching algorithms map certification names to database entries
+3. Career level associations created through junction tables
+4. Certification recommendations surfaced to users by career level
+
+## External Dependencies
+
+### Database Services
+- **Neon Database**: Serverless PostgreSQL hosting
+- **Connection Management**: @neondatabase/serverless for connection pooling
+
+### Development Tools
+- **Drizzle ORM**: Database operations and migrations
+- **XLSX**: Excel file processing for data imports
+- **Tailwind CSS**: Utility-first CSS framework
+- **Shadcn/ui**: Pre-built component library
+
+### Runtime Environment
+- **Node.js 20**: JavaScript runtime
+- **PostgreSQL 16**: Database engine
+- **Replit Infrastructure**: Development and hosting platform
+
+## Deployment Strategy
+
+### Development Environment
+- **Platform**: Replit with integrated development server
+- **Database**: Neon serverless PostgreSQL instance
+- **Build Process**: Vite development server with hot module replacement
+- **Port Configuration**: Local port 5000, external port 80
+
+### Production Deployment
+- **Target**: Autoscale deployment on Replit
+- **Build Command**: `npm run build` for optimized production bundle
+- **Start Command**: `npm run start` for production server
+- **Environment**: Node.js with PostgreSQL module support
+
+### Data Migration Strategy
+- **Schema Versioning**: Drizzle migrations for database evolution
+- **Data Import**: Batch processing scripts for initial data population
+- **Backup Strategy**: Regular database exports for data protection
+
+## Changelog
+
+- June 17, 2025. Initial setup
+
+## User Preferences
+
+Preferred communication style: Simple, everyday language.
