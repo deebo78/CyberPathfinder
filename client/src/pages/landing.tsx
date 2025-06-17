@@ -88,7 +88,7 @@ export default function Landing() {
           {features.map((feature) => {
             const Icon = feature.icon;
             return (
-              <Card key={feature.title} className="hover:shadow-lg transition-shadow cursor-pointer group">
+              <Card key={feature.title} className="hover:shadow-lg transition-shadow cursor-pointer group flex flex-col h-full">
                 <CardHeader className="text-center">
                   <div className={`w-16 h-16 ${feature.color} rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform`}>
                     <Icon className="h-8 w-8 text-white" />
@@ -98,8 +98,8 @@ export default function Landing() {
                     For {feature.users}
                   </CardDescription>
                 </CardHeader>
-                <CardContent className="text-center">
-                  <p className="text-gray-600 mb-6">{feature.description}</p>
+                <CardContent className="text-center flex flex-col flex-grow">
+                  <p className="text-gray-600 mb-6 flex-grow">{feature.description}</p>
                   <Link href={feature.link}>
                     <Button className="w-full group-hover:bg-gray-900 transition-colors">
                       Get Started
