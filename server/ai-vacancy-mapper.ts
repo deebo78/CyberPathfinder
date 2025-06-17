@@ -87,9 +87,16 @@ export class AIVacancyMapper {
       }));
 
       const prompt = `
-Analyze this job posting and provide comprehensive matching to NICE Framework work roles and career tracks.
+You are an expert Cyber Workforce Analyst specializing in NICE Framework alignment and job posting optimization. Your role is to:
 
-JOB POSTING:
+1. Map job postings to appropriate NICE Framework work roles
+2. Identify best-fit career tracks from the NICE-aligned catalog
+3. Extract and organize job requirements (skills, experience, education, certifications)
+4. Analyze internal consistency and alignment within the job posting
+5. Detect role creep, unrealistic expectations, conflicting qualifications, and inconsistencies
+6. Provide actionable improvement recommendations for clearer, more effective job postings
+
+JOB POSTING TO ANALYZE:
 Title: ${jobPosting.jobTitle}
 Description: ${jobPosting.jobDescription}
 Required Qualifications: ${jobPosting.requiredQualifications || 'Not specified'}
@@ -101,15 +108,7 @@ ${JSON.stringify(workRolesSummary, null, 2)}
 AVAILABLE CAREER TRACKS:
 ${JSON.stringify(careerTracksSummary, null, 2)}
 
-INSTRUCTIONS:
-1. Analyze the job posting requirements and responsibilities
-2. Extract key skills, experience levels, education requirements, and certifications
-3. Determine the experience level this job is targeting (Entry-Level, Mid-Level, Senior-Level, Expert-Level, Executive-Level)
-4. Match to work roles with similarity percentages (75%+ = primary, 50-74% = notable)
-5. Identify the best matching career track and create a career progression visualization
-6. Analyze if the job requirements align with the identified career level
-7. Provide recommendations for improving job description alignment
-
+ANALYSIS FRAMEWORK:
 Career Progression Levels (standard across tracks):
 - Entry-Level: 0-2 years experience, bachelor's degree preferred, basic certifications
 - Mid-Level: 3-5 years experience, specialized skills, intermediate certifications
@@ -117,7 +116,16 @@ Career Progression Levels (standard across tracks):
 - Expert-Level: 10+ years experience, technical leadership, expert certifications
 - Executive-Level: 15+ years experience, strategic leadership, executive responsibilities
 
-Response format (JSON):
+CONSISTENCY ANALYSIS CRITERIA:
+- Role Scope Conflicts: Combining incompatible responsibilities (e.g., hands-on technical + strategic leadership)
+- Experience Misalignment: Requirements inconsistent with stated level (e.g., 10+ years for "junior" role)
+- Education Contradictions: Conflicting degree requirements across sections
+- Certification Confusion: Mixing entry-level and expert certifications for same role
+- Skills Overload: Unrealistic breadth of technical skills for single position
+- Compensation Misalignment: Salary ranges inconsistent with experience/responsibility level
+- Redundant Requirements: Duplicate or overlapping qualifications stated multiple times
+
+RESPONSE FORMAT (JSON only):
 {
   "primaryMatches": [
     {
@@ -167,8 +175,33 @@ Response format (JSON):
     "certifications": ["cert1", "cert2"],
     "experienceLevel": "Mid-Level"
   },
-  "matchSummary": "Overall analysis summary"
-}`;
+  "matchSummary": "Overall analysis summary",
+  "roleConsistencyAnalysis": {
+    "summary": "Brief assessment of job posting consistency and clarity",
+    "conflictsFound": [
+      "Specific conflicts between requirements (e.g., contradictory experience levels)",
+      "Misaligned responsibilities and qualifications"
+    ],
+    "unrealisticExpectations": [
+      "Role scope too broad (combining multiple specialized positions)",
+      "Experience requirements unrealistic for stated level",
+      "Skill combinations that rarely exist in single candidates"
+    ],
+    "redundantOrDuplicateRequirements": [
+      "Requirements repeated in multiple sections",
+      "Overlapping qualifications that could be consolidated"
+    ],
+    "recommendedImprovements": [
+      "Specific actionable suggestions to improve clarity",
+      "Ways to better align with NICE Framework standards",
+      "Recommendations to increase candidate pool and diversity"
+    ],
+    "overallConsistencyScore": 85,
+    "severityLevel": "low"
+  }
+}
+
+Important: Ensure roleConsistencyAnalysis provides genuine value by identifying real inconsistencies. If the job posting is well-written and consistent, indicate this clearly rather than manufacturing issues.`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -201,6 +234,17 @@ Response format (JSON):
       }
       if (!analysis.matchSummary) {
         analysis.matchSummary = "Analysis completed successfully.";
+      }
+      if (!analysis.roleConsistencyAnalysis) {
+        analysis.roleConsistencyAnalysis = {
+          summary: "No consistency analysis available.",
+          conflictsFound: [],
+          unrealisticExpectations: [],
+          redundantOrDuplicateRequirements: [],
+          recommendedImprovements: [],
+          overallConsistencyScore: 75,
+          severityLevel: "low"
+        };
       }
 
       return analysis as VacancyAnalysis;

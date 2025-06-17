@@ -36,6 +36,15 @@ interface VacancyAnalysis {
     experienceLevel: string;
   };
   matchSummary: string;
+  roleConsistencyAnalysis?: {
+    summary: string;
+    conflictsFound: string[];
+    unrealisticExpectations: string[];
+    redundantOrDuplicateRequirements: string[];
+    recommendedImprovements: string[];
+    overallConsistencyScore: number;
+    severityLevel: 'low' | 'medium' | 'high';
+  };
 }
 
 interface CareerLevel {
@@ -547,6 +556,135 @@ export default function MapVacancy() {
                   </div>
                 </CardContent>
               </Card>
+
+              {/* Role Consistency Analysis */}
+              {analysis.roleConsistencyAnalysis && (
+                <Card className="border-l-4 border-l-yellow-500">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertCircle className="h-5 w-5 text-yellow-600" />
+                      Job Posting Consistency Analysis
+                      <Badge 
+                        variant={analysis.roleConsistencyAnalysis.severityLevel === 'high' ? 'destructive' : 
+                                analysis.roleConsistencyAnalysis.severityLevel === 'medium' ? 'default' : 'secondary'}
+                        className="ml-2"
+                      >
+                        {analysis.roleConsistencyAnalysis.severityLevel} priority
+                      </Badge>
+                    </CardTitle>
+                    <CardDescription>
+                      Analysis of internal consistency, role alignment, and improvement opportunities
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Overall Summary */}
+                    <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-medium">Overall Consistency Score</span>
+                        <span className="text-2xl font-bold text-blue-600">
+                          {analysis.roleConsistencyAnalysis.overallConsistencyScore}%
+                        </span>
+                      </div>
+                      <Progress value={analysis.roleConsistencyAnalysis.overallConsistencyScore} className="mb-3" />
+                      <p className="text-sm text-gray-700">{analysis.roleConsistencyAnalysis.summary}</p>
+                    </div>
+
+                    {/* Issues Found */}
+                    {(analysis.roleConsistencyAnalysis.conflictsFound.length > 0 || 
+                      analysis.roleConsistencyAnalysis.unrealisticExpectations.length > 0 || 
+                      analysis.roleConsistencyAnalysis.redundantOrDuplicateRequirements.length > 0) && (
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                          <XCircle className="h-4 w-4 text-red-500" />
+                          Issues Identified
+                        </h4>
+                        <div className="space-y-4">
+                          {analysis.roleConsistencyAnalysis.conflictsFound.length > 0 && (
+                            <div>
+                              <h5 className="font-medium text-red-700 mb-2">Conflicts Found</h5>
+                              <ul className="space-y-1">
+                                {analysis.roleConsistencyAnalysis.conflictsFound.map((conflict, index) => (
+                                  <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
+                                    <span className="text-red-500 mt-1">•</span>
+                                    {conflict}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {analysis.roleConsistencyAnalysis.unrealisticExpectations.length > 0 && (
+                            <div>
+                              <h5 className="font-medium text-orange-700 mb-2">Unrealistic Expectations</h5>
+                              <ul className="space-y-1">
+                                {analysis.roleConsistencyAnalysis.unrealisticExpectations.map((expectation, index) => (
+                                  <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
+                                    <span className="text-orange-500 mt-1">•</span>
+                                    {expectation}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+
+                          {analysis.roleConsistencyAnalysis.redundantOrDuplicateRequirements.length > 0 && (
+                            <div>
+                              <h5 className="font-medium text-yellow-700 mb-2">Redundant Requirements</h5>
+                              <ul className="space-y-1">
+                                {analysis.roleConsistencyAnalysis.redundantOrDuplicateRequirements.map((redundant, index) => (
+                                  <li key={index} className="text-sm text-gray-700 flex items-start gap-2">
+                                    <span className="text-yellow-500 mt-1">•</span>
+                                    {redundant}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Recommendations */}
+                    {analysis.roleConsistencyAnalysis.recommendedImprovements.length > 0 && (
+                      <div>
+                        <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          Recommended Improvements
+                        </h4>
+                        <div className="bg-green-50 p-4 rounded-lg">
+                          <ul className="space-y-2">
+                            {analysis.roleConsistencyAnalysis.recommendedImprovements.map((improvement, index) => (
+                              <li key={index} className="text-sm text-green-800 flex items-start gap-2">
+                                <CheckCircle2 className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                {improvement}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action Items */}
+                    <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                      <h4 className="font-medium text-blue-900 mb-2 flex items-center gap-2">
+                        <TrendingUp className="h-4 w-4" />
+                        Next Steps
+                      </h4>
+                      <p className="text-sm text-blue-800 mb-3">
+                        Review the recommendations above to improve job posting clarity and attract more qualified candidates.
+                      </p>
+                      <div className="flex gap-2">
+                        <Button size="sm" variant="outline" className="text-blue-700 border-blue-300">
+                          Export Analysis Report
+                        </Button>
+                        <Button size="sm" variant="outline" className="text-blue-700 border-blue-300">
+                          View NICE Framework Guide
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
             </>
           ) : (
             <Card>
