@@ -127,6 +127,9 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Salary Range Integration**: Added salary min/max and location fields to eliminate false compensation deduction penalties
 - **Market Intelligence**: Enhanced AI with specific salary benchmarks by experience level for precise compensation analysis
 - **Interface Clarity**: Changed analysis section title from "Job Posting Consistency Analysis" to "NICE Framework Alignment" for better clarity
+- **Resume Upload Feature**: Added comprehensive resume upload and AI analysis functionality to Career Mapping section
+- **Enhanced Career Analysis**: Implemented detailed gap analysis, salary projections, and transition timelines for resume-based recommendations
+- **Multi-Modal Input**: Career Mapping now supports both manual profile entry and resume file upload for career assessment
 
 ### January 16, 2025 - UI/UX Improvements
 - **Category Organization**: Reorganized 19 career tracks into 7 logical categories (Defensive Operations, Offensive Security, etc.)

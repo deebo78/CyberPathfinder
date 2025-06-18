@@ -34,6 +34,17 @@ interface CareerRecommendation {
   recommendedLevel: string;
   nextSteps: string[];
   relevantSkills: string[];
+  gapAnalysis?: {
+    strengths: string[];
+    gaps: string[];
+    recommendations: string[];
+  };
+  salaryRange?: {
+    min: number;
+    max: number;
+    currency: string;
+  };
+  timeToTransition?: string;
 }
 
 interface CareerAnalysis {
