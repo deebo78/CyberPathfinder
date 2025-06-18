@@ -112,8 +112,27 @@ export default function CareerMapping() {
       
       return response.json();
     },
-    onSuccess: (data) => {
-      setAnalysis(data);
+    onSuccess: async (data) => {
+      // Fetch the complete analysis data using the analysis ID
+      if (data.analysisId) {
+        try {
+          const response = await fetch(`/api/resume-analysis/${data.analysisId}`);
+          if (response.ok) {
+            const completeAnalysis = await response.json();
+            setAnalysis(completeAnalysis);
+          } else {
+            // Fallback to the data from upload response
+            setAnalysis(data);
+          }
+        } catch (error) {
+          console.error("Error fetching complete analysis:", error);
+          // Fallback to the data from upload response
+          setAnalysis(data);
+        }
+      } else {
+        setAnalysis(data);
+      }
+      
       setActiveTab("results");
       setUploadedFile(null);
       toast({
