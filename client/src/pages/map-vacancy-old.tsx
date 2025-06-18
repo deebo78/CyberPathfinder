@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen } from "lucide-react";
+import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen, Upload, FileText, Loader2 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -84,6 +84,9 @@ export default function MapVacancy() {
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
   const [location, setLocation] = useState("");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [activeTab, setActiveTab] = useState("manual");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [analysis, setAnalysis] = useState<VacancyAnalysis | null>(null);
   const { toast } = useToast();
@@ -123,7 +126,87 @@ export default function MapVacancy() {
     },
   });
 
+  const uploadJobPostingMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      
+      const response = await fetch("/api/extract-document", {
+        method: "POST",
+        body: formData
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to extract text from document");
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      // Fill the form fields with extracted text
+      setJobDescription(data.extractedText);
+      setActiveTab("manual"); // Switch to manual tab to show extracted content
+      setUploadedFile(null);
+      toast({
+        title: "Document Processed",
+        description: "Job posting content extracted successfully. Review and add any missing details.",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Upload Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
 
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type - accept TXT, DOC, and DOCX files
+      const allowedTypes = [
+        'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a DOC, DOCX, or TXT file.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 10MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setUploadedFile(file);
+    }
+  };
+
+  const handleUploadJobPosting = () => {
+    if (uploadedFile) {
+      uploadJobPostingMutation.mutate(uploadedFile);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
 
   const handleAnalyze = () => {
     if (!jobTitle.trim() || !jobDescription.trim()) {
@@ -171,97 +254,200 @@ export default function MapVacancy() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="h-5 w-5" />
-                Job Posting Details
+                Job Posting Analysis
               </CardTitle>
               <CardDescription>
-                Enter the job posting details to analyze against NICE Framework work roles
+                Analyze job postings by uploading a document or entering details manually
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="jobTitle">Job Title *</Label>
-                <Input
-                  id="jobTitle"
-                  value={jobTitle}
-                  onChange={(e) => setJobTitle(e.target.value)}
-                  placeholder="e.g., Senior Cybersecurity Analyst"
-                />
-              </div>
+            <CardContent>
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="manual">Manual Entry</TabsTrigger>
+                  <TabsTrigger value="upload">Upload Document</TabsTrigger>
+                </TabsList>
 
-              <div>
-                <Label htmlFor="jobDescription">Job Description *</Label>
-                <Textarea
-                  id="jobDescription"
-                  value={jobDescription}
-                  onChange={(e) => setJobDescription(e.target.value)}
-                  placeholder="Paste the full job description here..."
-                  rows={6}
-                />
-              </div>
+                <TabsContent value="manual" className="space-y-4 mt-6">
+                  <div>
+                    <Label htmlFor="jobTitle">Job Title *</Label>
+                    <Input
+                      id="jobTitle"
+                      value={jobTitle}
+                      onChange={(e) => setJobTitle(e.target.value)}
+                      placeholder="e.g., Senior Cybersecurity Analyst"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="required">Required Qualifications</Label>
-                <Textarea
-                  id="required"
-                  value={requiredQualifications}
-                  onChange={(e) => setRequiredQualifications(e.target.value)}
-                  placeholder="List required skills, experience, certifications..."
-                  rows={4}
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="jobDescription">Job Description *</Label>
+                    <Textarea
+                      id="jobDescription"
+                      value={jobDescription}
+                      onChange={(e) => setJobDescription(e.target.value)}
+                      placeholder="Paste the full job description here..."
+                      className="min-h-[150px]"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="preferred">Preferred Qualifications</Label>
-                <Textarea
-                  id="preferred"
-                  value={preferredQualifications}
-                  onChange={(e) => setPreferredQualifications(e.target.value)}
-                  placeholder="List preferred qualifications..."
-                  rows={3}
-                />
-              </div>
+                  <div>
+                    <Label htmlFor="requiredQualifications">Required Qualifications</Label>
+                    <Textarea
+                      id="requiredQualifications"
+                      value={requiredQualifications}
+                      onChange={(e) => setRequiredQualifications(e.target.value)}
+                      placeholder="List required skills, experience, and qualifications..."
+                      className="min-h-[100px]"
+                    />
+                  </div>
 
-              {/* Salary Range Fields */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="salaryMin">Minimum Salary ($)</Label>
-                  <Input
-                    id="salaryMin"
-                    type="number"
-                    value={salaryMin}
-                    onChange={(e) => setSalaryMin(e.target.value)}
-                    placeholder="e.g., 75000"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="salaryMax">Maximum Salary ($)</Label>
-                  <Input
-                    id="salaryMax"
-                    type="number"
-                    value={salaryMax}
-                    onChange={(e) => setSalaryMax(e.target.value)}
-                    placeholder="e.g., 95000"
-                  />
-                </div>
-              </div>
+                  <div>
+                    <Label htmlFor="preferredQualifications">Preferred Qualifications</Label>
+                    <Textarea
+                      id="preferredQualifications"
+                      value={preferredQualifications}
+                      onChange={(e) => setPreferredQualifications(e.target.value)}
+                      placeholder="List preferred skills and qualifications..."
+                      className="min-h-[100px]"
+                    />
+                  </div>
 
-              <div>
-                <Label htmlFor="location">Location</Label>
-                <Input
-                  id="location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g., New York, NY or Remote"
-                />
-              </div>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div>
+                      <Label htmlFor="salaryMin">Min Salary ($)</Label>
+                      <Input
+                        id="salaryMin"
+                        type="number"
+                        value={salaryMin}
+                        onChange={(e) => setSalaryMin(e.target.value)}
+                        placeholder="e.g., 70000"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="salaryMax">Max Salary ($)</Label>
+                      <Input
+                        id="salaryMax"
+                        type="number"
+                        value={salaryMax}
+                        onChange={(e) => setSalaryMax(e.target.value)}
+                        placeholder="e.g., 120000"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="location">Location</Label>
+                      <Input
+                        id="location"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        placeholder="e.g., Remote, New York, NY"
+                      />
+                    </div>
+                  </div>
 
-              <Button
-                onClick={handleAnalyze}
-                disabled={analyzeVacancyMutation.isPending}
-                className="w-full"
-              >
-                {analyzeVacancyMutation.isPending ? "Analyzing..." : "Analyze Job Posting"}
-              </Button>
+                  <Button 
+                    onClick={handleAnalyze} 
+                    disabled={analyzeVacancyMutation.isPending}
+                    className="w-full"
+                  >
+                    {analyzeVacancyMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Analyzing...
+                      </>
+                    ) : (
+                      <>
+                        <Target className="mr-2 h-4 w-4" />
+                        Analyze Job Posting
+                      </>
+                    )}
+                  </Button>
+                </TabsContent>
+
+                <TabsContent value="upload" className="space-y-6 mt-6">
+                  {!uploadedFile ? (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                      <div className="space-y-4">
+                        <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
+                          <FileText className="h-8 w-8 text-blue-600" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                            Upload Job Posting Document
+                          </h3>
+                          <p className="text-gray-600 mb-4">
+                            Upload a job posting in DOC, DOCX, or TXT format
+                          </p>
+                          <input
+                            ref={fileInputRef}
+                            type="file"
+                            accept=".txt,.doc,.docx"
+                            onChange={handleFileSelect}
+                            className="hidden"
+                          />
+                          <Button
+                            onClick={() => fileInputRef.current?.click()}
+                            variant="outline"
+                            className="w-full max-w-md"
+                          >
+                            <Upload className="mr-2 h-4 w-4" />
+                            Select Document
+                          </Button>
+                        </div>
+                        <div className="text-sm text-gray-500">
+                          Supported: DOC, DOCX, TXT files up to 10MB
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border border-gray-200 rounded-lg p-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <FileText className="h-8 w-8 text-blue-600" />
+                          <div>
+                            <p className="font-medium text-gray-900">{uploadedFile.name}</p>
+                            <p className="text-sm text-gray-500">
+                              {(uploadedFile.size / 1024 / 1024).toFixed(2)} MB
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          onClick={handleRemoveFile}
+                          variant="ghost"
+                          size="sm"
+                        >
+                          Remove
+                        </Button>
+                      </div>
+                      <Button
+                        onClick={handleUploadJobPosting}
+                        disabled={uploadJobPostingMutation.isPending}
+                        className="w-full"
+                      >
+                        {uploadJobPostingMutation.isPending ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Processing Document...
+                          </>
+                        ) : (
+                          <>
+                            <Upload className="mr-2 h-4 w-4" />
+                            Extract Job Posting Content
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  )}
+
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <h4 className="font-medium text-blue-900 mb-2">How it works:</h4>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• Upload your job posting document</li>
+                      <li>• Text is automatically extracted and parsed</li>
+                      <li>• Content appears in the manual entry form for review</li>
+                      <li>• Add any missing details and analyze</li>
+                    </ul>
+                  </div>
+                </TabsContent>
+              </Tabs>
             </CardContent>
           </Card>
         </div>
