@@ -46,6 +46,9 @@ interface CareerAnalysis {
 export default function CareerMapping() {
   const [analysis, setAnalysis] = useState<CareerAnalysis | null>(null);
   const [activeTab, setActiveTab] = useState("profile");
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -81,6 +84,41 @@ export default function CareerMapping() {
     }
   });
 
+  const uploadResumeMutation = useMutation({
+    mutationFn: async (file: File) => {
+      const formData = new FormData();
+      formData.append('resume', file);
+      
+      const response = await fetch("/api/upload-resume", {
+        method: "POST",
+        body: formData
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to analyze resume");
+      }
+      
+      return response.json();
+    },
+    onSuccess: (data) => {
+      setAnalysis(data);
+      setActiveTab("results");
+      setUploadedFile(null);
+      toast({
+        title: "Resume Analyzed",
+        description: "Your career recommendations are ready!",
+      });
+    },
+    onError: (error) => {
+      toast({
+        title: "Upload Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  });
+
   const { data: careerTracks } = useQuery({
     queryKey: ["/api/career-tracks"],
     enabled: !!analysis
@@ -88,6 +126,46 @@ export default function CareerMapping() {
 
   const onSubmit = (data: ProfileFormData) => {
     analyzeProfileMutation.mutate(data);
+  };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      // Validate file type
+      if (file.type !== 'text/plain') {
+        toast({
+          title: "Invalid File Type",
+          description: "Please upload a text (.txt) file. PDF support coming soon.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      // Validate file size (10MB limit)
+      if (file.size > 10 * 1024 * 1024) {
+        toast({
+          title: "File Too Large",
+          description: "Please upload a file smaller than 10MB.",
+          variant: "destructive",
+        });
+        return;
+      }
+      
+      setUploadedFile(file);
+    }
+  };
+
+  const handleUploadResume = () => {
+    if (uploadedFile) {
+      uploadResumeMutation.mutate(uploadedFile);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const getMatchScoreColor = (score: number) => {
@@ -107,10 +185,14 @@ export default function CareerMapping() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="profile" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            Profile Assessment
+            Manual Profile
+          </TabsTrigger>
+          <TabsTrigger value="upload" className="flex items-center gap-2">
+            <Upload className="h-4 w-4" />
+            Upload Resume
           </TabsTrigger>
           <TabsTrigger value="results" disabled={!analysis} className="flex items-center gap-2">
             <Target className="h-4 w-4" />
@@ -282,6 +364,110 @@ export default function CareerMapping() {
           </Card>
         </TabsContent>
 
+        <TabsContent value="upload" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Upload className="h-5 w-5" />
+                Upload Your Resume
+              </CardTitle>
+              <CardDescription>
+                Upload your resume for instant AI-powered career analysis and personalized recommendations.
+                Currently supports text (.txt) files. PDF support coming soon.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              {!uploadedFile ? (
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <div className="space-y-4">
+                    <div className="mx-auto w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center">
+                      <FileText className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                        Choose your resume file
+                      </h3>
+                      <p className="text-gray-600 mb-4">
+                        Upload a text file of your resume for analysis
+                      </p>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept=".txt"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
+                      <Button
+                        onClick={() => fileInputRef.current?.click()}
+                        variant="outline"
+                        className="w-full max-w-md"
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        Select Resume File
+                      </Button>
+                    </div>
+                    <div className="text-sm text-gray-500">
+                      Supported: .txt files up to 10MB
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="border border-gray-200 rounded-lg p-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
+                        <FileText className="h-5 w-5 text-green-600" />
+                      </div>
+                      <div>
+                        <h4 className="font-medium text-gray-900">{uploadedFile.name}</h4>
+                        <p className="text-sm text-gray-500">
+                          {(uploadedFile.size / 1024).toFixed(1)} KB
+                        </p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={handleRemoveFile}
+                      variant="ghost"
+                      size="sm"
+                    >
+                      Remove
+                    </Button>
+                  </div>
+                  
+                  <Button
+                    onClick={handleUploadResume}
+                    disabled={uploadResumeMutation.isPending}
+                    className="w-full"
+                  >
+                    {uploadResumeMutation.isPending ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Analyzing Resume...
+                      </>
+                    ) : (
+                      <>
+                        <Target className="mr-2 h-4 w-4" />
+                        Analyze Resume & Get Recommendations
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <h4 className="font-medium text-blue-900 mb-2">What happens next?</h4>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li>• AI extracts your skills, experience, and education</li>
+                  <li>• Matches you to relevant NICE Framework career tracks</li>
+                  <li>• Provides personalized career recommendations</li>
+                  <li>• Suggests certifications and next steps</li>
+                  <li>• Estimates salary ranges and transition timelines</li>
+                </ul>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="results" className="space-y-6">
           {analysis && (
             <>
@@ -352,11 +538,35 @@ export default function CareerMapping() {
 
                       <p className="text-muted-foreground">{recommendation.reasoning}</p>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                         <div>
                           <h4 className="font-medium mb-2">Recommended Level:</h4>
                           <Badge variant="default">{recommendation.recommendedLevel}</Badge>
                         </div>
+
+                        {recommendation.salaryRange && (
+                          <div>
+                            <h4 className="font-medium mb-2 flex items-center gap-1">
+                              <DollarSign className="h-4 w-4" />
+                              Salary Range:
+                            </h4>
+                            <p className="text-sm font-medium text-green-600">
+                              ${recommendation.salaryRange.min.toLocaleString()} - ${recommendation.salaryRange.max.toLocaleString()}
+                            </p>
+                          </div>
+                        )}
+
+                        {recommendation.timeToTransition && (
+                          <div>
+                            <h4 className="font-medium mb-2 flex items-center gap-1">
+                              <Clock className="h-4 w-4" />
+                              Transition Time:
+                            </h4>
+                            <p className="text-sm text-muted-foreground">
+                              {recommendation.timeToTransition}
+                            </p>
+                          </div>
+                        )}
 
                         <div>
                           <h4 className="font-medium mb-2">Relevant Skills:</h4>
@@ -374,6 +584,47 @@ export default function CareerMapping() {
                           </div>
                         </div>
                       </div>
+
+                      {/* Gap Analysis Section - only for resume-based analysis */}
+                      {recommendation.gapAnalysis && (
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+                          <div>
+                            <h4 className="font-medium mb-2 text-green-700">Your Strengths:</h4>
+                            <ul className="space-y-1">
+                              {recommendation.gapAnalysis.strengths.map((strength, idx) => (
+                                <li key={idx} className="text-sm text-green-600 flex items-start gap-1">
+                                  <span className="w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
+                                  {strength}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-medium mb-2 text-orange-700">Skill Gaps:</h4>
+                            <ul className="space-y-1">
+                              {recommendation.gapAnalysis.gaps.map((gap, idx) => (
+                                <li key={idx} className="text-sm text-orange-600 flex items-start gap-1">
+                                  <span className="w-1 h-1 bg-orange-500 rounded-full mt-2 flex-shrink-0"></span>
+                                  {gap}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          
+                          <div>
+                            <h4 className="font-medium mb-2 text-blue-700">Action Items:</h4>
+                            <ul className="space-y-1">
+                              {recommendation.gapAnalysis.recommendations.map((rec, idx) => (
+                                <li key={idx} className="text-sm text-blue-600 flex items-start gap-1">
+                                  <span className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+                                  {rec}
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        </div>
+                      )}
 
                       <div>
                         <h4 className="font-medium mb-2">Next Steps:</h4>

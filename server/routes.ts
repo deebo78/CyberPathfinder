@@ -661,23 +661,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let resumeText = "";
       
-      // Parse different file types
-      if (req.file.mimetype === 'application/pdf') {
-        try {
-          const dataBuffer = fs.readFileSync(req.file.path);
-          const pdfData = await pdfParse(dataBuffer);
-          resumeText = pdfData.text;
-        } catch (pdfError) {
-          console.error("PDF parsing error:", pdfError);
-          fs.unlinkSync(req.file.path);
-          return res.status(400).json({ message: "Error parsing PDF file. Please ensure it's a valid PDF or try uploading a text file." });
-        }
-      } else if (req.file.mimetype === 'text/plain') {
+      // Parse different file types (PDF support will be added later)
+      if (req.file.mimetype === 'text/plain') {
         resumeText = fs.readFileSync(req.file.path, 'utf-8');
+      } else if (req.file.mimetype === 'application/pdf') {
+        // Clean up uploaded file
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ message: "PDF support coming soon. Please upload text (.txt) files for now." });
       } else {
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
-        return res.status(400).json({ message: "Unsupported file type. Please upload PDF or TXT files only." });
+        return res.status(400).json({ message: "Unsupported file type. Please upload TXT files only." });
       }
 
       if (!resumeText.trim()) {
