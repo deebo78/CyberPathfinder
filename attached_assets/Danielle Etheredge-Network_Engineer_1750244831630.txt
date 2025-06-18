@@ -1,0 +1,87 @@
+DANIELLE (DANNY) ETHEREDGE EVANS, GEORGIA, 30809 ~ 803- 830-2343
+(DANIELLE.M.ETHEREDGE@OUTLOOK.COM )
+(WWW.LINKEDIN.COM/IN/DMETHEREDGE )
+(SECURITY CLEARANCE: TOP SECRET/SENSITIVE COMPARTMENTED INFORMATION (TS/SCI), SSBI UPDATED 12 AUG 2019)
+NETWORK ENGINEER
+Dedicated and results-driven Project Manager with 15 years of experience leading cross-functional teams to successful project completion, now seeking to leverage my strong organizational and problem-solving skills in a new career as a Network Engineer. Possess a solid foundation in networking fundamentals and a deep passion for technology, backed by recent certifications such as Cisco Certified Network Associate (CCNA), Security+, Certified Ethical Hacker (CEH). Excited to apply my project management expertise to plan, implement, and optimize network solutions, ensuring seamless connectivity and efficiency for clients and organizations. Proven ability to adapt quickly, strong attention to detail, and excellent communication skills make me an asset in the transition to the dynamic field of network engineering.
+KNOWLEDGE FORTE
+Program Management
+Project Management
+Risk Management
+Compliance
+Network Architecture
+Routing Protocols
+Network Hardware
+Network Support
+Troubleshooting
+Communication
+Wireshark
+LAN/WAN Config
+Hardware Installation
+Virtualization
+Network Security
+Data Collection
+Documentation
+IDS/IPS
+Nessus
+NMAP
+PROFESSIONAL SKILLS
+ Demonstrated ability to interact and communicate effectively with team members and senior leaders while communicating technical concepts to technical and non-technical audiences.
+ Strong background in cybersecurity and information technology compliance, with a focus on Federal Risk and Authorization Management Program (FedRAMP) and NIST frameworks and in-depth knowledge of federal security standards, policies, and regulations.
+ Designing and maintaining access control mechanisms to ensure that only authorized users or devices can access the network resources; includes implementing technologies like VPNs, firewalls, and multi-factor authentication (MFA)
+ Demonstrated knowledge of Risk Management Framework (RMF) Package, Artifacts and SOPs, FISMA Compliance, NIST SP 800-53 Controls, and Cloud security.
+IT TRAINING AND CERTIFICATIONS
+ Project Management Professional; Project Management Institute
+ Cisco Certified Network Associate; (Cisco)
+ Security+; CompTIA
+ Certified Ethical Hacker (CEH); EC-Council
+ Cybersecurity Analyst (CySA+); CompTIA
+ Microsoft Technology Associate: Networking Fundamentals; Microsoft
+EDUCATION
+ Bachelor of Science: Computer Networks and Cybersecurity, University of Maryland Global Campus, Adelphi, Maryland – May 2022
+ Associates in Applied Science: Communications Applications Technology, Community College of the Air Force, Maxwell Air Force Base, Alabama – 2003
+PROFESSIONAL EXPERIENCE
+C2 LABS Apr 2023 – Present
+Cybersecurity Compliance Project Manager
+ Managed end-to-end FedRAMP compliance projects, ensuring adherence to federal security standards, requirements, and guidelines; successfully leading cross-functional teams to deliver FedRAMP compliance projects on time and within budget, resulting in cloud service provider FedRAMP authorizations
+ Implemented and maintained continuous monitoring processes to ensure ongoing compliance and timely reporting to federal agencies
+ Collaborated with internal and external stakeholders to identify and address compliance gaps, resulting in a reduction in security vulnerabilities and successful completion of external FedRAMP audits
+DANIELLE (DANNY) ETHEREDGE PAGE 2 ~ EVANS, GEORGIA, 30809 ~ 803- 830-2343 (DMETHEREDGE@GMAIL.COM)
+NATIONAL CYBER RANGE COMPLEX (UNCLASSIFIED) – SCIENTIFIC RESEARCH CORPORATION Apr 2022 – Jan 2023
+Program Manager
+ Managed team of 20 cyber security analysts & engineers operating a cyber range as a component of the distributed National Cyber Range Complex
+ Designed and maintained the network infrastructure of the cyber range, ensuring a secure and isolated environment for cybersecurity training exercises
+ Deployed and configured firewall rules, intrusion detection systems (IDS), and intrusion prevention systems (IPS) to protect the cyber range's network.
+ Implemented security policies and access controls to simulate a secure network environment.
+ Implemented network segmentation and isolation techniques to simulate real-world network scenarios
+EMPLOYMENT SKILLS TRAINING INTERN – VETS2PM & APEX SYSTEMS Oct 2021 – Jan 2022
+Intern
+ Cybersecurity training – extensive training on network threats and vulnerabilities; risk analysis; hacking tools, techniques, and methodologies; network behavior analytics
+ Project Management training - heavy emphasis on a combination of Cyber fundamentals to include briefings, demonstrations, videos, and discussion/mentorship sessions
+313TH TRAINING SQUADRON, GOODFELLOW AFB, TEXAS Jul 2020 – Oct 2021
+Squadron Superintendent/Advanced Training Program Manager/Senior Leader Management Course Instructor
+ Led development and launch of Cyber Intelligence Professional 100 and Cyber Intelligence Formal Training Unit courses providing cyber knowledge to non-cyber personnel and cyber position training to meet Cyber Mission Force requirements
+ Course Director/Primary Instructor for Intelligence Senior Enlisted Managers course graduating 160 senior leaders per year
+603RD AIR OPERATIONS CENTER, RAMSTEIN AIR BASE, GERMANY Jul 2017 – Jul 2020
+ISR Division Superintendent
+ Supervised data analysis of intelligence requirements, asset availability, and national intelligence priorities; led analysis and reporting for 6000 collection operations (25% of all 2020 Dept of Defense airborne ISR collection operations)
+ Directed $3.6M operational efficiency solution to technical challenge resulting in 98% increase to imagery download speed
+480TH ISR GROUP, FORT GORDON, GEORGIA July 2016 – July 2017
+Operations Superintendent
+ Directed network operations, including monitoring, troubleshooting, and optimizing network performance
+ Led squadron personnel through change management processes, including technology upgrades and transitions.
+ Coordinated network upgrades, patch management, and equipment replacement to maintain operational readiness
+ Managed $2M yearly operational budget, as well, as a key player in projecting future organization expenses
+ Increased customer service “Satisfaction” rate by 25% over 12 months by spearheading the Force Support team synchronizing 16 support agencies supporting 1,200 personnel
+U.S. AIR FORCE (VARIOUS LOCATIONS & ASSIGNMENTS) Jan 1998 – Jul 2016
+Signals & Network Intelligence Analyst
+ Computer Network Operations: Conducted global collection, exploitation, and signals analysis critical to cryptologic and cyber operations missions. Exploited and maintained access to worldwide networks
+ Developed and tested disaster recovery and business continuity plans to ensure minimal network disruptions during emergencies.
+ Project Manager for computer network operations unit activation, drafted mission statement, designed organization structure, established initial operations budget while serving as a Project Manager for squadron activation venture
+MILITARY TRAINING/CERTIFICATIONS
+Air Education & Training Command – Basic Instructor Course, United States Air Force, 2020
+Senior Noncommissioned Officer Academy (In Residence), United States Air Force, 2016
+Joint Cyber Analysis Course (JCAC), United States Air Force, 2013
+Noncommissioned Officer Academy (In Residence), United States Air Force, 2009
+Airman Leadership School (In Residence), United States Air Force, 2003
+Basic Network Intelligence Analyst Course, United States Air Force 1998

@@ -718,6 +718,45 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Get resume analysis by ID
+  app.get("/api/resume-analysis/:id", async (req, res) => {
+    try {
+      const analysisId = parseInt(req.params.id);
+      const analysis = await storage.getResumeAnalysisById(analysisId);
+      
+      if (!analysis) {
+        return res.status(404).json({ message: "Resume analysis not found" });
+      }
+
+      // Parse the JSON fields that are stored as strings in the database
+      const parsedAnalysis = {
+        id: analysis.id,
+        filename: analysis.filename,
+        extractedData: typeof analysis.extractedData === 'string' 
+          ? JSON.parse(analysis.extractedData) 
+          : analysis.extractedData,
+        recommendations: typeof analysis.careerRecommendations === 'string' 
+          ? JSON.parse(analysis.careerRecommendations) 
+          : analysis.careerRecommendations,
+        overallAssessment: typeof analysis.analysisMetadata === 'string' 
+          ? JSON.parse(analysis.analysisMetadata)?.overallAssessment || ''
+          : analysis.analysisMetadata?.overallAssessment || '',
+        strengthAreas: typeof analysis.analysisMetadata === 'string' 
+          ? JSON.parse(analysis.analysisMetadata)?.strengthAreas || []
+          : analysis.analysisMetadata?.strengthAreas || [],
+        developmentAreas: typeof analysis.analysisMetadata === 'string' 
+          ? JSON.parse(analysis.analysisMetadata)?.developmentAreas || []
+          : analysis.analysisMetadata?.developmentAreas || [],
+        createdAt: analysis.createdAt
+      };
+
+      res.json(parsedAnalysis);
+    } catch (error) {
+      console.error("Error fetching resume analysis:", error);
+      res.status(500).json({ message: "Failed to fetch resume analysis" });
+    }
+  });
+
   app.post("/api/work-role-match/:id", async (req, res) => {
     try {
       const workRoleId = parseInt(req.params.id);
