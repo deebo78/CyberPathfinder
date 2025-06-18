@@ -161,11 +161,17 @@ export default function CareerMapping() {
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      // Validate file type
-      if (file.type !== 'text/plain') {
+      // Validate file type - accept TXT, DOC, and DOCX files
+      const allowedTypes = [
+        'text/plain',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      
+      if (!allowedTypes.includes(file.type)) {
         toast({
           title: "Invalid File Type",
-          description: "Please upload a text (.txt) file. PDF support coming soon.",
+          description: "Please upload a DOC, DOCX, or TXT file.",
           variant: "destructive",
         });
         return;
