@@ -480,6 +480,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } else if (fileExtension === '.txt' || req.file.mimetype.startsWith('text/')) {
           console.log("Reading as text file");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
+        } else if (fileExtension === '.docx' || req.file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+          console.log("Processing DOCX file with mammoth");
+          const mammoth = await import('mammoth');
+          const result = await mammoth.extractRawText({ path: filePath });
+          extractedText = result.value;
+          if (result.messages && result.messages.length > 0) {
+            console.log("Document parsing warnings:", result.messages);
+          }
+        } else if (fileExtension === '.doc' || req.file.mimetype === 'application/msword') {
+          console.log("Processing DOC file with mammoth");
+          const mammoth = await import('mammoth');
+          const result = await mammoth.extractRawText({ path: filePath });
+          extractedText = result.value;
+          if (result.messages && result.messages.length > 0) {
+            console.log("Document parsing warnings:", result.messages);
+          }
         } else {
           console.log("Unsupported file format - trying as text fallback");
           extractedText = await fs.promises.readFile(filePath, 'utf-8');
@@ -510,13 +526,13 @@ export async function registerRoutes(app: Express): Promise<Server> {
         
         const result = {
           jobTitle,
-          jobDescription: extractedText,
+          extractedText: extractedText,
           filename: req.file.originalname
         };
         
         console.log("Sending response:", { 
           jobTitle: result.jobTitle,
-          descriptionLength: result.jobDescription.length,
+          descriptionLength: result.extractedText.length,
           filename: result.filename
         });
         

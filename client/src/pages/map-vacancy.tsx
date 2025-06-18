@@ -141,7 +141,12 @@ export default function MapVacancy() {
       return response.json();
     },
     onSuccess: (data) => {
+      // Fill the job description with extracted content
       setJobDescription(data.extractedText);
+      // If we extracted a job title, use it
+      if (data.jobTitle && data.jobTitle !== 'untitled') {
+        setJobTitle(data.jobTitle);
+      }
       setActiveTab("manual");
       setUploadedFile(null);
       toast({
@@ -561,7 +566,7 @@ export default function MapVacancy() {
                               <div className="flex items-center justify-between">
                                 <span className="text-sm font-medium">{level.title}</span>
                                 {level.isJobMatch && (
-                                  <Badge size="sm" variant="outline" className="bg-blue-100 text-blue-700">
+                                  <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
                                     Current Level
                                   </Badge>
                                 )}
