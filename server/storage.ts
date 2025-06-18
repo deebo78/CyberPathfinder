@@ -2,6 +2,7 @@ import {
   categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills,
   workRoleTasks, workRoleKnowledge, workRoleSkills, importHistory,
   careerTracks, careerLevels, careerPositions, certifications, careerLevelCertifications,
+  resumeAnalyses,
   type Category, type InsertCategory,
   type SpecialtyArea, type InsertSpecialtyArea,
   type WorkRole, type InsertWorkRole,
@@ -10,7 +11,8 @@ import {
   type Skill, type InsertSkill,
   type ImportHistory, type InsertImportHistory,
   type CareerTrack, type CareerLevel, type CareerPosition,
-  type Certification, type InsertCertification
+  type Certification, type InsertCertification,
+  type ResumeAnalysis, type InsertResumeAnalysis
 } from "@shared/schema";
 import { db } from "./db";
 import { eq, ilike, desc, count, sql, inArray } from "drizzle-orm";
@@ -93,6 +95,12 @@ export interface IStorage {
   getTracksByCertification(certificationId: number): Promise<any[]>;
   getCertificationsByCareerLevel(careerLevelId: number): Promise<any[]>;
   getCertificationsWithMappings(): Promise<any[]>;
+
+  // Resume Analysis
+  getResumeAnalyses(): Promise<ResumeAnalysis[]>;
+  getResumeAnalysisById(id: number): Promise<ResumeAnalysis | undefined>;
+  createResumeAnalysis(resumeAnalysis: InsertResumeAnalysis): Promise<ResumeAnalysis>;
+  deleteResumeAnalysis(id: number): Promise<boolean>;
 
 }
 

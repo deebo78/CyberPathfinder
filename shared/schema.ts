@@ -108,6 +108,17 @@ export const importHistory = pgTable("import_history", {
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Resume Analysis table for storing uploaded resume analyses
+export const resumeAnalyses = pgTable("resume_analyses", {
+  id: serial("id").primaryKey(),
+  filename: text("filename").notNull(),
+  originalText: text("original_text").notNull(),
+  extractedData: jsonb("extracted_data").notNull(), // Skills, experience, education, etc.
+  careerRecommendations: jsonb("career_recommendations").notNull(), // AI-generated recommendations
+  analysisMetadata: jsonb("analysis_metadata"), // Additional analysis data
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Career Tracks tables
 export const careerTracks = pgTable("career_tracks", {
   id: serial("id").primaryKey(),
@@ -369,6 +380,11 @@ export const insertCareerLevelCertificationSchema = createInsertSchema(careerLev
   createdAt: true,
 });
 
+export const insertResumeAnalysisSchema = createInsertSchema(resumeAnalyses).omit({
+  id: true,
+  createdAt: true,
+});
+
 // Types
 export type Category = typeof categories.$inferSelect;
 export type InsertCategory = z.infer<typeof insertCategorySchema>;
@@ -408,3 +424,6 @@ export type InsertCareerLevel = z.infer<typeof insertCareerLevelSchema>;
 
 export type CareerPosition = typeof careerPositions.$inferSelect;
 export type InsertCareerPosition = z.infer<typeof insertCareerPositionSchema>;
+
+export type ResumeAnalysis = typeof resumeAnalyses.$inferSelect;
+export type InsertResumeAnalysis = z.infer<typeof insertResumeAnalysisSchema>;
