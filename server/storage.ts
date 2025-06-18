@@ -532,6 +532,26 @@ export class DatabaseStorage implements IStorage {
     return result.rows;
   }
 
+  // Resume Analysis
+  async getResumeAnalyses(): Promise<ResumeAnalysis[]> {
+    return await db.select().from(resumeAnalyses).orderBy(desc(resumeAnalyses.createdAt));
+  }
+
+  async getResumeAnalysisById(id: number): Promise<ResumeAnalysis | undefined> {
+    const [analysis] = await db.select().from(resumeAnalyses).where(eq(resumeAnalyses.id, id));
+    return analysis || undefined;
+  }
+
+  async createResumeAnalysis(resumeAnalysis: InsertResumeAnalysis): Promise<ResumeAnalysis> {
+    const [created] = await db.insert(resumeAnalyses).values(resumeAnalysis).returning();
+    return created;
+  }
+
+  async deleteResumeAnalysis(id: number): Promise<boolean> {
+    const result = await db.delete(resumeAnalyses).where(eq(resumeAnalyses.id, id));
+    return (result.rowCount || 0) > 0;
+  }
+
 }
 
 export const storage = new DatabaseStorage();

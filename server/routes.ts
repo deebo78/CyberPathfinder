@@ -15,6 +15,8 @@ import {
 } from "@shared/schema";
 import { aiCareerMapper } from "./ai-career-mapper";
 import { aiVacancyMapper } from "./ai-vacancy-mapper";
+import { AIResumeAnalyzer } from "./ai-resume-analyzer";
+import fs from "fs";
 
 const upload = multer({ 
   dest: 'uploads/',
@@ -22,6 +24,8 @@ const upload = multer({
     fileSize: 10 * 1024 * 1024 // 10MB limit
   }
 });
+
+const resumeAnalyzer = new AIResumeAnalyzer();
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Statistics endpoint
@@ -643,6 +647,80 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error analyzing vacancy:", error);
       res.status(500).json({ message: "Failed to analyze job posting" });
+    }
+  });
+
+  // Resume Upload and Analysis API endpoint
+  app.post("/api/upload-resume", upload.single('resume'), async (req: MulterRequest, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: "No resume file uploaded" });
+      }
+
+      console.log("Processing uploaded resume:", req.file.originalname);
+      
+      let resumeText = "";
+      
+      // Parse different file types
+      if (req.file.mimetype === 'application/pdf') {
+        try {
+          const dataBuffer = fs.readFileSync(req.file.path);
+          const pdfData = await pdfParse(dataBuffer);
+          resumeText = pdfData.text;
+        } catch (pdfError) {
+          console.error("PDF parsing error:", pdfError);
+          fs.unlinkSync(req.file.path);
+          return res.status(400).json({ message: "Error parsing PDF file. Please ensure it's a valid PDF or try uploading a text file." });
+        }
+      } else if (req.file.mimetype === 'text/plain') {
+        resumeText = fs.readFileSync(req.file.path, 'utf-8');
+      } else {
+        // Clean up uploaded file
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ message: "Unsupported file type. Please upload PDF or TXT files only." });
+      }
+
+      if (!resumeText.trim()) {
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ message: "Could not extract text from the resume file" });
+      }
+
+      console.log("Extracted resume text length:", resumeText.length);
+      
+      // Analyze resume with AI
+      const analysis = await resumeAnalyzer.analyzeResume({
+        filename: req.file.originalname,
+        content: resumeText
+      });
+      
+      // Save analysis to database
+      const analysisId = await resumeAnalyzer.saveResumeAnalysis({
+        filename: req.file.originalname,
+        content: resumeText
+      }, analysis);
+      
+      console.log("Resume analysis completed, saved with ID:", analysisId);
+      
+      // Clean up uploaded file
+      fs.unlinkSync(req.file.path);
+      
+      res.json({
+        analysisId,
+        ...analysis
+      });
+      
+    } catch (error) {
+      // Clean up uploaded file on error
+      if (req.file) {
+        try {
+          fs.unlinkSync(req.file.path);
+        } catch (cleanupError) {
+          console.error("Error cleaning up file:", cleanupError);
+        }
+      }
+      
+      console.error("Error analyzing resume:", error);
+      res.status(500).json({ message: "Failed to analyze resume: " + (error as Error).message });
     }
   });
 
