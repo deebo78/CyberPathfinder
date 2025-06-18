@@ -227,8 +227,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
 
-  // Import History routes
-  app.get("/api/import-history", async (req, res) => {
+  // Import History routes (admin only)
+  app.get("/api/import-history", requireAdminAccess, async (req, res) => {
     try {
       const history = await storage.getImportHistory();
       res.json(history);
@@ -238,8 +238,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // NICE Framework automated import endpoint
-  app.post("/api/import/nice-framework", async (req, res) => {
+  // NICE Framework automated import endpoint (admin only)
+  app.post("/api/import/nice-framework", requireAdminAccess, async (req, res) => {
     try {
       const { NiceFrameworkImporter } = await import("./nice-importer");
       const importer = new NiceFrameworkImporter();
@@ -256,8 +256,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // File upload and import endpoint
-  app.post("/api/import", upload.single('file'), async (req: any, res) => {
+  // File upload and import endpoint (admin only)
+  app.post("/api/import", requireAdminAccess, upload.single('file'), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
