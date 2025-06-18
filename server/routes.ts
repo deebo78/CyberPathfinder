@@ -17,6 +17,7 @@ import { aiCareerMapper } from "./ai-career-mapper";
 import { aiVacancyMapper } from "./ai-vacancy-mapper";
 import { AIResumeAnalyzer } from "./ai-resume-analyzer";
 import fs from "fs";
+import mammoth from "mammoth";
 
 const upload = multer({ 
   dest: 'uploads/',
@@ -661,17 +662,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let resumeText = "";
       
-      // Parse different file types (PDF support will be added later)
+      // Parse different file types
       if (req.file.mimetype === 'text/plain') {
         resumeText = fs.readFileSync(req.file.path, 'utf-8');
       } else if (req.file.mimetype === 'application/pdf') {
-        // Clean up uploaded file
-        fs.unlinkSync(req.file.path);
-        return res.status(400).json({ message: "PDF support coming soon. Please upload text (.txt) files for now." });
+        // Handle PDF files
+        const dataBuffer = fs.readFileSync(req.file.path);
+        const pdfData = await pdfParse(dataBuffer);
+        resumeText = pdfData.text;
+      } else if (req.file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
+                 req.file.mimetype === 'application/msword') {
+        // Handle DOC/DOCX files
+        const result = await mammoth.extractRawText({ path: req.file.path });
+        resumeText = result.value;
       } else {
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
-        return res.status(400).json({ message: "Unsupported file type. Please upload TXT files only." });
+        return res.status(400).json({ message: "Unsupported file type. Please upload PDF, DOC, DOCX, or TXT files." });
       }
 
       if (!resumeText.trim()) {
