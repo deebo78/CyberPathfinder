@@ -606,7 +606,7 @@ export default function MapVacancy() {
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <AlertCircle className="h-5 w-5 text-yellow-600" />
-                      Job Posting Consistency Analysis
+                      NICE Framework Alignment
                       <Badge 
                         variant={analysis.roleConsistencyAnalysis.severityLevel === 'high' ? 'destructive' : 
                                 analysis.roleConsistencyAnalysis.severityLevel === 'medium' ? 'default' : 'secondary'}
@@ -616,7 +616,7 @@ export default function MapVacancy() {
                       </Badge>
                     </CardTitle>
                     <CardDescription>
-                      Analysis of internal consistency, role alignment, and improvement opportunities
+                      Quality assessment and alignment with NICE Framework standards
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-6">
