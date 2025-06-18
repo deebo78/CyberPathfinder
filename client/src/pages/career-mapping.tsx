@@ -531,122 +531,128 @@ export default function CareerMapping() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {analysis.recommendations.map((recommendation, index) => (
-                    <div key={index} className="border rounded-lg p-4 space-y-4">
-                      <div className="flex items-center justify-between">
-                        <h3 className="text-lg font-semibold">{recommendation.trackName}</h3>
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm text-muted-foreground">Match Score:</span>
+                  {analysis.recommendations && analysis.recommendations.length > 0 ? (
+                    analysis.recommendations.map((recommendation, index) => (
+                      <div key={index} className="border rounded-lg p-4 space-y-4">
+                        <div className="flex items-center justify-between">
+                          <h3 className="text-lg font-semibold">{recommendation.trackName}</h3>
                           <div className="flex items-center gap-2">
-                            <Progress 
-                              value={recommendation.matchScore} 
-                              className="w-20 h-2"
-                            />
-                            <span className="font-bold">{recommendation.matchScore}%</span>
+                            <span className="text-sm text-muted-foreground">Match Score:</span>
+                            <div className="flex items-center gap-2">
+                              <Progress 
+                                value={recommendation.matchScore} 
+                                className="w-20 h-2"
+                              />
+                              <span className="font-bold">{recommendation.matchScore}%</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <p className="text-muted-foreground">{recommendation.reasoning}</p>
+                        <p className="text-muted-foreground">{recommendation.reasoning}</p>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                        <div>
-                          <h4 className="font-medium mb-2">Recommended Level:</h4>
-                          <Badge variant="default">{recommendation.recommendedLevel}</Badge>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                          <div>
+                            <h4 className="font-medium mb-2">Recommended Level:</h4>
+                            <Badge variant="default">{recommendation.recommendedLevel}</Badge>
+                          </div>
+
+                          {recommendation.salaryRange && (
+                            <div>
+                              <h4 className="font-medium mb-2 flex items-center gap-1">
+                                <DollarSign className="h-4 w-4" />
+                                Salary Range:
+                              </h4>
+                              <p className="text-sm font-medium text-green-600">
+                                ${recommendation.salaryRange.min.toLocaleString()} - ${recommendation.salaryRange.max.toLocaleString()}
+                              </p>
+                            </div>
+                          )}
+
+                          {recommendation.timeToTransition && (
+                            <div>
+                              <h4 className="font-medium mb-2 flex items-center gap-1">
+                                <Clock className="h-4 w-4" />
+                                Transition Time:
+                              </h4>
+                              <p className="text-sm text-muted-foreground">
+                                {recommendation.timeToTransition}
+                              </p>
+                            </div>
+                          )}
+
+                          <div>
+                            <h4 className="font-medium mb-2">Relevant Skills:</h4>
+                            <div className="flex flex-wrap gap-1">
+                              {recommendation.relevantSkills?.slice(0, 3).map((skill, skillIndex) => (
+                                <Badge key={skillIndex} variant="secondary" className="text-xs">
+                                  {skill}
+                                </Badge>
+                              ))}
+                              {recommendation.relevantSkills && recommendation.relevantSkills.length > 3 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{recommendation.relevantSkills.length - 3} more
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
                         </div>
 
-                        {recommendation.salaryRange && (
-                          <div>
-                            <h4 className="font-medium mb-2 flex items-center gap-1">
-                              <DollarSign className="h-4 w-4" />
-                              Salary Range:
-                            </h4>
-                            <p className="text-sm font-medium text-green-600">
-                              ${recommendation.salaryRange.min.toLocaleString()} - ${recommendation.salaryRange.max.toLocaleString()}
-                            </p>
+                        {/* Gap Analysis Section - only for resume-based analysis */}
+                        {recommendation.gapAnalysis && (
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
+                            <div>
+                              <h4 className="font-medium mb-2 text-green-700">Your Strengths:</h4>
+                              <ul className="space-y-1">
+                                {recommendation.gapAnalysis.strengths?.map((strength, idx) => (
+                                  <li key={idx} className="text-sm text-green-600 flex items-start gap-1">
+                                    <span className="w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
+                                    {strength}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            
+                            <div>
+                              <h4 className="font-medium mb-2 text-orange-700">Skill Gaps:</h4>
+                              <ul className="space-y-1">
+                                {recommendation.gapAnalysis.gaps?.map((gap, idx) => (
+                                  <li key={idx} className="text-sm text-orange-600 flex items-start gap-1">
+                                    <span className="w-1 h-1 bg-orange-500 rounded-full mt-2 flex-shrink-0"></span>
+                                    {gap}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                            
+                            <div>
+                              <h4 className="font-medium mb-2 text-blue-700">Action Items:</h4>
+                              <ul className="space-y-1">
+                                {recommendation.gapAnalysis.recommendations?.map((rec, idx) => (
+                                  <li key={idx} className="text-sm text-blue-600 flex items-start gap-1">
+                                    <span className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
+                                    {rec}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
                           </div>
                         )}
 
-                        {recommendation.timeToTransition && (
-                          <div>
-                            <h4 className="font-medium mb-2 flex items-center gap-1">
-                              <Clock className="h-4 w-4" />
-                              Transition Time:
-                            </h4>
-                            <p className="text-sm text-muted-foreground">
-                              {recommendation.timeToTransition}
-                            </p>
-                          </div>
-                        )}
-
                         <div>
-                          <h4 className="font-medium mb-2">Relevant Skills:</h4>
-                          <div className="flex flex-wrap gap-1">
-                            {recommendation.relevantSkills.slice(0, 3).map((skill, skillIndex) => (
-                              <Badge key={skillIndex} variant="secondary" className="text-xs">
-                                {skill}
-                              </Badge>
+                          <h4 className="font-medium mb-2">Next Steps:</h4>
+                          <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                            {recommendation.nextSteps?.map((step, stepIndex) => (
+                              <li key={stepIndex}>{step}</li>
                             ))}
-                            {recommendation.relevantSkills.length > 3 && (
-                              <Badge variant="secondary" className="text-xs">
-                                +{recommendation.relevantSkills.length - 3} more
-                              </Badge>
-                            )}
-                          </div>
+                          </ul>
                         </div>
                       </div>
-
-                      {/* Gap Analysis Section - only for resume-based analysis */}
-                      {recommendation.gapAnalysis && (
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t">
-                          <div>
-                            <h4 className="font-medium mb-2 text-green-700">Your Strengths:</h4>
-                            <ul className="space-y-1">
-                              {recommendation.gapAnalysis.strengths.map((strength, idx) => (
-                                <li key={idx} className="text-sm text-green-600 flex items-start gap-1">
-                                  <span className="w-1 h-1 bg-green-500 rounded-full mt-2 flex-shrink-0"></span>
-                                  {strength}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium mb-2 text-orange-700">Skill Gaps:</h4>
-                            <ul className="space-y-1">
-                              {recommendation.gapAnalysis.gaps.map((gap, idx) => (
-                                <li key={idx} className="text-sm text-orange-600 flex items-start gap-1">
-                                  <span className="w-1 h-1 bg-orange-500 rounded-full mt-2 flex-shrink-0"></span>
-                                  {gap}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          
-                          <div>
-                            <h4 className="font-medium mb-2 text-blue-700">Action Items:</h4>
-                            <ul className="space-y-1">
-                              {recommendation.gapAnalysis.recommendations.map((rec, idx) => (
-                                <li key={idx} className="text-sm text-blue-600 flex items-start gap-1">
-                                  <span className="w-1 h-1 bg-blue-500 rounded-full mt-2 flex-shrink-0"></span>
-                                  {rec}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        </div>
-                      )}
-
-                      <div>
-                        <h4 className="font-medium mb-2">Next Steps:</h4>
-                        <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
-                          {recommendation.nextSteps.map((step, stepIndex) => (
-                            <li key={stepIndex}>{step}</li>
-                          ))}
-                        </ul>
-                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center text-muted-foreground py-8">
+                      <p>No career recommendations available. Please try uploading your resume again or use the manual profile form.</p>
                     </div>
-                  ))}
+                  )}
                 </CardContent>
               </Card>
             </>
