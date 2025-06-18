@@ -10,10 +10,11 @@ export function TopNavigation() {
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [location] = useLocation();
   
-  // Hide admin tools on main user-facing pages
+  // Only show admin tools to developers/admins with proper access
+  const isDeveloperMode = import.meta.env.VITE_ENABLE_ADMIN === 'true';
   const userFacingPages = ["/career-mapping", "/map-vacancy", "/career-tracks"];
   const isUserFacingPage = userFacingPages.some(page => location.startsWith(page));
-  const showAdminTools = !isUserFacingPage;
+  const showAdminTools = isDeveloperMode && !isUserFacingPage;
 
   return (
     <>
@@ -50,7 +51,7 @@ export function TopNavigation() {
                   </div>
                 </>
               )}
-              {!showAdminTools && (
+              {!showAdminTools && isDeveloperMode && (
                 <Link href="/admin">
                   <Button variant="outline">
                     <Settings className="w-4 h-4 mr-2" />

@@ -28,9 +28,18 @@ const upload = multer({
 
 const resumeAnalyzer = new AIResumeAnalyzer();
 
+// Middleware to check admin access
+function requireAdminAccess(req: Request, res: any, next: any) {
+  const isAdminEnabled = process.env.VITE_ENABLE_ADMIN === 'true';
+  if (!isAdminEnabled) {
+    return res.status(403).json({ message: "Admin access is disabled" });
+  }
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Statistics endpoint
-  app.get("/api/statistics", async (req, res) => {
+  // Statistics endpoint (admin only)
+  app.get("/api/statistics", requireAdminAccess, async (req, res) => {
     try {
       const stats = await storage.getStatistics();
       res.json(stats);
@@ -40,8 +49,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Search endpoint
-  app.get("/api/search", async (req, res) => {
+  // Search endpoint (admin only)
+  app.get("/api/search", requireAdminAccess, async (req, res) => {
     try {
       const { q } = req.query;
       if (!q || typeof q !== 'string') {
