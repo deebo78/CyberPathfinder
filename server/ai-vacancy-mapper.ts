@@ -183,24 +183,26 @@ RESPONSE FORMAT (JSON only):
   },
   "matchSummary": "Overall analysis summary",
   "roleConsistencyAnalysis": {
-    "summary": "Brief assessment of job posting consistency and clarity",
+    "summary": "Detailed assessment of job posting consistency, clarity, and alignment with industry standards",
     "conflictsFound": [
-      "Specific conflicts between requirements (e.g., contradictory experience levels)",
-      "Misaligned responsibilities and qualifications"
+      "SPECIFIC conflicts with exact details (e.g., 'Requires 10+ years experience but labeled as entry-level position')",
+      "SPECIFIC misalignments between job title, responsibilities, and qualifications",
+      "SPECIFIC contradictions in technical requirements or certifications"
     ],
     "unrealisticExpectations": [
-      "Role scope too broad (combining multiple specialized positions)",
-      "Experience requirements unrealistic for stated level",
-      "Skill combinations that rarely exist in single candidates"
+      "SPECIFIC examples of scope creep (e.g., 'Combines network security, application development, and project management - typically 3 separate roles')",
+      "SPECIFIC skill combinations that are market-unrealistic (e.g., 'Expert-level skills in 8+ unrelated technologies')",
+      "SPECIFIC experience mismatches (e.g., 'Junior role requiring senior-level decision-making authority')"
     ],
     "redundantOrDuplicateRequirements": [
-      "Requirements repeated in multiple sections",
-      "Overlapping qualifications that could be consolidated"
+      "SPECIFIC instances of repetition with examples (e.g., 'Security clearance mentioned in 3 different sections')",
+      "SPECIFIC overlapping skills that could be consolidated (e.g., 'Lists both Python programming and Python scripting separately')"
     ],
     "recommendedImprovements": [
-      "Specific actionable suggestions to improve clarity",
-      "Ways to better align with NICE Framework standards",
-      "Recommendations to increase candidate pool and diversity"
+      "SPECIFIC, actionable suggestions with clear implementation steps",
+      "SPECIFIC NICE Framework alignments (e.g., 'Align with Systems Administration (IO-WRL-005) by focusing on...')",
+      "SPECIFIC ways to improve candidate attraction (e.g., 'Split into two roles: Security Analyst and Network Administrator')",
+      "SPECIFIC language improvements (e.g., 'Replace vague requirement X with specific skill Y')"
     ],
     "overallConsistencyScore": 85,
     "severityLevel": "low",
@@ -222,7 +224,54 @@ CRITICAL SCORING INSTRUCTIONS:
 4. BE HONEST: If no significant issues exist, score should be 90+ with minimal/no issues listed
 5. AVOID CONTRADICTIONS: Don't flag "unrealistic expectations" with an 85% score - this is illogical
 
-Important: Ensure roleConsistencyAnalysis provides genuine value by identifying real inconsistencies. If the job posting is well-written and consistent, indicate this clearly rather than manufacturing issues.`;
+DETAILED ANALYSIS GUIDELINES:
+
+1. CONFLICT DETECTION - Look for these specific issues:
+   - Title vs. Responsibility Mismatch: "Senior" title but entry-level tasks
+   - Experience Contradictions: Different experience requirements in different sections
+   - Certification Conflicts: Mixing beginner and expert certifications
+   - Salary vs. Requirements: Compensation doesn't match skill/experience level
+   - Technical Impossibilities: Requiring expertise in conflicting technologies
+
+2. UNREALISTIC EXPECTATIONS - Identify these patterns:
+   - Role Consolidation: Combining 2+ distinct job functions
+   - Technology Overload: Requiring expertise in 5+ unrelated tech stacks
+   - Timeline Unrealism: "Immediate expert proficiency" in complex systems
+   - Market Scarcity: Skills combinations that exist in <1% of candidates
+   - Level Inflation: Junior roles with senior responsibilities
+
+3. REDUNDANCY DETECTION - Find these duplications:
+   - Skill Repetition: Same requirement listed multiple ways
+   - Experience Double-Counting: Similar experience requirements restated
+   - Education Overlap: Multiple ways of stating same degree requirement
+   - Certification Redundancy: Related certs listed separately when one covers the other
+
+4. IMPROVEMENT RECOMMENDATIONS - Provide specific actions:
+   - "Split into [Role A] focusing on [X] and [Role B] focusing on [Y]"
+   - "Reduce required technologies from [list] to core 3: [specific techs]"
+   - "Align salary range with [specific market data/level]"
+   - "Replace '[vague requirement]' with '[specific, measurable requirement]'"
+   - "Map to NICE Framework role [Code] by emphasizing [specific tasks/skills]"
+
+5. MARKET INTELLIGENCE - Add context about:
+   - Typical salary ranges for the identified role and experience level
+   - Common skill gaps in the current cybersecurity market
+   - Certification pathways that align with career progression
+   - Geographic considerations if location affects requirements
+
+6. NICE FRAMEWORK ALIGNMENT - Enhance recommendations with:
+   - Specific NICE work role codes that best match the position
+   - Tasks from the NICE Framework that should be emphasized
+   - Knowledge, Skills, and Abilities (KSAs) that are missing but should be included
+   - Career progression pathway within the NICE Framework
+
+7. CANDIDATE ATTRACTION IMPROVEMENTS - Suggest:
+   - How to make the role more appealing to diverse candidates
+   - Ways to clarify growth opportunities and career development
+   - Benefits or perks that would strengthen the posting
+   - Language adjustments to improve inclusivity
+
+Important: If the job posting is genuinely well-written and consistent, state this clearly with a 90+ score rather than manufacturing issues. Be honest about quality and provide value-added insights even for well-written postings.`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
