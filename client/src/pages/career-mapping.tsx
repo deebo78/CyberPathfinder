@@ -403,7 +403,7 @@ export default function CareerMapping() {
               </CardTitle>
               <CardDescription>
                 Upload your resume for instant AI-powered career analysis and personalized recommendations.
-                Supports PDF, DOC, DOCX, and TXT files.
+                Supports DOC, DOCX, and TXT files.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -418,12 +418,12 @@ export default function CareerMapping() {
                         Choose your resume file
                       </h3>
                       <p className="text-gray-600 mb-4">
-                        Upload your resume in PDF, DOC, DOCX, or TXT format
+                        Upload your resume in DOC, DOCX, or TXT format
                       </p>
                       <input
                         ref={fileInputRef}
                         type="file"
-                        accept=".txt,.pdf,.doc,.docx"
+                        accept=".txt,.doc,.docx"
                         onChange={handleFileSelect}
                         className="hidden"
                       />
@@ -437,7 +437,7 @@ export default function CareerMapping() {
                       </Button>
                     </div>
                     <div className="text-sm text-gray-500">
-                      Supported: PDF, DOC, DOCX, TXT files up to 10MB
+                      Supported: DOC, DOCX, TXT files up to 10MB
                     </div>
                   </div>
                 </div>

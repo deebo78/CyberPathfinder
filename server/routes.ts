@@ -666,15 +666,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (req.file.mimetype === 'text/plain') {
         resumeText = fs.readFileSync(req.file.path, 'utf-8');
       } else if (req.file.mimetype === 'application/pdf') {
-        // Handle PDF files
-        const dataBuffer = fs.readFileSync(req.file.path);
-        const pdfData = await pdfParse(dataBuffer);
-        resumeText = pdfData.text;
+        // Handle PDF files - temporarily disabled due to parsing issues
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ message: "PDF support is temporarily unavailable. Please upload DOC, DOCX, or TXT files." });
       } else if (req.file.mimetype === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || 
                  req.file.mimetype === 'application/msword') {
         // Handle DOC/DOCX files
-        const result = await mammoth.extractRawText({ path: req.file.path });
-        resumeText = result.value;
+        try {
+          const result = await mammoth.extractRawText({ path: req.file.path });
+          resumeText = result.value;
+          if (result.messages && result.messages.length > 0) {
+            console.log("Document parsing warnings:", result.messages);
+          }
+        } catch (docError) {
+          console.error("DOC/DOCX parsing error:", docError);
+          fs.unlinkSync(req.file.path);
+          return res.status(400).json({ message: "Unable to parse Word document. Please try saving as TXT format." });
+        }
       } else {
         // Clean up uploaded file
         fs.unlinkSync(req.file.path);
