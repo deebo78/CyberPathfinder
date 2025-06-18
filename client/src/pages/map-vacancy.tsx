@@ -593,25 +593,54 @@ export default function MapVacancy() {
                       <p className="text-sm text-gray-700 mb-3">{analysis.roleConsistencyAnalysis.summary}</p>
                       
                       {analysis.roleConsistencyAnalysis.scoringBreakdown && (
-                        <div className="bg-gray-50 border border-gray-200 rounded p-3">
-                          <h5 className="text-xs font-semibold text-gray-700 mb-2">Scoring Breakdown</h5>
-                          <div className="text-xs text-gray-600 space-y-1">
-                            <div className="flex justify-between">
-                              <span>Base Score:</span>
-                              <span className="font-medium">{analysis.roleConsistencyAnalysis.scoringBreakdown.baseScore}</span>
+                        <div className="bg-white border border-gray-200 rounded p-4">
+                          <h5 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                            <TrendingUp className="h-4 w-4" />
+                            Detailed Scoring Methodology
+                          </h5>
+                          
+                          {/* Scoring Scale Explanation */}
+                          <div className="mb-4 p-3 bg-blue-50 rounded-lg">
+                            <h6 className="text-xs font-semibold text-blue-800 mb-2">Quality Scoring Scale</h6>
+                            <div className="grid grid-cols-2 gap-2 text-xs">
+                              <div className="text-green-700">90-100: Excellent</div>
+                              <div className="text-blue-700">75-89: Good</div>
+                              <div className="text-yellow-700">60-74: Fair</div>
+                              <div className="text-red-700">40-59: Poor</div>
                             </div>
+                          </div>
+
+                          {/* Mathematical Breakdown */}
+                          <div className="text-sm text-gray-700 space-y-2">
+                            <div className="flex justify-between items-center py-2 border-b border-gray-100">
+                              <span className="font-medium">Starting Base Score:</span>
+                              <span className="font-bold text-green-600">+{analysis.roleConsistencyAnalysis.scoringBreakdown.baseScore}</span>
+                            </div>
+                            
                             {analysis.roleConsistencyAnalysis.scoringBreakdown.deductions.map((deduction, i) => (
-                              <div key={i} className="border-l-2 border-red-200 pl-2 py-1">
-                                <div className="flex justify-between">
-                                  <span className="text-red-600">{deduction.category}:</span>
-                                  <span className="font-medium text-red-600">{deduction.points}</span>
+                              <div key={i} className="border-l-4 border-red-300 pl-3 py-2 bg-red-50 rounded-r">
+                                <div className="flex justify-between items-start">
+                                  <div className="flex-1">
+                                    <span className="font-medium text-red-700">{deduction.category}</span>
+                                    <p className="text-xs text-red-600 mt-1">{deduction.reason}</p>
+                                  </div>
+                                  <span className="font-bold text-red-600 ml-2">{deduction.points}</span>
                                 </div>
-                                <p className="text-xs text-gray-500 mt-1">{deduction.reason}</p>
                               </div>
                             ))}
-                            <div className="border-t pt-1 flex justify-between font-semibold">
-                              <span>Final Score:</span>
-                              <span>{analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore}%</span>
+                            
+                            <div className="border-t-2 border-gray-300 pt-3 mt-3">
+                              <div className="flex justify-between items-center">
+                                <span className="font-bold text-gray-800">Final Quality Score:</span>
+                                <span className={`font-bold text-lg ${
+                                  analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore >= 90 ? 'text-green-600' :
+                                  analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore >= 75 ? 'text-blue-600' :
+                                  analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore >= 60 ? 'text-yellow-600' :
+                                  'text-red-600'
+                                }`}>
+                                  {analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore}%
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>

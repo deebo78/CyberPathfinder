@@ -218,33 +218,44 @@ RESPONSE FORMAT (JSON only):
 }
 
 CRITICAL SCORING INSTRUCTIONS:
-1. BE MATHEMATICALLY CONSISTENT: If you identify unrealistic expectations or conflicts, the score MUST reflect this (typically 60-74 for fair, 40-59 for poor)
-2. MATCH SEVERITY TO SCORE: high severity = <60, medium = 60-79, low = 80+
-3. EXPLAIN DEDUCTIONS: Show exact point deductions in scoringBreakdown
-4. BE HONEST: If no significant issues exist, score should be 90+ with minimal/no issues listed
-5. AVOID CONTRADICTIONS: Don't flag "unrealistic expectations" with an 85% score - this is illogical
+1. BE MATHEMATICALLY PRECISE: Apply exact deductions based on specific issues found
+2. MANDATORY DEDUCTION AMOUNTS:
+   - Skills Overload (5+ unrelated techs): -15 to -25 points
+   - Role Scope Conflicts (mixing roles): -15 to -25 points  
+   - Experience Contradictions: -10 to -20 points
+   - Certification Confusion: -10 to -20 points
+   - Redundant Requirements: -5 to -10 points
+   - Compensation Misalignment: -10 to -15 points
+3. SCORE RANGES ARE STRICT:
+   - 90-100: Excellent (only 1-2 minor issues, total deductions ≤10)
+   - 75-89: Good (moderate issues, total deductions 11-25)
+   - 60-74: Fair (significant problems, total deductions 26-40)
+   - 40-59: Poor (major issues, total deductions 41-60)
+   - <40: Critical problems (total deductions >60)
+4. IF YOU FIND NO REAL ISSUES: Score 95-100, don't manufacture problems
+5. IF YOU FIND MAJOR ISSUES: Score must be <75, with specific examples
 
 DETAILED ANALYSIS GUIDELINES:
 
 1. CONFLICT DETECTION - Look for these specific issues:
-   - Title vs. Responsibility Mismatch: "Senior" title but entry-level tasks
-   - Experience Contradictions: Different experience requirements in different sections
-   - Certification Conflicts: Mixing beginner and expert certifications
-   - Salary vs. Requirements: Compensation doesn't match skill/experience level
-   - Technical Impossibilities: Requiring expertise in conflicting technologies
+   - Title vs. Responsibility Mismatch: "Senior" title but entry-level tasks (-15 points)
+   - Experience Contradictions: "2 years required" in one section, "5+ years" in another (-10 points)
+   - Certification Conflicts: Mixing CISSP (expert) with CompTIA A+ (entry-level) (-15 points)
+   - Salary vs. Requirements: $45K salary for senior architect role (-15 points)
+   - Technical Impossibilities: Expert in both Windows and Linux kernel development (-20 points)
 
 2. UNREALISTIC EXPECTATIONS - Identify these patterns:
-   - Role Consolidation: Combining 2+ distinct job functions
-   - Technology Overload: Requiring expertise in 5+ unrelated tech stacks
-   - Timeline Unrealism: "Immediate expert proficiency" in complex systems
-   - Market Scarcity: Skills combinations that exist in <1% of candidates
-   - Level Inflation: Junior roles with senior responsibilities
+   - Role Consolidation: "Security Analyst + Network Admin + Project Manager" (-20 points)
+   - Technology Overload: Expert in Python, Java, C++, JavaScript, Go, Rust (-25 points)
+   - Timeline Unrealism: "5+ years DevSecOps experience" for $50K entry role (-15 points)
+   - Market Scarcity: Expert-level skills in 8+ unrelated technologies (-25 points)
+   - Level Inflation: "Junior analyst" managing enterprise security budget (-20 points)
 
 3. REDUNDANCY DETECTION - Find these duplications:
-   - Skill Repetition: Same requirement listed multiple ways
-   - Experience Double-Counting: Similar experience requirements restated
-   - Education Overlap: Multiple ways of stating same degree requirement
-   - Certification Redundancy: Related certs listed separately when one covers the other
+   - Skill Repetition: "Python programming" and "Python scripting" listed separately (-5 points)
+   - Experience Double-Counting: "3 years IT experience" and "3+ years technical experience" (-5 points)
+   - Education Overlap: "Computer Science degree" and "Bachelor's in CS" listed separately (-5 points)
+   - Certification Redundancy: Requiring both CISSP and CISM when one covers the other (-10 points)
 
 4. IMPROVEMENT RECOMMENDATIONS - Provide specific actions:
    - "Split into [Role A] focusing on [X] and [Role B] focusing on [Y]"
@@ -271,7 +282,33 @@ DETAILED ANALYSIS GUIDELINES:
    - Benefits or perks that would strengthen the posting
    - Language adjustments to improve inclusivity
 
-Important: If the job posting is genuinely well-written and consistent, state this clearly with a 90+ score rather than manufacturing issues. Be honest about quality and provide value-added insights even for well-written postings.`;
+EXAMPLES OF SCORING IN ACTION:
+
+EXCELLENT JOB POSTING (95 points):
+- Clear role definition aligned with single NICE work role
+- Realistic experience requirements matching stated level
+- Logical skill progression and related technologies
+- Minor deduction: -5 for missing preferred certifications
+
+GOOD JOB POSTING (80 points):
+- Generally well-structured with clear requirements
+- Some technology breadth but manageable scope
+- Minor inconsistencies in experience language
+- Deductions: -10 redundant requirements, -10 slightly broad tech scope
+
+FAIR JOB POSTING (65 points):
+- Mixed responsibilities from multiple distinct roles
+- Experience requirements somewhat unrealistic for level
+- Several redundant or overlapping requirements
+- Deductions: -15 role mixing, -10 experience mismatch, -10 redundancy
+
+POOR JOB POSTING (45 points):
+- Combines 3+ distinct job functions inappropriately
+- Major experience contradictions between sections
+- Unrealistic technology expertise expectations
+- Deductions: -25 role consolidation, -15 contradictions, -15 tech overload
+
+BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generous with broken job postings.`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
