@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -632,10 +633,187 @@ export default function MapVacancy() {
                       
                       {analysis.roleConsistencyAnalysis.scoringBreakdown && (
                         <div className="bg-white border border-gray-200 rounded p-4">
-                          <h5 className="text-sm font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                            <TrendingUp className="h-4 w-4" />
-                            Detailed Scoring Methodology
-                          </h5>
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                              <TrendingUp className="h-4 w-4" />
+                              Detailed Scoring Methodology
+                            </h5>
+                            <Dialog>
+                              <DialogTrigger asChild>
+                                <Button variant="outline" size="sm" className="flex items-center gap-1">
+                                  <BookOpen className="h-3 w-3" />
+                                  Scoring Standards
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+                                <DialogHeader>
+                                  <DialogTitle>Complete Scoring Standards Reference</DialogTitle>
+                                  <DialogDescription>
+                                    Comprehensive guide to job posting quality evaluation and point deductions
+                                  </DialogDescription>
+                                </DialogHeader>
+                                <div className="space-y-6 py-4">
+                                  
+                                  {/* Quality Scale */}
+                                  <div>
+                                    <h3 className="text-lg font-semibold mb-3">Quality Scale</h3>
+                                    <div className="grid grid-cols-2 gap-3">
+                                      <div className="p-3 bg-green-50 border border-green-200 rounded">
+                                        <div className="font-medium text-green-800">90-100: Excellent</div>
+                                        <div className="text-sm text-green-600">Minimal issues, best practices followed</div>
+                                      </div>
+                                      <div className="p-3 bg-blue-50 border border-blue-200 rounded">
+                                        <div className="font-medium text-blue-800">75-89: Good</div>
+                                        <div className="text-sm text-blue-600">Minor improvements needed</div>
+                                      </div>
+                                      <div className="p-3 bg-yellow-50 border border-yellow-200 rounded">
+                                        <div className="font-medium text-yellow-800">60-74: Fair</div>
+                                        <div className="text-sm text-yellow-600">Moderate issues requiring attention</div>
+                                      </div>
+                                      <div className="p-3 bg-red-50 border border-red-200 rounded">
+                                        <div className="font-medium text-red-800">40-59: Poor</div>
+                                        <div className="text-sm text-red-600">Significant problems affecting candidates</div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Deduction Categories */}
+                                  <div>
+                                    <h3 className="text-lg font-semibold mb-4">Deduction Categories</h3>
+                                    <div className="space-y-4">
+                                      
+                                      {/* Skills Overload */}
+                                      <div className="border border-gray-200 rounded-lg p-4">
+                                        <h4 className="font-semibold text-red-700 mb-2">Skills Overload (-15 to -25 points)</h4>
+                                        <p className="text-sm text-gray-600 mb-2">Requiring unrealistic breadth of technical expertise</p>
+                                        <div className="space-y-1 text-sm">
+                                          <div>• 5+ unrelated technology stacks: <span className="font-medium">-15 points</span></div>
+                                          <div>• 7+ unrelated technology stacks: <span className="font-medium">-20 points</span></div>
+                                          <div>• 10+ unrelated technology stacks: <span className="font-medium">-25 points</span></div>
+                                        </div>
+                                        <div className="mt-2 p-2 bg-red-50 rounded text-xs">
+                                          <div className="text-red-600">❌ "Expert in Python, Java, C++, JavaScript, Go, Rust" (-25 points)</div>
+                                          <div className="text-green-600">✅ "Expert in Python with familiarity in Java or C++" (no deduction)</div>
+                                        </div>
+                                      </div>
+
+                                      {/* Role Scope Conflicts */}
+                                      <div className="border border-gray-200 rounded-lg p-4">
+                                        <h4 className="font-semibold text-red-700 mb-2">Role Scope Conflicts (-15 to -25 points)</h4>
+                                        <p className="text-sm text-gray-600 mb-2">Combining responsibilities from multiple distinct job functions</p>
+                                        <div className="space-y-1 text-sm">
+                                          <div>• 2 distinct roles combined: <span className="font-medium">-15 points</span></div>
+                                          <div>• 3+ distinct roles combined: <span className="font-medium">-20 points</span></div>
+                                          <div>• Management + technical expert roles: <span className="font-medium">-25 points</span></div>
+                                        </div>
+                                        <div className="mt-2 p-2 bg-red-50 rounded text-xs">
+                                          <div className="text-red-600">❌ "Security Analyst + Network Admin + Project Manager" (-20 points)</div>
+                                          <div className="text-green-600">✅ "Security Analyst with network monitoring responsibilities" (no deduction)</div>
+                                        </div>
+                                      </div>
+
+                                      {/* Experience Misalignment */}
+                                      <div className="border border-gray-200 rounded-lg p-4">
+                                        <h4 className="font-semibold text-red-700 mb-2">Experience Misalignment (-10 to -20 points)</h4>
+                                        <p className="text-sm text-gray-600 mb-2">Experience requirements inconsistent with stated level</p>
+                                        <div className="space-y-1 text-sm">
+                                          <div>• Minor contradiction (1-2 year variance): <span className="font-medium">-10 points</span></div>
+                                          <div>• Major contradiction (3-5 year variance): <span className="font-medium">-15 points</span></div>
+                                          <div>• Extreme contradiction (5+ year variance): <span className="font-medium">-20 points</span></div>
+                                        </div>
+                                      </div>
+
+                                      {/* Compensation Misalignment */}
+                                      <div className="border border-gray-200 rounded-lg p-4">
+                                        <h4 className="font-semibold text-red-700 mb-2">Compensation Misalignment (-10 to -15 points)</h4>
+                                        <p className="text-sm text-gray-600 mb-2">Salary ranges inconsistent with market rates</p>
+                                        <div className="overflow-x-auto">
+                                          <table className="w-full text-xs border-collapse">
+                                            <thead>
+                                              <tr className="border-b">
+                                                <th className="text-left p-2">Level</th>
+                                                <th className="text-left p-2">Market Range</th>
+                                                <th className="text-left p-2">Undercompensation</th>
+                                                <th className="text-left p-2">Deduction</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody className="text-xs">
+                                              <tr className="border-b">
+                                                <td className="p-2">Entry-Level</td>
+                                                <td className="p-2">$45K-75K</td>
+                                                <td className="p-2">&lt;$40K</td>
+                                                <td className="p-2 font-medium">-15 points</td>
+                                              </tr>
+                                              <tr className="border-b">
+                                                <td className="p-2">Mid-Level</td>
+                                                <td className="p-2">$75K-110K</td>
+                                                <td className="p-2">&lt;$65K</td>
+                                                <td className="p-2 font-medium">-10 points</td>
+                                              </tr>
+                                              <tr className="border-b">
+                                                <td className="p-2">Senior-Level</td>
+                                                <td className="p-2">$110K-150K</td>
+                                                <td className="p-2">&lt;$100K</td>
+                                                <td className="p-2 font-medium">-10 points</td>
+                                              </tr>
+                                              <tr className="border-b">
+                                                <td className="p-2">Expert-Level</td>
+                                                <td className="p-2">$150K-200K</td>
+                                                <td className="p-2">&lt;$140K</td>
+                                                <td className="p-2 font-medium">-10 points</td>
+                                              </tr>
+                                              <tr>
+                                                <td className="p-2">Executive-Level</td>
+                                                <td className="p-2">$200K+</td>
+                                                <td className="p-2">&lt;$180K</td>
+                                                <td className="p-2 font-medium">-15 points</td>
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+
+                                      {/* Other Categories */}
+                                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="border border-gray-200 rounded-lg p-4">
+                                          <h4 className="font-semibold text-red-700 mb-2">Certification Confusion (-10 to -20 points)</h4>
+                                          <div className="space-y-1 text-xs">
+                                            <div>• Entry + intermediate certs: -10 points</div>
+                                            <div>• Entry + expert certs: -15 points</div>
+                                            <div>• Conflicting cert paths: -20 points</div>
+                                          </div>
+                                        </div>
+                                        
+                                        <div className="border border-gray-200 rounded-lg p-4">
+                                          <h4 className="font-semibold text-red-700 mb-2">Redundant Requirements (-5 to -10 points)</h4>
+                                          <div className="space-y-1 text-xs">
+                                            <div>• Minor redundancy (2-3 instances): -5 points</div>
+                                            <div>• Moderate redundancy (4-5 instances): -7 points</div>
+                                            <div>• Major redundancy (6+ instances): -10 points</div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  {/* Calculation Process */}
+                                  <div>
+                                    <h3 className="text-lg font-semibold mb-3">Calculation Process</h3>
+                                    <div className="bg-gray-50 p-4 rounded-lg">
+                                      <ol className="list-decimal list-inside space-y-2 text-sm">
+                                        <li>Start with base score of 100 points</li>
+                                        <li>Apply deductions based on identified issues</li>
+                                        <li>Add any applicable NICE Framework alignment bonuses</li>
+                                        <li>Validate final score against severity indicators</li>
+                                        <li>Generate specific improvement recommendations</li>
+                                      </ol>
+                                    </div>
+                                  </div>
+
+                                </div>
+                              </DialogContent>
+                            </Dialog>
+                          </div>
                           
                           {/* Scoring Scale Explanation */}
                           <div className="mb-4 p-3 bg-blue-50 rounded-lg">
