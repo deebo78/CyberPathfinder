@@ -80,6 +80,9 @@ export default function MapVacancy() {
   const [jobDescription, setJobDescription] = useState("");
   const [requiredQualifications, setRequiredQualifications] = useState("");
   const [preferredQualifications, setPreferredQualifications] = useState("");
+  const [salaryMin, setSalaryMin] = useState("");
+  const [salaryMax, setSalaryMax] = useState("");
+  const [location, setLocation] = useState("");
 
   const [analysis, setAnalysis] = useState<VacancyAnalysis | null>(null);
   const { toast } = useToast();
@@ -136,6 +139,9 @@ export default function MapVacancy() {
       jobDescription,
       requiredQualifications,
       preferredQualifications,
+      salaryMin: salaryMin ? parseInt(salaryMin) : null,
+      salaryMax: salaryMax ? parseInt(salaryMax) : null,
+      location,
     });
   };
 
@@ -214,7 +220,39 @@ export default function MapVacancy() {
                 />
               </div>
 
+              {/* Salary Range Fields */}
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="salaryMin">Minimum Salary ($)</Label>
+                  <Input
+                    id="salaryMin"
+                    type="number"
+                    value={salaryMin}
+                    onChange={(e) => setSalaryMin(e.target.value)}
+                    placeholder="e.g., 75000"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="salaryMax">Maximum Salary ($)</Label>
+                  <Input
+                    id="salaryMax"
+                    type="number"
+                    value={salaryMax}
+                    onChange={(e) => setSalaryMax(e.target.value)}
+                    placeholder="e.g., 95000"
+                  />
+                </div>
+              </div>
 
+              <div>
+                <Label htmlFor="location">Location</Label>
+                <Input
+                  id="location"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="e.g., New York, NY or Remote"
+                />
+              </div>
 
               <Button
                 onClick={handleAnalyze}

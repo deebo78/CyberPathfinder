@@ -6,6 +6,9 @@ interface JobPosting {
   jobDescription: string;
   requiredQualifications?: string;
   preferredQualifications?: string;
+  salaryMin?: number | null;
+  salaryMax?: number | null;
+  location?: string;
 }
 
 interface WorkRoleMatch {
@@ -101,6 +104,8 @@ Title: ${jobPosting.jobTitle}
 Description: ${jobPosting.jobDescription}
 Required Qualifications: ${jobPosting.requiredQualifications || 'Not specified'}
 Preferred Qualifications: ${jobPosting.preferredQualifications || 'Not specified'}
+Salary Range: ${jobPosting.salaryMin && jobPosting.salaryMax ? `$${jobPosting.salaryMin.toLocaleString()} - $${jobPosting.salaryMax.toLocaleString()}` : 'Not specified'}
+Location: ${jobPosting.location || 'Not specified'}
 
 AVAILABLE NICE WORK ROLES:
 ${JSON.stringify(workRolesSummary, null, 2)}
