@@ -627,7 +627,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
         jobTitle: z.string(),
         jobDescription: z.string(),
         requiredQualifications: z.string().optional(),
-        preferredQualifications: z.string().optional()
+        preferredQualifications: z.string().optional(),
+        salaryMin: z.number().nullable().optional(),
+        salaryMax: z.number().nullable().optional(),
+        location: z.string().optional()
       });
 
       const jobPosting = vacancySchema.parse(req.body);

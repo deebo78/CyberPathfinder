@@ -128,11 +128,13 @@ CONSISTENCY ANALYSIS CRITERIA & SCORING:
 - Certification Confusion: Mixing entry-level and expert certifications (-10 to -20 points)
 - Skills Overload: Unrealistic breadth of technical skills (-15 to -25 points)
 - Compensation Misalignment: Salary ranges inconsistent with experience/responsibility (-10 to -15 points)
+  * NO DEDUCTION if salary range is provided and within market ranges
   * Entry-Level: $45K-75K typical, <$40K = major undercompensation (-15 points)
   * Mid-Level: $75K-110K typical, <$65K = undercompensation (-10 points)  
   * Senior-Level: $110K-150K typical, <$100K = undercompensation (-10 points)
   * Expert-Level: $150K-200K typical, <$140K = undercompensation (-10 points)
   * Executive-Level: $200K+ typical, <$180K = undercompensation (-15 points)
+  * Missing salary information: -10 points (only if no salary range provided)
 - Redundant Requirements: Duplicate or overlapping qualifications (-5 to -10 points)
 
 SCORING METHODOLOGY:
@@ -317,6 +319,12 @@ POOR JOB POSTING (45 points):
 - Major experience contradictions between sections
 - Unrealistic technology expertise expectations
 - Deductions: -25 role consolidation, -15 contradictions, -15 tech overload
+
+CRITICAL COMPENSATION LOGIC:
+- If salary range is provided (not "Not specified"), DO NOT deduct points for missing salary
+- Only apply compensation misalignment deductions if salary is provided BUT below market rates
+- If location is provided (not "Not specified"), DO NOT deduct points for missing location
+- Evaluate provided salary against experience level benchmarks
 
 BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generous with broken job postings.`;
 
