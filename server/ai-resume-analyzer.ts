@@ -113,7 +113,9 @@ export class AIResumeAnalyzer {
       }));
 
       const prompt = `
-You are an expert Cybersecurity Career Advisor and Resume Analyst with deep knowledge of the NICE Framework. Analyze this resume thoroughly and provide comprehensive career guidance.
+You are an expert Cybersecurity Career Advisor and Resume Analyst with deep knowledge of the NICE Framework. Analyze this resume thoroughly and provide comprehensive, gender-neutral career guidance.
+
+IMPORTANT: Use gender-neutral language throughout your analysis. Refer to the candidate as "the candidate," "they," or "them" regardless of the name or any perceived gender indicators.
 
 RESUME CONTENT:
 ${resumeData.content}
@@ -136,20 +138,20 @@ ANALYSIS REQUIREMENTS:
    - Determine experience level (entry/mid/senior/expert/executive)
 
 2. CAREER TRACK MATCHING:
-   - Match to top 3-5 most suitable career tracks
-   - Calculate match scores (0-100) based on skills, experience, interests
+   - Match the candidate to top 3-5 most suitable career tracks
+   - Calculate match scores (0-100) based on their skills, experience, interests
    - Provide detailed reasoning for each match
    - Recommend appropriate career level within each track
-   - Identify skill gaps and development areas
+   - Identify their skill gaps and development areas
    - Suggest realistic salary ranges
    - Estimate transition timeline
 
 3. COMPREHENSIVE ASSESSMENT:
-   - Overall professional assessment
-   - Key strength areas
-   - Development opportunities
-   - Strategic next steps
-   - Career advancement roadmap
+   - Overall professional assessment of the candidate
+   - Their key strength areas
+   - Their development opportunities
+   - Strategic next steps for their career
+   - Career advancement roadmap tailored to their profile
 
 CAREER LEVEL DEFINITIONS:
 - Entry (0-2 years): New to cybersecurity, foundational skills
@@ -171,6 +173,12 @@ SALARY BENCHMARKS (USD):
 - Senior: $110K-150K
 - Expert: $150K-200K+
 - Executive: $200K-300K+
+
+LANGUAGE GUIDELINES:
+- Use "the candidate," "they," "them," "their" throughout
+- Avoid gendered assumptions based on names
+- Focus on skills and qualifications objectively
+- Use inclusive, professional language
 
 Respond with detailed JSON analysis following this structure:
 {

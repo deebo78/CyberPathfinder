@@ -130,6 +130,7 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Resume Upload Feature**: Added comprehensive resume upload and AI analysis functionality to Career Mapping section
 - **Enhanced Career Analysis**: Implemented detailed gap analysis, salary projections, and transition timelines for resume-based recommendations
 - **Multi-Modal Input**: Career Mapping now supports both manual profile entry and resume file upload for career assessment
+- **Gender-Neutral AI**: Updated resume analysis prompts to use inclusive, gender-neutral language throughout all recommendations
 
 ### January 16, 2025 - UI/UX Improvements
 - **Category Organization**: Reorganized 19 career tracks into 7 logical categories (Defensive Operations, Offensive Security, etc.)
