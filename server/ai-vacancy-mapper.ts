@@ -128,6 +128,11 @@ CONSISTENCY ANALYSIS CRITERIA & SCORING:
 - Certification Confusion: Mixing entry-level and expert certifications (-10 to -20 points)
 - Skills Overload: Unrealistic breadth of technical skills (-15 to -25 points)
 - Compensation Misalignment: Salary ranges inconsistent with experience/responsibility (-10 to -15 points)
+  * Entry-Level: $45K-75K typical, <$40K = major undercompensation (-15 points)
+  * Mid-Level: $75K-110K typical, <$65K = undercompensation (-10 points)  
+  * Senior-Level: $110K-150K typical, <$100K = undercompensation (-10 points)
+  * Expert-Level: $150K-200K typical, <$140K = undercompensation (-10 points)
+  * Executive-Level: $200K+ typical, <$180K = undercompensation (-15 points)
 - Redundant Requirements: Duplicate or overlapping qualifications (-5 to -10 points)
 
 SCORING METHODOLOGY:

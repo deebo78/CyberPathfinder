@@ -124,6 +124,8 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Token Limit Protection**: Prevented AI analysis failures from oversized content uploads
 - **Transparent Scoring System**: Added detailed scoring breakdown showing base scores, point deductions, and calculation methodology
 - **Mathematical Consistency**: Implemented validation to prevent contradictory scores (e.g., high scores with severe issues)
+- **Salary Range Integration**: Added salary min/max and location fields to eliminate false compensation deduction penalties
+- **Market Intelligence**: Enhanced AI with specific salary benchmarks by experience level for precise compensation analysis
 
 ### January 16, 2025 - UI/UX Improvements
 - **Category Organization**: Reorganized 19 career tracks into 7 logical categories (Defensive Operations, Offensive Security, etc.)
