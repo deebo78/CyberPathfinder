@@ -56,7 +56,7 @@ interface CareerAnalysis {
 
 export default function CareerMapping() {
   const [analysis, setAnalysis] = useState<CareerAnalysis | null>(null);
-  const [activeTab, setActiveTab] = useState("profile");
+  const [activeTab, setActiveTab] = useState("upload");
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
