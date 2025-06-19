@@ -110,7 +110,7 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 
 ## Recent Changes
 
-### June 19, 2025 - Advanced Resume Validation & Credibility Assessment System
+### June 19, 2025 - Advanced Resume Validation & Credibility Assessment System (MVP Complete)
 - **Timeline Consistency Analysis**: Enhanced AI to detect impossible chronological claims like 15+ years experience starting 2009 vs 2020 degree completion
 - **Credential Authority Validation**: System flags expired certifications (CISSP expired 2018) being used to claim current training authority
 - **Future Expertise Detection**: Identifies "in-progress" certifications claimed as current competencies (CMMC CCP vs audit claims)
@@ -119,6 +119,8 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Smart Recommendation Adjustment**: Career suggestions factor credibility scores, reducing levels and confidence for problematic resumes
 - **Intelligent Validation Fallback**: Text analysis creates structured validation findings when AI doesn't generate proper assessment
 - **Enhanced Database Storage**: Analysis metadata includes complete validation findings for persistent credibility tracking and historical analysis
+- **Salary Disclaimer Addition**: Added "Based on national averages" disclaimer to all salary range displays for transparency
+- **MVP Status**: Platform now ready for business and individual use with comprehensive validation and career guidance capabilities
 
 ### January 16, 2025 - Map Vacancy Feature Enhancement
 - **Role Consistency Analysis**: Added comprehensive job posting analysis that identifies conflicts, unrealistic expectations, and redundant requirements
