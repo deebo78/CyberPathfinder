@@ -1,0 +1,43 @@
+Sarah Johnson
+Cybersecurity Engineer
+Email: sarah.johnson@email.com
+Phone: (555) 123-4567
+
+PROFESSIONAL EXPERIENCE
+
+Cybersecurity Engineer II (April 2021 - Present)
+Lockshield Technologies, Remote
+• Implemented endpoint security solutions and vulnerability management
+• Conducted penetration testing and security assessments
+• Developed Azure security policies and CI/CD pipeline security
+
+IT Security Analyst (June 2015 - August 2021)
+CyberGuard Solutions, Florida
+• Managed SIEM deployment and monitoring
+• Performed network security assessments
+• Azure Security Engineer responsibilities 2021-2022
+
+EDUCATION
+
+Associate of Science in Cybersecurity (May 2022)
+Valencia College, Orlando, FL
+GPA: 3.8/4.0
+
+Bachelor of Science in Information Technology (In Progress, Expected 2024)
+University of Central Florida, Orlando, FL
+Current GPA: 3.7/4.0
+
+CERTIFICATIONS
+
+• OSCP (Offensive Security Certified Professional) - 2020
+• AWS Certified Security – Specialty - 2018
+• Security+ (CompTIA) - 2024
+• Azure Security Engineer Associate - Pending (Exam scheduled 2025)
+
+TECHNICAL SKILLS
+
+• Penetration Testing: Metasploit, Nmap, Burp Suite
+• Cloud Security: AWS, Azure (hands-on experience since 2021)
+• SIEM: Splunk, QRadar, Elastic Stack
+• Scripting: Python, PowerShell, Bash
+• Vulnerability Management: Nessus, OpenVAS, Qualys

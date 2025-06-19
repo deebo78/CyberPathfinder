@@ -245,6 +245,21 @@ CRITICAL VALIDATION EXAMPLES TO DETECT:
    - CMMC expertise claims + CMMC CCP exam listed as future/in-progress
    - Training others in areas where personal certification is incomplete
 
+5. Certification Progression Logic Violations:
+   - OSCP in 2020 but Security+ not until 2024 (advanced before foundational)
+   - AWS Security Specialty in 2018 before any formal education or work experience
+   - Specialized certifications without supporting educational or professional context
+
+6. Work Timeline and Education Conflicts:
+   - Mid-level engineer since 2021 but Associate degree completed 2022
+   - Bachelor's degree still in progress but claiming years of professional experience
+   - Job overlap issues (multiple positions with conflicting date ranges)
+
+7. Skills vs Certification Misalignment:
+   - Azure Security Engineer work 2021-2022 but Azure certification pending 2025
+   - Claims of hands-on expertise without supporting certifications
+   - Professional roles requiring certifications that candidate doesn't possess
+
 SCORING IMPACT FOR VALIDATION ISSUES:
 - Critical issues (timeline impossible): Reduce credibility score by 40-50 points
 - High severity (major inconsistencies): Reduce by 25-35 points  
@@ -342,6 +357,11 @@ SPECIFIC CHECKS REQUIRED:
 - Check if technical expertise claims match certification acquisition timelines
 - Detect "in-progress" or future certifications listed as current competencies
 - Validate years of experience against biographical timeline consistency
+- Flag advanced certifications acquired before foundational ones (e.g., OSCP before Security+)
+- Check for job overlap periods that need clarification
+- Verify certification dates against education and work timeline logic
+- Identify skills claimed without supporting certifications or vice versa
+- Detect mid-level roles claimed before completing relevant education
 
 MANDATORY VALIDATION OUTPUT STRUCTURE:
 
@@ -429,28 +449,68 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
           credibilityScore -= 30;
         }
         
-        // Check for certification timeline vs experience claims
-        if (resumeText.includes('2009') && resumeText.includes('2024')) {
+        // Check for certification progression logic violations
+        if ((resumeText.includes('oscp') && resumeText.includes('2020')) && 
+            (resumeText.includes('security+') && resumeText.includes('2024'))) {
           issues.push({
             type: "certification_timeline",
             severity: "high",
-            description: "Advanced technical roles predate basic industry certifications",
-            evidence: "Red team operations 2009-2012 but Security+ not acquired until 2024",
-            impact: "Questions validity of early specialized cybersecurity experience"
+            description: "Advanced penetration testing certification acquired before foundational security certification",
+            evidence: "OSCP in 2020 but Security+ not until 2024",
+            impact: "Unusual certification progression suggests potential timeline inconsistency"
           });
           credibilityScore -= 25;
         }
-        
-        // Check for future expertise claims
-        if (resumeText.includes('in progress') && (resumeText.includes('audit') || resumeText.includes('cmmc'))) {
+
+        // Check for work-education timeline conflicts
+        if ((resumeText.includes('2021') && resumeText.includes('engineer')) && 
+            (resumeText.includes('2022') && resumeText.includes('associate'))) {
+          issues.push({
+            type: "education_experience_mismatch",
+            severity: "high",
+            description: "Professional engineering role claimed before completing relevant education",
+            evidence: "Mid-level engineer since 2021 but Associate degree completed 2022",
+            impact: "Questions qualifications for professional engineering responsibilities"
+          });
+          credibilityScore -= 30;
+        }
+
+        // Check for early certification without context
+        if (resumeText.includes('2018') && resumeText.includes('aws') && 
+            assessmentLower.includes('before') || assessmentLower.includes('earliest')) {
+          issues.push({
+            type: "certification_timeline",
+            severity: "medium",
+            description: "Advanced cloud certification acquired before professional context",
+            evidence: "AWS Security Specialty in 2018 before formal education or work roles",
+            impact: "Difficult to validate without supporting professional background"
+          });
+          credibilityScore -= 20;
+        }
+
+        // Check for skills vs certification misalignment
+        if ((resumeText.includes('azure') && resumeText.includes('engineer')) &&
+            (resumeText.includes('pending') || resumeText.includes('2025'))) {
           issues.push({
             type: "credential_authority",
             severity: "medium",
-            description: "Claiming current expertise in areas where certification is incomplete",
-            evidence: "CMMC CCP listed as 'In Progress' while claiming to conduct CMMC audits",
-            impact: "Cannot provide authoritative CMMC services without completed certification"
+            description: "Professional Azure work without supporting certification",
+            evidence: "Azure Security Engineer work 2021-2022 but certification pending 2025",
+            impact: "Professional expertise claims lack official validation"
           });
-          credibilityScore -= 20;
+          credibilityScore -= 15;
+        }
+
+        // Check for job overlap issues
+        if (resumeText.includes('april 2021') && resumeText.includes('august 2021')) {
+          issues.push({
+            type: "experience_level_mismatch",
+            severity: "low",
+            description: "Potential job overlap requiring clarification",
+            evidence: "Current job since April 2021 with previous job ending August 2021",
+            impact: "Timeline overlap may need verification"
+          });
+          credibilityScore -= 10;
         }
         
         analysis.validationFindings = {
