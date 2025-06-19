@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, User, Target, Award, BookOpen, TrendingUp, Upload, FileText, DollarSign, MapPin, Clock } from "lucide-react";
+import { Loader2, User, Target, Award, BookOpen, TrendingUp, Upload, FileText, DollarSign, MapPin, Clock, AlertTriangle } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -515,6 +515,117 @@ export default function CareerMapping() {
                   <p className="text-muted-foreground">{analysis.overallAssessment}</p>
                 </CardContent>
               </Card>
+
+              {/* Credibility Assessment Section */}
+              {analysis.validationFindings && (
+                <Card className={`border-2 ${
+                  analysis.validationFindings.overallCredibilityScore < 60 
+                    ? 'border-red-200 bg-red-50' 
+                    : analysis.validationFindings.overallCredibilityScore < 80 
+                    ? 'border-yellow-200 bg-yellow-50' 
+                    : 'border-green-200 bg-green-50'
+                }`}>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <AlertTriangle className={`h-5 w-5 ${
+                        analysis.validationFindings.overallCredibilityScore < 60 
+                          ? 'text-red-600' 
+                          : analysis.validationFindings.overallCredibilityScore < 80 
+                          ? 'text-yellow-600' 
+                          : 'text-green-600'
+                      }`} />
+                      Resume Credibility Assessment
+                    </CardTitle>
+                    <CardDescription>
+                      Timeline consistency and credential verification analysis
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex items-center justify-between p-3 bg-white rounded-lg">
+                      <span className="font-medium">Overall Credibility Score:</span>
+                      <div className="flex items-center gap-2">
+                        <Progress 
+                          value={analysis.validationFindings.overallCredibilityScore} 
+                          className="w-24 h-2"
+                        />
+                        <span className={`font-bold ${
+                          analysis.validationFindings.overallCredibilityScore < 60 
+                            ? 'text-red-600' 
+                            : analysis.validationFindings.overallCredibilityScore < 80 
+                            ? 'text-yellow-600' 
+                            : 'text-green-600'
+                        }`}>
+                          {analysis.validationFindings.overallCredibilityScore}/100
+                        </span>
+                      </div>
+                    </div>
+
+                    {analysis.validationFindings.timelineConsistency?.issues && 
+                     analysis.validationFindings.timelineConsistency.issues.length > 0 && (
+                      <div>
+                        <h4 className="font-medium mb-3 text-red-700">Timeline & Credential Concerns:</h4>
+                        <div className="space-y-3">
+                          {analysis.validationFindings.timelineConsistency.issues.map((issue, index) => (
+                            <div key={index} className="bg-white border border-red-200 rounded-lg p-4">
+                              <div className="flex items-start gap-3">
+                                <div className={`mt-1 w-3 h-3 rounded-full flex-shrink-0 ${
+                                  issue.severity === 'critical' ? 'bg-red-600' :
+                                  issue.severity === 'high' ? 'bg-red-500' :
+                                  issue.severity === 'medium' ? 'bg-yellow-500' : 'bg-yellow-400'
+                                }`}></div>
+                                <div className="flex-1">
+                                  <div className="flex items-center gap-2 mb-1">
+                                    <span className="text-sm font-medium capitalize">
+                                      {issue.severity} Priority
+                                    </span>
+                                    <Badge variant="outline" className="text-xs">
+                                      {issue.type.replace(/_/g, ' ')}
+                                    </Badge>
+                                  </div>
+                                  <p className="text-sm text-gray-700 mb-2">{issue.description}</p>
+                                  {issue.evidence && (
+                                    <p className="text-xs text-gray-600 bg-gray-50 p-2 rounded">
+                                      <strong>Evidence:</strong> {issue.evidence}
+                                    </p>
+                                  )}
+                                  {issue.impact && (
+                                    <p className="text-xs text-red-600 mt-1">
+                                      <strong>Impact:</strong> {issue.impact}
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {analysis.validationFindings.recommendationAdjustments?.levelDowngrade && (
+                      <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <h4 className="font-medium text-yellow-800 mb-2">Recommendation Adjustments Made:</h4>
+                        <ul className="text-sm text-yellow-700 space-y-1">
+                          <li>• Career level recommendations have been adjusted due to credibility concerns</li>
+                          <li>• Match confidence reduced by {analysis.validationFindings.recommendationAdjustments.confidenceReduction || 0}%</li>
+                          {analysis.validationFindings.recommendationAdjustments.additionalVerificationNeeded && 
+                           analysis.validationFindings.recommendationAdjustments.additionalVerificationNeeded.length > 0 && (
+                            <li>• Additional verification needed for: {analysis.validationFindings.recommendationAdjustments.additionalVerificationNeeded.join(', ')}</li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    {analysis.validationFindings.overallCredibilityScore >= 80 && (
+                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                        <p className="text-sm text-green-700">
+                          Resume shows strong timeline consistency and credential verification. 
+                          Career recommendations are based on validated experience and qualifications.
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <Card>

@@ -133,11 +133,30 @@ ANALYSIS REQUIREMENTS:
    - Work experience with years calculation
    - Education background
    - Technical and cybersecurity skills
-   - Certifications with status
+   - Certifications with status and dates
    - Notable projects
    - Determine experience level (entry/mid/senior/expert/executive)
 
-2. CAREER TRACK MATCHING:
+2. CRITICAL VALIDATION CHECKS:
+   **Timeline Consistency Analysis**:
+   - Cross-reference education dates with claimed work experience
+   - Flag if senior positions predate relevant education by significant margins
+   - Validate certification dates against claimed expertise in those areas
+   - Check if training/teaching roles align with current certification status
+   - Identify gaps between claimed experience start dates and educational milestones
+
+   **Credential Verification**:
+   - Flag expired certifications that don't support current training claims
+   - Validate if technical experience timeline matches certification acquisition
+   - Check for "future" or "in-progress" certifications claimed as current expertise
+   - Assess if advanced roles match educational background timing
+
+   **Experience Level Validation**:
+   - Verify if claimed seniority aligns with education completion dates
+   - Flag director/executive claims without supporting educational foundation
+   - Cross-check years of experience against biographical timeline consistency
+
+3. CAREER TRACK MATCHING:
    - Match the candidate to top 3-5 most suitable career tracks
    - Calculate match scores (0-100) based on their skills, experience, interests
    - Provide detailed reasoning for each match
@@ -145,13 +164,15 @@ ANALYSIS REQUIREMENTS:
    - Identify their skill gaps and development areas
    - Suggest realistic salary ranges
    - Estimate transition timeline
+   - **FACTOR IN VALIDATION ISSUES**: Reduce recommendations if timeline inconsistencies exist
 
-3. COMPREHENSIVE ASSESSMENT:
+4. COMPREHENSIVE ASSESSMENT:
    - Overall professional assessment of the candidate
    - Their key strength areas
    - Their development opportunities
    - Strategic next steps for their career
    - Career advancement roadmap tailored to their profile
+   - **INCLUDE CREDIBILITY ASSESSMENT**: Flag any timeline or credential inconsistencies
 
 CAREER LEVEL DEFINITIONS:
 - Entry (0-2 years): New to cybersecurity, foundational skills
@@ -174,11 +195,39 @@ SALARY BENCHMARKS (USD):
 - Expert: $150K-200K+
 - Executive: $200K-300K+
 
+CRITICAL VALIDATION EXAMPLES TO DETECT:
+1. Education vs Experience Timeline Issues:
+   - Undergraduate degree in 2020 + claimed 15+ years senior experience starting 2009
+   - Director roles in 2012 without prior relevant degree completion
+   - Graduate studies starting 2025 but claiming advanced expertise for years prior
+
+2. Certification Authority vs Current Status:
+   - Expired CISSP since 2018 + current claims of developing CISSP training
+   - Teaching/training roles without valid current certifications
+   - Claims of expertise in areas where certifications lapsed
+
+3. Skills vs Certification Timeline:
+   - Red team/STIG experience 2009-2012 + Security+ not acquired until 2024
+   - Advanced technical roles predating foundational certifications by years
+   - Specialized expertise claims before acquiring basic industry certifications
+
+4. Future Expertise Claims:
+   - "In Progress" certifications listed as current competencies
+   - CMMC expertise claims + CMMC CCP exam listed as future/in-progress
+   - Training others in areas where personal certification is incomplete
+
+SCORING IMPACT FOR VALIDATION ISSUES:
+- Critical issues (timeline impossible): Reduce credibility score by 40-50 points
+- High severity (major inconsistencies): Reduce by 25-35 points  
+- Medium severity (questionable timelines): Reduce by 15-25 points
+- Low severity (minor discrepancies): Reduce by 5-10 points
+
 LANGUAGE GUIDELINES:
 - Use "the candidate," "they," "them," "their" throughout
 - Avoid gendered assumptions based on names
 - Focus on skills and qualifications objectively
 - Use inclusive, professional language
+- Be direct about validation concerns - credibility matters for hiring decisions
 
 Respond with detailed JSON analysis following this structure:
 {
@@ -190,6 +239,31 @@ Respond with detailed JSON analysis following this structure:
     "certifications": [...],
     "projects": [...],
     "experienceLevel": "..."
+  },
+  "validationFindings": {
+    "overallCredibilityScore": number (0-100),
+    "timelineConsistency": {
+      "isConsistent": boolean,
+      "issues": [
+        {
+          "type": "education_experience_mismatch" | "certification_timeline" | "experience_level_mismatch" | "credential_authority",
+          "severity": "low" | "medium" | "high" | "critical",
+          "description": "...",
+          "evidence": "...",
+          "impact": "..."
+        }
+      ]
+    },
+    "credentialVerification": {
+      "expiredCertificationConcerns": [...],
+      "futureExpertiseClaims": [...],
+      "trainingAuthorityMismatches": [...]
+    },
+    "recommendationAdjustments": {
+      "levelDowngrade": boolean,
+      "confidenceReduction": number,
+      "additionalVerificationNeeded": [...]
+    }
   },
   "careerRecommendations": [
     {
