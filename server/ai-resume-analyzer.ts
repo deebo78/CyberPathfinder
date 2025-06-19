@@ -293,7 +293,15 @@ Respond with detailed JSON analysis following this structure:
   "nextSteps": [...]
 }
 
-Be thorough, specific, and actionable in your recommendations. Focus on realistic career progression based on current qualifications.`;
+CRITICAL VALIDATION INSTRUCTIONS:
+- Start with credibility score of 100 and deduct points for each inconsistency
+- Flag ANY timeline impossibilities as "critical" severity
+- Question expired certifications used for training claims
+- Verify experience claims against educational timeline
+- Identify future/in-progress certs claimed as current expertise
+- Adjust all recommendations based on credibility findings
+
+Be thorough, specific, and actionable in your recommendations. Focus on realistic career progression based on VALIDATED qualifications only.`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user

@@ -47,11 +47,38 @@ interface CareerRecommendation {
   timeToTransition?: string;
 }
 
+interface ValidationIssue {
+  type: 'education_experience_mismatch' | 'certification_timeline' | 'experience_level_mismatch' | 'credential_authority';
+  severity: 'low' | 'medium' | 'high' | 'critical';
+  description: string;
+  evidence: string;
+  impact: string;
+}
+
+interface ValidationFindings {
+  overallCredibilityScore: number;
+  timelineConsistency: {
+    isConsistent: boolean;
+    issues: ValidationIssue[];
+  };
+  credentialVerification: {
+    expiredCertificationConcerns: string[];
+    futureExpertiseClaims: string[];
+    trainingAuthorityMismatches: string[];
+  };
+  recommendationAdjustments: {
+    levelDowngrade: boolean;
+    confidenceReduction: number;
+    additionalVerificationNeeded: string[];
+  };
+}
+
 interface CareerAnalysis {
   recommendations: CareerRecommendation[];
   overallAssessment: string;
   strengthAreas: string[];
   developmentAreas: string[];
+  validationFindings?: ValidationFindings;
 }
 
 export default function CareerMapping() {

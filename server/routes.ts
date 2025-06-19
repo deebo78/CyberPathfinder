@@ -778,15 +778,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
         recommendations: typeof analysis.careerRecommendations === 'string' 
           ? JSON.parse(analysis.careerRecommendations) 
           : analysis.careerRecommendations,
-        overallAssessment: typeof analysis.analysisMetadata === 'string' 
-          ? JSON.parse(analysis.analysisMetadata)?.overallAssessment || ''
-          : analysis.analysisMetadata?.overallAssessment || '',
-        strengthAreas: typeof analysis.analysisMetadata === 'string' 
-          ? JSON.parse(analysis.analysisMetadata)?.strengthAreas || []
-          : analysis.analysisMetadata?.strengthAreas || [],
-        developmentAreas: typeof analysis.analysisMetadata === 'string' 
-          ? JSON.parse(analysis.analysisMetadata)?.developmentAreas || []
-          : analysis.analysisMetadata?.developmentAreas || [],
+        overallAssessment: (() => {
+          try {
+            const metadata = typeof analysis.analysisMetadata === 'string' 
+              ? JSON.parse(analysis.analysisMetadata) 
+              : analysis.analysisMetadata || {};
+            return metadata.overallAssessment || '';
+          } catch {
+            return '';
+          }
+        })(),
+        strengthAreas: (() => {
+          try {
+            const metadata = typeof analysis.analysisMetadata === 'string' 
+              ? JSON.parse(analysis.analysisMetadata) 
+              : analysis.analysisMetadata || {};
+            return metadata.strengthAreas || [];
+          } catch {
+            return [];
+          }
+        })(),
+        developmentAreas: (() => {
+          try {
+            const metadata = typeof analysis.analysisMetadata === 'string' 
+              ? JSON.parse(analysis.analysisMetadata) 
+              : analysis.analysisMetadata || {};
+            return metadata.developmentAreas || [];
+          } catch {
+            return [];
+          }
+        })(),
+        validationFindings: (() => {
+          try {
+            const metadata = typeof analysis.analysisMetadata === 'string' 
+              ? JSON.parse(analysis.analysisMetadata) 
+              : analysis.analysisMetadata || {};
+            return metadata.validationFindings || null;
+          } catch {
+            return null;
+          }
+        })(),
         createdAt: analysis.createdAt
       };
 
