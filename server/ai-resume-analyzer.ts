@@ -293,15 +293,36 @@ Respond with detailed JSON analysis following this structure:
   "nextSteps": [...]
 }
 
-CRITICAL VALIDATION INSTRUCTIONS:
-- Start with credibility score of 100 and deduct points for each inconsistency
-- Flag ANY timeline impossibilities as "critical" severity
-- Question expired certifications used for training claims
-- Verify experience claims against educational timeline
-- Identify future/in-progress certs claimed as current expertise
-- Adjust all recommendations based on credibility findings
+CRITICAL VALIDATION REQUIREMENTS:
 
-Be thorough, specific, and actionable in your recommendations. Focus on realistic career progression based on VALIDATED qualifications only.`;
+You MUST perform comprehensive credibility validation and include a "validationFindings" object in your response. This is mandatory for all resume analyses.
+
+VALIDATION PROCESS:
+1. Start with credibility score of 100
+2. Examine ALL timeline relationships between education, certifications, and experience
+3. Deduct points for each inconsistency found:
+   - Critical inconsistencies (impossible timelines): -40 to -50 points
+   - High severity (major mismatches): -25 to -35 points  
+   - Medium severity (questionable claims): -15 to -25 points
+   - Low severity (minor discrepancies): -5 to -10 points
+
+SPECIFIC CHECKS REQUIRED:
+- Cross-reference graduation dates with claimed work experience start dates
+- Flag senior positions that predate relevant education completion
+- Identify expired certifications being used to claim current training authority
+- Check if technical expertise claims match certification acquisition timelines
+- Detect "in-progress" or future certifications listed as current competencies
+- Validate years of experience against biographical timeline consistency
+
+MANDATORY OUTPUT: Your JSON response MUST include a complete "validationFindings" object with:
+- overallCredibilityScore (0-100)
+- timelineConsistency with isConsistent boolean and detailed issues array
+- credentialVerification with specific concerns
+- recommendationAdjustments based on credibility findings
+
+Adjust ALL career recommendations based on validation findings. Lower credibility scores should result in more conservative level recommendations.
+
+Be thorough, specific, and actionable. Focus on realistic career progression based on VALIDATED qualifications only.`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
