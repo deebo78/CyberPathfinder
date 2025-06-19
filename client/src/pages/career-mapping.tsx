@@ -672,7 +672,7 @@ export default function CareerMapping() {
                                 Salary Range:
                               </h4>
                               <p className="text-sm font-medium text-green-600">
-                                ${recommendation.salaryRange.min.toLocaleString()} - ${recommendation.salaryRange.max.toLocaleString()}
+                                ${recommendation.salaryRange.min}K - ${recommendation.salaryRange.max}K
                               </p>
                             </div>
                           )}

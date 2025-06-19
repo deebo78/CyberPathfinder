@@ -211,12 +211,18 @@ SCORING CRITERIA:
 - Education background (15%)
 - Career trajectory (10%)
 
-SALARY BENCHMARKS (USD):
-- Entry: $45K-75K
-- Mid: $75K-110K  
-- Senior: $110K-150K
-- Expert: $150K-200K+
-- Executive: $200K-300K+
+SALARY BENCHMARKS (USD) - 2025 Market Rates:
+- Entry (0-2 years): $60K-85K
+- Mid (3-5 years): $85K-130K  
+- Senior (6-10 years): $130K-180K
+- Expert (11+ years): $180K-250K+
+- Executive: $250K-400K+
+
+IMPORTANT: Assess experience level based on ACTUAL years of experience and demonstrated capabilities, not just job titles. Many candidates inflate titles - focus on:
+- Years of hands-on technical experience
+- Depth of technical skills and certifications
+- Leadership and project management responsibilities
+- Specialized expertise and industry recognition
 
 CRITICAL VALIDATION EXAMPLES TO DETECT:
 1. Education vs Experience Timeline Issues:
