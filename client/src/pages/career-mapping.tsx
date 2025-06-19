@@ -582,10 +582,10 @@ export default function CareerMapping() {
                   <CardHeader className="pb-3">
                     <CardTitle className="text-base flex items-center gap-2">
                       <AlertTriangle className="h-4 w-4 text-amber-600" />
-                      Timeline Verification Notes
+                      Verification Notes
                     </CardTitle>
                     <CardDescription className="text-sm">
-                      Some timeline discrepancies were detected. These may be honest mistakes that can be clarified.
+                      Some discrepancies were detected in the resume. These may be honest mistakes that can be clarified.
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="space-y-3">
