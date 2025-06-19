@@ -674,6 +674,9 @@ export default function CareerMapping() {
                               <p className="text-sm font-medium text-green-600">
                                 ${recommendation.salaryRange.min}K - ${recommendation.salaryRange.max}K
                               </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Based on national averages
+                              </p>
                             </div>
                           )}
 
