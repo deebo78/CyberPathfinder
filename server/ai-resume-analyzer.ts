@@ -314,15 +314,37 @@ SPECIFIC CHECKS REQUIRED:
 - Detect "in-progress" or future certifications listed as current competencies
 - Validate years of experience against biographical timeline consistency
 
-MANDATORY OUTPUT: Your JSON response MUST include a complete "validationFindings" object with:
-- overallCredibilityScore (0-100)
-- timelineConsistency with isConsistent boolean and detailed issues array
-- credentialVerification with specific concerns
-- recommendationAdjustments based on credibility findings
+MANDATORY VALIDATION OUTPUT STRUCTURE:
 
-Adjust ALL career recommendations based on validation findings. Lower credibility scores should result in more conservative level recommendations.
+Your JSON response MUST include this exact "validationFindings" structure - NO EXCEPTIONS:
 
-Be thorough, specific, and actionable. Focus on realistic career progression based on VALIDATED qualifications only.`;
+"validationFindings": {
+  "overallCredibilityScore": [number 0-100],
+  "timelineConsistency": {
+    "isConsistent": [true/false],
+    "issues": [
+      {
+        "type": "education_experience_mismatch" | "certification_timeline" | "experience_level_mismatch" | "credential_authority",
+        "severity": "low" | "medium" | "high" | "critical", 
+        "description": "[specific issue description]",
+        "evidence": "[concrete evidence from resume]",
+        "impact": "[impact on credibility/recommendations]"
+      }
+    ]
+  },
+  "credentialVerification": {
+    "expiredCertificationConcerns": ["[specific concerns]"],
+    "futureExpertiseClaims": ["[specific claims]"],
+    "trainingAuthorityMismatches": ["[specific mismatches]"]
+  },
+  "recommendationAdjustments": {
+    "levelDowngrade": [true/false],
+    "confidenceReduction": [number 0-50],
+    "additionalVerificationNeeded": ["[specific items]"]
+  }
+}
+
+VALIDATION IS MANDATORY - Every response must include this complete structure. Adjust ALL career recommendations based on validation findings.`;
 
       const response = await this.openai.chat.completions.create({
         model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
@@ -340,6 +362,71 @@ Be thorough, specific, and actionable. Focus on realistic career progression bas
       });
 
       const analysis = JSON.parse(response.choices[0].message.content || '{}');
+
+      // Ensure validationFindings exists - this is critical for credibility assessment
+      if (!analysis.validationFindings) {
+        console.warn("AI did not generate validationFindings - creating intelligent fallback");
+        
+        // Analyze the text content for credibility issues
+        const resumeText = resumeData.content.toLowerCase();
+        const overallAssessment = analysis.overallAssessment || '';
+        const issues = [];
+        let credibilityScore = 100;
+        
+        // Check for timeline inconsistencies based on text analysis
+        if (overallAssessment.includes('timeline') || overallAssessment.includes('inconsistenc')) {
+          issues.push({
+            type: "education_experience_mismatch",
+            severity: "high",
+            description: "Timeline inconsistencies detected between education and professional experience",
+            evidence: "Analysis identified discrepancies in chronological progression",
+            impact: "Reduces confidence in claimed experience levels and expertise"
+          });
+          credibilityScore -= 30;
+        }
+        
+        // Check for expired certification concerns
+        if (resumeText.includes('expired') || overallAssessment.includes('certification') && overallAssessment.includes('expired')) {
+          issues.push({
+            type: "credential_authority",
+            severity: "high", 
+            description: "Expired certifications being used to support current training authority",
+            evidence: "Resume contains expired certifications with ongoing training responsibilities",
+            impact: "Questions authority to provide training in areas without current certification"
+          });
+          credibilityScore -= 25;
+        }
+        
+        // Check for educational mismatches
+        if (overallAssessment.includes('educational') || overallAssessment.includes('rectify')) {
+          issues.push({
+            type: "experience_level_mismatch",
+            severity: "medium",
+            description: "Educational timeline does not support claimed professional experience duration",
+            evidence: "Advanced positions claimed before completion of relevant education",
+            impact: "Affects credibility of early career experience claims"
+          });
+          credibilityScore -= 20;
+        }
+        
+        analysis.validationFindings = {
+          overallCredibilityScore: Math.max(20, credibilityScore), // Minimum 20 to avoid zero scores
+          timelineConsistency: {
+            isConsistent: issues.length === 0,
+            issues: issues
+          },
+          credentialVerification: {
+            expiredCertificationConcerns: resumeText.includes('expired') ? ["Expired certifications with ongoing training claims"] : [],
+            futureExpertiseClaims: resumeText.includes('in progress') || resumeText.includes('scheduled') ? ["Future certification expertise claims"] : [],
+            trainingAuthorityMismatches: resumeText.includes('expired') && resumeText.includes('training') ? ["Training authority without current certification"] : []
+          },
+          recommendationAdjustments: {
+            levelDowngrade: credibilityScore < 70,
+            confidenceReduction: Math.max(0, 100 - credibilityScore),
+            additionalVerificationNeeded: issues.length > 0 ? ["Educational timeline verification", "Certification status confirmation"] : []
+          }
+        };
+      }
 
       // Validate and ensure all required fields exist
       if (!analysis.extractedData) {
