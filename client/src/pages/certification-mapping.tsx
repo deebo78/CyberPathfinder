@@ -214,9 +214,9 @@ export default function CertificationMapping() {
                         <span className="text-xs font-medium text-gray-700">Levels:</span>
                       </div>
                       <div className="flex flex-wrap gap-1">
-                        {uniqueJobTitles.slice(0, 2).map((title: any, index: number) => (
+                        {uniqueJobTitles.slice(0, 2).map((title: string, index: number) => (
                           <Badge key={index} variant="secondary" className="text-xs truncate max-w-[100px]">
-                            {String(title)}
+                            {title}
                           </Badge>
                         ))}
                         {uniqueJobTitles.length > 2 && (
