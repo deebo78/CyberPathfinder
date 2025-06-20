@@ -34,6 +34,7 @@ function Router() {
     "/career-mapping",
     "/map-vacancy", 
     "/career-tracks",
+    "/certification-mapping",
     "/test"
   ];
   const shouldShowSidebar = !isLandingPage && !noSidebarPages.some(page => location.startsWith(page));
