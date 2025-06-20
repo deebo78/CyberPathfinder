@@ -111,48 +111,51 @@ export default function CareerTracksExplorer() {
   };
 
   const organizeTracksByCategory = (tracks: CareerTrack[]) => {
-    const categories = {
-      "Defensive Operations": [
-        "SOC Operations",
-        "Threat Intelligence", 
-        "Digital Forensics",
-        "Cybercrime Investigation",
-        "Vulnerability Management"
-      ],
-      "Offensive Security": [
-        "Red Team Operations"
-      ],
-      "Architecture & Engineering": [
-        "Cybersecurity Architecture & Engineering",
-        "Secure Software Development",
-        "Cloud and Infrastructure Security",
-        "OT (Operational Technology) Security",
-        "Security Automation and Orchestration"
-      ],
-      "Identity & Access": [
-        "Identity and Access Management"
-      ],
-      "Governance & Risk": [
-        "GRC (Governance, Risk, Compliance)",
-        "Privacy Policy Legal Affairs"
-      ],
-      "Leadership & Management": [
-        "Executive Leadership CISO Track",
-        "Program and Project Management"
-      ],
-      "Education & Innovation": [
-        "Cybersecurity Education & Training",
-        "Technology Research and Tool Development",
-        "Customer Facing Security Roles"
-      ]
+    const trackCategoryMap: { [key: string]: string } = {
+      "SOC Operations": "Defensive Operations",
+      "Threat Intelligence": "Defensive Operations", 
+      "Digital Forensics": "Defensive Operations",
+      "Cybercrime Investigation": "Defensive Operations",
+      "Vulnerability Management": "Defensive Operations",
+      "Red Team Operations": "Offensive Security",
+      "Cybersecurity Architecture & Engineering": "Architecture & Engineering",
+      "Secure Software Development": "Architecture & Engineering",
+      "Cloud and Infrastructure Security": "Architecture & Engineering",
+      "OT (Operational Technology) Security": "Architecture & Engineering",
+      "Security Automation and Orchestration": "Architecture & Engineering",
+      "Identity and Access Management": "Identity & Access",
+      "GRC (Governance, Risk, Compliance)": "Governance & Risk",
+      "Privacy Policy Legal Affairs": "Governance & Risk",
+      "Executive Leadership CISO Track": "Leadership & Management",
+      "Program and Project Management": "Leadership & Management",
+      "Cybersecurity Education & Training": "Education & Innovation",
+      "Technology Research and Tool Development": "Education & Innovation",
+      "Customer Facing Security Roles": "Education & Innovation"
     };
 
     const organized: { [key: string]: CareerTrack[] } = {};
     
-    Object.entries(categories).forEach(([category, trackNames]) => {
-      organized[category] = tracks.filter(track => 
-        trackNames.some(name => track.name.includes(name.replace(/&/g, 'and')))
-      );
+    // Initialize categories
+    const categories = [
+      "Defensive Operations",
+      "Offensive Security", 
+      "Architecture & Engineering",
+      "Identity & Access",
+      "Governance & Risk",
+      "Leadership & Management",
+      "Education & Innovation"
+    ];
+    
+    categories.forEach(category => {
+      organized[category] = [];
+    });
+    
+    // Organize tracks by exact name matching
+    tracks.forEach(track => {
+      const category = trackCategoryMap[track.name];
+      if (category && organized[category]) {
+        organized[category].push(track);
+      }
     });
 
     return organized;
