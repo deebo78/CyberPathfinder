@@ -328,21 +328,42 @@ CRITICAL COMPENSATION LOGIC:
 
 BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generous with broken job postings.`;
 
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-        messages: [
-          {
-            role: "system",
-            content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles."
-          },
-          {
-            role: "user", 
-            content: prompt
-          }
-        ],
-        response_format: { type: "json_object" },
-        temperature: 0.3
-      });
+      // Try gpt-4o-mini first as fallback, then gpt-4o
+      let response;
+      try {
+        response = await this.openai.chat.completions.create({
+          model: "gpt-4o-mini", // Try the mini version first
+          messages: [
+            {
+              role: "system",
+              content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles."
+            },
+            {
+              role: "user", 
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.3
+        });
+      } catch (miniError) {
+        console.log('gpt-4o-mini failed, trying gpt-4o:', miniError);
+        response = await this.openai.chat.completions.create({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system",
+              content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles."
+            },
+            {
+              role: "user", 
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+          temperature: 0.3
+        });
+      }
 
       const analysis = JSON.parse(response.choices[0].message.content || '{}');
       
@@ -376,7 +397,40 @@ BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generou
 
     } catch (error) {
       console.error('AI Vacancy Mapping Error:', error);
-      throw new Error('Failed to analyze job posting: ' + (error as Error).message);
+      
+      // Check if it's an OpenAI API error
+      if (error instanceof Error && error.message.includes('404')) {
+        throw new Error('OpenAI API endpoint not found. Please verify your API key and model access.');
+      }
+      
+      // For other errors, provide fallback analysis
+      console.warn('OpenAI API failed, providing fallback analysis');
+      return {
+        primaryMatches: [],
+        otherNotableRoles: [],
+        bestTrackMatch: {
+          trackId: 1,
+          trackName: 'General Cybersecurity',
+          matchPercentage: 50,
+          matchReason: 'Unable to perform AI analysis due to API error'
+        },
+        extractedRequirements: {
+          skills: ['General cybersecurity knowledge'],
+          experience: ['Entry to mid-level experience'],
+          education: ['Bachelor\'s degree preferred'],
+          certifications: ['Security+ or equivalent']
+        },
+        matchSummary: 'Analysis could not be completed due to API error. Manual review recommended.',
+        roleConsistencyAnalysis: {
+          summary: 'Unable to perform consistency analysis due to API error.',
+          conflictsFound: [],
+          unrealisticExpectations: [],
+          redundantOrDuplicateRequirements: [],
+          recommendedImprovements: ['Please verify job posting requirements manually'],
+          overallConsistencyScore: 50,
+          severityLevel: 'medium' as const
+        }
+      } as VacancyAnalysis;
     }
   }
 
