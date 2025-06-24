@@ -31,8 +31,10 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 ### Career Track System
 - **19+ Specialized Tracks**: SOC Operations, Red Team, Digital Forensics, GRC, Cloud Security, etc.
 - **5-Level Progression**: Entry → Mid → Senior → Expert → Executive
-- **NICE Framework Integration**: Maps to official NICE work roles and categories
+- **NICE Framework Integration**: Maps to official NICE work roles and categories with complete TKS inheritance
+- **Interactive TKS Visualization**: Hover tooltips and progression charts showing Tasks, Knowledge, and Skills requirements
 - **Certification Mapping**: Links relevant certifications to each career level
+- **Evidence-Based Competencies**: Each career level inherits specific requirements from 38 unique NICE Framework Work Roles
 
 ### Certification Database
 - **180+ Certifications**: Comprehensive database of cybersecurity certifications
@@ -110,12 +112,15 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 
 ## Recent Changes
 
-### June 26, 2025 - Complete NICE Framework TKS Integration
+### June 26, 2025 - Complete NICE Framework TKS Integration & Interactive Visualization
 - **Universal TKS Inheritance**: Extended TKS inheritance to all 19 career tracks with 72 career levels mapped to 38 unique NICE Work Roles
 - **Comprehensive Database Mapping**: Established relational connections inheriting 2,655 tasks, 5,167 knowledge items, and 1,917 skills across the entire career progression system
 - **Evidence-Based Progression**: Each career level now directly inherits specific Tasks, Knowledge, and Skills requirements from official NICE Framework Work Roles
+- **Interactive TKS Visualization**: Added hover tooltips on career progression cards showing detailed NICE Framework requirements with tabbed Tasks/Knowledge/Skills preview
+- **TKS Progression Charts**: Created expandable charts displaying TKS inheritance statistics across career levels with color-coded visualization
 - **Complete API Integration**: Added `/api/career-tracks/:id/tks` and `/api/career-tracks/:id/tks-progression` endpoints providing detailed TKS inheritance data
 - **Track-Specific Mappings**: All career tracks now mapped to appropriate NICE roles (e.g., Red Team to Vulnerability Analysis, GRC to Security Control Assessment, Cloud to Infrastructure Support)
+- **Mapping Documentation**: Created comprehensive NICE Framework mapping methodology document explaining career progression logic and TKS inheritance strategy
 - **Security Fix**: Removed admin page access vulnerability from "Explore Framework" button in career track details
 - **Career Tracks Display**: Fixed missing career tracks in explorer (now shows all 19 tracks properly organized)
 - **Certification Guide Enhancement**: Added level filtering buttons and compact card design for improved UX
