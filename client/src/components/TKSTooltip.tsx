@@ -142,14 +142,14 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
         <div
           className="fixed z-50"
           style={{
-            left: Math.min(position.x - 200, window.innerWidth - 420),
-            top: Math.max(position.y - 280, 20),
-            maxWidth: '400px'
+            left: Math.min(position.x - 225, window.innerWidth - 450),
+            top: Math.max(position.y - 320, 20),
+            maxWidth: '450px'
           }}
           onMouseEnter={handleTooltipMouseEnter}
           onMouseLeave={handleTooltipMouseLeave}
         >
-          <Card className="shadow-lg border-2 border-blue-200 bg-white pointer-events-auto">
+          <Card className="shadow-lg border-2 border-blue-200 bg-white pointer-events-auto w-96">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-blue-600" />
@@ -214,22 +214,22 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                     </TabsList>
                     
                     <TabsContent value="tasks" className="mt-2">
-                      <ScrollArea className="h-32">
-                        <div className="space-y-1">
+                      <ScrollArea className="h-40">
+                        <div className="space-y-1 pr-2">
                           {tksData.tasks && tksData.tasks.length > 0 ? (
-                            <>
-                              {tksData.tasks.slice(0, 5).map((task, index) => (
-                                <div key={index} className="text-xs p-1 bg-red-50 rounded">
-                                  <span className="font-mono text-red-700">{task.code}:</span>
-                                  <span className="ml-1 text-gray-700">{task.description.slice(0, 60)}...</span>
-                                </div>
-                              ))}
-                              {tksData.tasks.length > 5 && (
-                                <div className="text-xs text-gray-500 text-center py-1">
-                                  +{tksData.tasks.length - 5} more tasks
-                                </div>
-                              )}
-                            </>
+                            tksData.tasks.map((task, index) => (
+                              <div key={index} className="text-xs p-2 bg-red-50 rounded border-l-2 border-red-200 hover:bg-red-100 transition-colors">
+                                <div className="font-mono text-red-700 font-medium mb-1">{task.code}</div>
+                                <div className="text-gray-700 leading-relaxed">{task.description}</div>
+                                {task.importance && (
+                                  <div className="mt-1">
+                                    <span className="text-xs bg-red-200 text-red-800 px-1 rounded">
+                                      {task.importance}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            ))
                           ) : (
                             <div className="text-xs text-gray-500 text-center py-4">
                               No tasks data available
@@ -240,22 +240,22 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                     </TabsContent>
                     
                     <TabsContent value="knowledge" className="mt-2">
-                      <ScrollArea className="h-32">
-                        <div className="space-y-1">
+                      <ScrollArea className="h-40">
+                        <div className="space-y-1 pr-2">
                           {tksData.knowledge && tksData.knowledge.length > 0 ? (
-                            <>
-                              {tksData.knowledge.slice(0, 5).map((item, index) => (
-                                <div key={index} className="text-xs p-1 bg-blue-50 rounded">
-                                  <span className="font-mono text-blue-700">{item.code}:</span>
-                                  <span className="ml-1 text-gray-700">{item.description.slice(0, 60)}...</span>
-                                </div>
-                              ))}
-                              {tksData.knowledge.length > 5 && (
-                                <div className="text-xs text-gray-500 text-center py-1">
-                                  +{tksData.knowledge.length - 5} more knowledge items
-                                </div>
-                              )}
-                            </>
+                            tksData.knowledge.map((item, index) => (
+                              <div key={index} className="text-xs p-2 bg-blue-50 rounded border-l-2 border-blue-200 hover:bg-blue-100 transition-colors">
+                                <div className="font-mono text-blue-700 font-medium mb-1">{item.code}</div>
+                                <div className="text-gray-700 leading-relaxed">{item.description}</div>
+                                {item.importance && (
+                                  <div className="mt-1">
+                                    <span className="text-xs bg-blue-200 text-blue-800 px-1 rounded">
+                                      {item.importance}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            ))
                           ) : (
                             <div className="text-xs text-gray-500 text-center py-4">
                               No knowledge data available
@@ -266,22 +266,22 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                     </TabsContent>
                     
                     <TabsContent value="skills" className="mt-2">
-                      <ScrollArea className="h-32">
-                        <div className="space-y-1">
+                      <ScrollArea className="h-40">
+                        <div className="space-y-1 pr-2">
                           {tksData.skills && tksData.skills.length > 0 ? (
-                            <>
-                              {tksData.skills.slice(0, 5).map((skill, index) => (
-                                <div key={index} className="text-xs p-1 bg-green-50 rounded">
-                                  <span className="font-mono text-green-700">{skill.code}:</span>
-                                  <span className="ml-1 text-gray-700">{skill.description.slice(0, 60)}...</span>
-                                </div>
-                              ))}
-                              {tksData.skills.length > 5 && (
-                                <div className="text-xs text-gray-500 text-center py-1">
-                                  +{tksData.skills.length - 5} more skills
-                                </div>
-                              )}
-                            </>
+                            tksData.skills.map((skill, index) => (
+                              <div key={index} className="text-xs p-2 bg-green-50 rounded border-l-2 border-green-200 hover:bg-green-100 transition-colors">
+                                <div className="font-mono text-green-700 font-medium mb-1">{skill.code}</div>
+                                <div className="text-gray-700 leading-relaxed">{skill.description}</div>
+                                {skill.importance && (
+                                  <div className="mt-1">
+                                    <span className="text-xs bg-green-200 text-green-800 px-1 rounded">
+                                      {skill.importance}
+                                    </span>
+                                  </div>
+                                )}
+                              </div>
+                            ))
                           ) : (
                             <div className="text-xs text-gray-500 text-center py-4">
                               No skills data available
