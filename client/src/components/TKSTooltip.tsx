@@ -26,6 +26,7 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
   const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [showTimeout, setShowTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const fetchTKSData = async () => {
     if (tksData) return; // Already loaded
@@ -84,10 +85,14 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
   };
 
   const handleMouseEnter = (e: React.MouseEvent) => {
-    // Clear any pending hide timeout
+    // Clear any pending timeouts
     if (hideTimeout) {
       clearTimeout(hideTimeout);
       setHideTimeout(null);
+    }
+    if (showTimeout) {
+      clearTimeout(showTimeout);
+      setShowTimeout(null);
     }
     
     const rect = e.currentTarget.getBoundingClientRect();
@@ -95,30 +100,54 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
       x: rect.left + rect.width / 2,
       y: rect.top - 10
     });
-    setIsVisible(true);
-    fetchTKSData();
+    
+    // Add a small delay before showing to prevent flickering
+    const timeout = setTimeout(() => {
+      setIsVisible(true);
+      fetchTKSData();
+    }, 100);
+    setShowTimeout(timeout);
   };
 
   const handleMouseLeave = () => {
+    // Clear any pending show timeout
+    if (showTimeout) {
+      clearTimeout(showTimeout);
+      setShowTimeout(null);
+    }
+    
     // Add a delay to allow moving to the tooltip
     const timeout = setTimeout(() => {
       setIsVisible(false);
-    }, 200);
+    }, 300);
     setHideTimeout(timeout);
   };
 
   const handleTooltipMouseEnter = () => {
-    // Clear any pending hide timeout when entering tooltip
+    // Clear any pending timeouts when entering tooltip
     if (hideTimeout) {
       clearTimeout(hideTimeout);
       setHideTimeout(null);
+    }
+    if (showTimeout) {
+      clearTimeout(showTimeout);
+      setShowTimeout(null);
     }
     setIsVisible(true);
   };
 
   const handleTooltipMouseLeave = () => {
-    // Hide immediately when leaving tooltip
-    setIsVisible(false);
+    // Clear any pending timeouts
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      setHideTimeout(null);
+    }
+    if (showTimeout) {
+      clearTimeout(showTimeout);
+      setShowTimeout(null);
+    }
+    // Hide with a small delay to prevent flickering
+    setTimeout(() => setIsVisible(false), 50);
   };
 
   useEffect(() => {
@@ -129,8 +158,13 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, [isVisible]);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      // Cleanup timeouts on unmount
+      if (hideTimeout) clearTimeout(hideTimeout);
+      if (showTimeout) clearTimeout(showTimeout);
+    };
+  }, [isVisible, hideTimeout, showTimeout]);
 
   return (
     <>
