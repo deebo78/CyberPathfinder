@@ -169,6 +169,46 @@ export const careerLevelCertifications = pgTable("career_level_certifications", 
   createdAt: timestamp("created_at").defaultNow(),
 });
 
+// Career Level Work Roles (NICE work roles mapped to career progression levels)
+export const careerLevelWorkRoles = pgTable("career_level_work_roles", {
+  id: serial("id").primaryKey(),
+  careerLevelId: integer("career_level_id").references(() => careerLevels.id).notNull(),
+  workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
+  priority: integer("priority").default(1), // 1 = primary, 2 = secondary, etc.
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Career Level Tasks (inherited from Work Roles or custom additions)
+export const careerLevelTasks = pgTable("career_level_tasks", {
+  id: serial("id").primaryKey(),
+  careerLevelId: integer("career_level_id").references(() => careerLevels.id).notNull(),
+  taskId: integer("task_id").references(() => tasks.id).notNull(),
+  importance: text("importance").default("required"), // required, preferred, optional
+  source: text("source").default("inherited"), // inherited, custom
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Career Level Knowledge (inherited from Work Roles or custom additions)
+export const careerLevelKnowledge = pgTable("career_level_knowledge", {
+  id: serial("id").primaryKey(),
+  careerLevelId: integer("career_level_id").references(() => careerLevels.id).notNull(),
+  knowledgeItemId: integer("knowledge_item_id").references(() => knowledgeItems.id).notNull(),
+  importance: text("importance").default("required"), // required, preferred, optional
+  source: text("source").default("inherited"), // inherited, custom
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// Career Level Skills (inherited from Work Roles or custom additions)
+export const careerLevelSkills = pgTable("career_level_skills", {
+  id: serial("id").primaryKey(),
+  careerLevelId: integer("career_level_id").references(() => careerLevels.id).notNull(),
+  skillId: integer("skill_id").references(() => skills.id).notNull(),
+  importance: text("importance").default("required"), // required, preferred, optional
+  source: text("source").default("inherited"), // inherited, custom
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 // Relations
 export const categoriesRelations = relations(categories, ({ many }) => ({
   specialtyAreas: many(specialtyAreas),
@@ -285,6 +325,10 @@ export const careerLevelsRelations = relations(careerLevels, ({ one, many }) => 
   }),
   careerPositions: many(careerPositions),
   careerLevelCertifications: many(careerLevelCertifications),
+  careerLevelWorkRoles: many(careerLevelWorkRoles),
+  careerLevelTasks: many(careerLevelTasks),
+  careerLevelKnowledge: many(careerLevelKnowledge),
+  careerLevelSkills: many(careerLevelSkills),
 }));
 
 export const careerPositionsRelations = relations(careerPositions, ({ one }) => ({
@@ -306,6 +350,51 @@ export const careerLevelCertificationsRelations = relations(careerLevelCertifica
   certification: one(certifications, {
     fields: [careerLevelCertifications.certificationId],
     references: [certifications.id],
+  }),
+}));
+
+// New TKS inheritance relations
+export const careerLevelWorkRolesRelations = relations(careerLevelWorkRoles, ({ one }) => ({
+  careerLevel: one(careerLevels, {
+    fields: [careerLevelWorkRoles.careerLevelId],
+    references: [careerLevels.id],
+  }),
+  workRole: one(workRoles, {
+    fields: [careerLevelWorkRoles.workRoleId],
+    references: [workRoles.id],
+  }),
+}));
+
+export const careerLevelTasksRelations = relations(careerLevelTasks, ({ one }) => ({
+  careerLevel: one(careerLevels, {
+    fields: [careerLevelTasks.careerLevelId],
+    references: [careerLevels.id],
+  }),
+  task: one(tasks, {
+    fields: [careerLevelTasks.taskId],
+    references: [tasks.id],
+  }),
+}));
+
+export const careerLevelKnowledgeRelations = relations(careerLevelKnowledge, ({ one }) => ({
+  careerLevel: one(careerLevels, {
+    fields: [careerLevelKnowledge.careerLevelId],
+    references: [careerLevels.id],
+  }),
+  knowledgeItem: one(knowledgeItems, {
+    fields: [careerLevelKnowledge.knowledgeItemId],
+    references: [knowledgeItems.id],
+  }),
+}));
+
+export const careerLevelSkillsRelations = relations(careerLevelSkills, ({ one }) => ({
+  careerLevel: one(careerLevels, {
+    fields: [careerLevelSkills.careerLevelId],
+    references: [careerLevels.id],
+  }),
+  skill: one(skills, {
+    fields: [careerLevelSkills.skillId],
+    references: [skills.id],
   }),
 }));
 
