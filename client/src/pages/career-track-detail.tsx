@@ -414,13 +414,13 @@ export default function CareerTrackDetail() {
               </div>
               
               <div className="space-y-4">
-                <h4 className="font-medium text-gray-900">Explore Framework Details</h4>
+                <h4 className="font-medium text-gray-900">Explore Other Career Tracks</h4>
                 <p className="text-sm text-gray-600">
-                  Browse the complete NICE Framework to understand work roles, tasks, and skills in detail.
+                  Discover other cybersecurity career paths and find related opportunities across the industry.
                 </p>
-                <Link href="/relationships">
+                <Link href="/career-tracks">
                   <Button variant="outline" className="w-full">
-                    Explore Framework
+                    Browse All Tracks
                     <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 </Link>

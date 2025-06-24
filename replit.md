@@ -110,6 +110,12 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 
 ## Recent Changes
 
+### June 26, 2025 - Security & UI Improvements
+- **Security Fix**: Removed admin page access vulnerability from "Explore Framework" button in career track details
+- **Career Tracks Display**: Fixed missing career tracks in explorer (now shows all 19 tracks properly organized)
+- **Certification Guide Enhancement**: Added level filtering buttons and compact card design for improved UX
+- **Navigation Enhancement**: Added Certifications tab to main navigation with Award icon
+
 ### June 19, 2025 - Advanced Resume Validation & Credibility Assessment System (MVP Complete)
 - **Timeline Consistency Analysis**: Enhanced AI to detect impossible chronological claims like 15+ years experience starting 2009 vs 2020 degree completion
 - **Credential Authority Validation**: System flags expired certifications (CISSP expired 2018) being used to claim current training authority
