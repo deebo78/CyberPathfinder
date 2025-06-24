@@ -314,84 +314,83 @@ export default function CareerTrackDetail() {
               {careerLevels.map((level, index) => {
                 const jobTitles = getJobTitlesForLevel(level.level);
                 return (
-                  <TKSTooltip key={level.level} careerTrackId={trackData.id} levelName={level.level}>
-                    <div className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-help">
-                      <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
-                        {index + 1}
+                  <div key={level.level} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                      {index + 1}
+                    </div>
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between mb-2">
+                        <h3 className="font-medium text-gray-900">
+                          {level.level}
+                        </h3>
+                        <Badge variant="outline" className="text-xs">
+                          {level.experience}
+                        </Badge>
                       </div>
-                      <div className="flex-1">
-                        <div className="flex items-center justify-between mb-2">
-                          <h3 className="font-medium text-gray-900 flex items-center gap-2">
-                            {level.level}
-                            <BookOpen className="w-4 h-4 text-blue-500" title="Hover for NICE Framework TKS requirements" />
-                          </h3>
-                          <Badge variant="outline" className="text-xs">
-                            {level.experience}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-3">{level.description}</p>
-                      
-                        <div className="flex items-start justify-between gap-4">
-                          {/* Job Titles on the left */}
-                          <div className="flex-1">
-                            {jobTitles.length > 0 && (
-                              <div>
-                                <p className="text-xs font-medium text-gray-700 mb-2 flex items-center">
-                                  <Users className="h-3 w-3 mr-1" />
-                                  Typical Job Titles:
-                                </p>
-                                <div className="flex flex-wrap gap-1">
-                                  {jobTitles.map((title: string, titleIndex: number) => (
-                                    <Badge key={titleIndex} variant="secondary" className="text-xs">
-                                      {title}
-                                    </Badge>
-                                  ))}
-                                </div>
+                      <p className="text-sm text-gray-600 mb-3">{level.description}</p>
+                    
+                      <div className="flex items-start justify-between gap-4">
+                        {/* Job Titles on the left */}
+                        <div className="flex-1">
+                          {jobTitles.length > 0 && (
+                            <div>
+                              <p className="text-xs font-medium text-gray-700 mb-2 flex items-center">
+                                <Users className="h-3 w-3 mr-1" />
+                                Typical Job Titles:
+                              </p>
+                              <div className="flex flex-wrap gap-1">
+                                {jobTitles.map((title: string, titleIndex: number) => (
+                                  <Badge key={titleIndex} variant="secondary" className="text-xs">
+                                    {title}
+                                  </Badge>
+                                ))}
                               </div>
-                            )}
-                          </div>
-
-                          {/* Certifications on the right */}
-                          <div className="flex-1">
-                            {trackData.careerLevels && (() => {
-                              const levelData = trackData.careerLevels.find((l: any) => l.name === level.level);
-                              const certifications = levelData?.careerLevelCertifications || [];
-                              
-                              if (certifications.length > 0) {
-                                return (
-                                  <div className="text-right">
-                                    <p className="text-xs font-medium text-gray-700 mb-2 flex items-center justify-end">
-                                      <Award className="h-3 w-3 mr-1" />
-                                      Recommended Certifications:
-                                    </p>
-                                    <div className="flex flex-wrap gap-1 justify-end">
-                                      {certifications.map((certMapping: any, certIndex: number) => (
-                                        <Badge 
-                                          key={certIndex} 
-                                          variant="outline" 
-                                          className="text-xs cursor-pointer hover:bg-yellow-50 border-yellow-200"
-                                          title={certMapping.certification.name}
-                                        >
-                                          {certMapping.certification.code}
-                                        </Badge>
-                                      ))}
-                                    </div>
-                                  </div>
-                                );
-                              }
-                              return null;
-                            })()}
-                          </div>
+                            </div>
+                          )}
                         </div>
-                        
-                        {/* TKS Hint */}
-                        <div className="mt-3 text-xs text-blue-600 bg-blue-50 p-2 rounded border-l-2 border-blue-300">
+
+                        {/* Certifications on the right */}
+                        <div className="flex-1">
+                          {trackData.careerLevels && (() => {
+                            const levelData = trackData.careerLevels.find((l: any) => l.name === level.level);
+                            const certifications = levelData?.careerLevelCertifications || [];
+                            
+                            if (certifications.length > 0) {
+                              return (
+                                <div className="text-right">
+                                  <p className="text-xs font-medium text-gray-700 mb-2 flex items-center justify-end">
+                                    <Award className="h-3 w-3 mr-1" />
+                                    Recommended Certifications:
+                                  </p>
+                                  <div className="flex flex-wrap gap-1 justify-end">
+                                    {certifications.map((certMapping: any, certIndex: number) => (
+                                      <Badge 
+                                        key={certIndex} 
+                                        variant="outline" 
+                                        className="text-xs cursor-pointer hover:bg-yellow-50 border-yellow-200"
+                                        title={certMapping.certification.name}
+                                      >
+                                        {certMapping.certification.code}
+                                      </Badge>
+                                    ))}
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return null;
+                          })()}
+                        </div>
+                      </div>
+                      
+                      {/* TKS Hint with Tooltip */}
+                      <TKSTooltip careerTrackId={trackData.id} levelName={level.level}>
+                        <div className="mt-3 text-xs text-blue-600 bg-blue-50 p-2 rounded border-l-2 border-blue-300 cursor-help hover:bg-blue-100 transition-colors">
                           <BookOpen className="w-3 h-3 inline mr-1" />
                           Hover for NICE Framework Tasks, Knowledge & Skills requirements
                         </div>
-                      </div>
+                      </TKSTooltip>
                     </div>
-                  </TKSTooltip>
+                  </div>
                 );
               })}
             </div>

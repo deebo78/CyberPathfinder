@@ -177,3 +177,4 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 ## User Preferences
 
 Preferred communication style: Simple, everyday language.
+UI/UX Preferences: Interactive tooltips should be targeted to specific elements, not large areas, to prevent interface interference during navigation.
