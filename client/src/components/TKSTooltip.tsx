@@ -25,6 +25,7 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const fetchTKSData = async () => {
     if (tksData) return; // Already loaded
@@ -83,6 +84,12 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
   };
 
   const handleMouseEnter = (e: React.MouseEvent) => {
+    // Clear any pending hide timeout
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      setHideTimeout(null);
+    }
+    
     const rect = e.currentTarget.getBoundingClientRect();
     setPosition({
       x: rect.left + rect.width / 2,
@@ -92,12 +99,26 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
     fetchTKSData();
   };
 
-  const handleMouseLeave = (e: React.MouseEvent) => {
-    // Only hide if we're not hovering over the tooltip itself
-    const relatedTarget = e.relatedTarget as Element;
-    if (!relatedTarget || !relatedTarget.closest('[data-tooltip-content]')) {
+  const handleMouseLeave = () => {
+    // Add a delay to allow moving to the tooltip
+    const timeout = setTimeout(() => {
       setIsVisible(false);
+    }, 200);
+    setHideTimeout(timeout);
+  };
+
+  const handleTooltipMouseEnter = () => {
+    // Clear any pending hide timeout when entering tooltip
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      setHideTimeout(null);
     }
+    setIsVisible(true);
+  };
+
+  const handleTooltipMouseLeave = () => {
+    // Hide immediately when leaving tooltip
+    setIsVisible(false);
   };
 
   useEffect(() => {
