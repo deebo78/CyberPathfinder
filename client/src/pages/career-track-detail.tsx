@@ -4,6 +4,8 @@ import { Link } from "wouter";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { TKSTooltip } from "@/components/TKSTooltip";
+import { TKSProgressionChart } from "@/components/TKSProgressionChart";
 import { 
   ArrowLeft, 
   TrendingUp, 
@@ -312,17 +314,21 @@ export default function CareerTrackDetail() {
               {careerLevels.map((level, index) => {
                 const jobTitles = getJobTitlesForLevel(level.level);
                 return (
-                  <div key={level.level} className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
-                      {index + 1}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-gray-900">{level.level}</h3>
-                        <Badge variant="outline" className="text-xs">
-                          {level.experience}
-                        </Badge>
+                  <TKSTooltip key={level.level} careerTrackId={trackData.id} levelName={level.level}>
+                    <div className="flex items-start space-x-4 p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-help">
+                      <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-sm font-medium">
+                        {index + 1}
                       </div>
+                      <div className="flex-1">
+                        <div className="flex items-center justify-between mb-2">
+                          <h3 className="font-medium text-gray-900 flex items-center gap-2">
+                            {level.level}
+                            <BookOpen className="w-4 h-4 text-blue-500" title="Hover for NICE Framework TKS requirements" />
+                          </h3>
+                          <Badge variant="outline" className="text-xs">
+                            {level.experience}
+                          </Badge>
+                        </div>
                       <p className="text-sm text-gray-600 mb-3">{level.description}</p>
                       
                       <div className="flex items-start justify-between gap-4">
@@ -376,16 +382,27 @@ export default function CareerTrackDetail() {
                             return null;
                           })()}
                         </div>
+                        
+                        {/* TKS Hint */}
+                        <div className="mt-3 text-xs text-blue-600 bg-blue-50 p-2 rounded border-l-2 border-blue-300">
+                          <BookOpen className="w-3 h-3 inline mr-1" />
+                          Hover for NICE Framework Tasks, Knowledge & Skills requirements
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </TKSTooltip>
                 );
               })}
             </div>
           </CardContent>
         </Card>
 
-
+        {/* TKS Progression Chart */}
+        <TKSProgressionChart 
+          careerTrackId={trackData.id}
+          careerTrackName={trackData.name}
+          className="mb-8"
+        />
 
         {/* Next Steps */}
         <Card>
