@@ -109,11 +109,15 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                   <div className="border-b pb-2">
                     <div className="text-xs font-medium text-gray-600 mb-1">Mapped Work Roles:</div>
                     <div className="flex flex-wrap gap-1">
-                      {tksData.workRoles.map((role) => (
-                        <Badge key={role.code} variant="outline" className="text-xs px-1 py-0">
-                          {role.code}
-                        </Badge>
-                      ))}
+                      {tksData.workRoles && tksData.workRoles.length > 0 ? (
+                        tksData.workRoles.map((role) => (
+                          <Badge key={role.code} variant="outline" className="text-xs px-1 py-0">
+                            {role.code}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-gray-500">No work roles mapped</span>
+                      )}
                     </div>
                   </div>
 
@@ -124,21 +128,21 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                         <Target className="w-3 h-3 text-red-600" />
                         <span className="text-xs font-medium">Tasks</span>
                       </div>
-                      <div className="text-lg font-bold text-red-600">{tksData.tksStats.taskCount}</div>
+                      <div className="text-lg font-bold text-red-600">{tksData.tksStats?.taskCount || 0}</div>
                     </div>
                     <div className="bg-blue-50 rounded p-2">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <BookOpen className="w-3 h-3 text-blue-600" />
                         <span className="text-xs font-medium">Knowledge</span>
                       </div>
-                      <div className="text-lg font-bold text-blue-600">{tksData.tksStats.knowledgeCount}</div>
+                      <div className="text-lg font-bold text-blue-600">{tksData.tksStats?.knowledgeCount || 0}</div>
                     </div>
                     <div className="bg-green-50 rounded p-2">
                       <div className="flex items-center justify-center gap-1 mb-1">
                         <Zap className="w-3 h-3 text-green-600" />
                         <span className="text-xs font-medium">Skills</span>
                       </div>
-                      <div className="text-lg font-bold text-green-600">{tksData.tksStats.skillCount}</div>
+                      <div className="text-lg font-bold text-green-600">{tksData.tksStats?.skillCount || 0}</div>
                     </div>
                   </div>
 
@@ -153,15 +157,23 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                     <TabsContent value="tasks" className="mt-2">
                       <ScrollArea className="h-32">
                         <div className="space-y-1">
-                          {tksData.tasks.slice(0, 5).map((task, index) => (
-                            <div key={index} className="text-xs p-1 bg-red-50 rounded">
-                              <span className="font-mono text-red-700">{task.code}:</span>
-                              <span className="ml-1 text-gray-700">{task.description.slice(0, 60)}...</span>
-                            </div>
-                          ))}
-                          {tksData.tasks.length > 5 && (
-                            <div className="text-xs text-gray-500 text-center py-1">
-                              +{tksData.tasks.length - 5} more tasks
+                          {tksData.tasks && tksData.tasks.length > 0 ? (
+                            <>
+                              {tksData.tasks.slice(0, 5).map((task, index) => (
+                                <div key={index} className="text-xs p-1 bg-red-50 rounded">
+                                  <span className="font-mono text-red-700">{task.code}:</span>
+                                  <span className="ml-1 text-gray-700">{task.description.slice(0, 60)}...</span>
+                                </div>
+                              ))}
+                              {tksData.tasks.length > 5 && (
+                                <div className="text-xs text-gray-500 text-center py-1">
+                                  +{tksData.tasks.length - 5} more tasks
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-xs text-gray-500 text-center py-4">
+                              No tasks data available
                             </div>
                           )}
                         </div>
@@ -171,15 +183,23 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                     <TabsContent value="knowledge" className="mt-2">
                       <ScrollArea className="h-32">
                         <div className="space-y-1">
-                          {tksData.knowledge.slice(0, 5).map((item, index) => (
-                            <div key={index} className="text-xs p-1 bg-blue-50 rounded">
-                              <span className="font-mono text-blue-700">{item.code}:</span>
-                              <span className="ml-1 text-gray-700">{item.description.slice(0, 60)}...</span>
-                            </div>
-                          ))}
-                          {tksData.knowledge.length > 5 && (
-                            <div className="text-xs text-gray-500 text-center py-1">
-                              +{tksData.knowledge.length - 5} more knowledge items
+                          {tksData.knowledge && tksData.knowledge.length > 0 ? (
+                            <>
+                              {tksData.knowledge.slice(0, 5).map((item, index) => (
+                                <div key={index} className="text-xs p-1 bg-blue-50 rounded">
+                                  <span className="font-mono text-blue-700">{item.code}:</span>
+                                  <span className="ml-1 text-gray-700">{item.description.slice(0, 60)}...</span>
+                                </div>
+                              ))}
+                              {tksData.knowledge.length > 5 && (
+                                <div className="text-xs text-gray-500 text-center py-1">
+                                  +{tksData.knowledge.length - 5} more knowledge items
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-xs text-gray-500 text-center py-4">
+                              No knowledge data available
                             </div>
                           )}
                         </div>
@@ -189,15 +209,23 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
                     <TabsContent value="skills" className="mt-2">
                       <ScrollArea className="h-32">
                         <div className="space-y-1">
-                          {tksData.skills.slice(0, 5).map((skill, index) => (
-                            <div key={index} className="text-xs p-1 bg-green-50 rounded">
-                              <span className="font-mono text-green-700">{skill.code}:</span>
-                              <span className="ml-1 text-gray-700">{skill.description.slice(0, 60)}...</span>
-                            </div>
-                          ))}
-                          {tksData.skills.length > 5 && (
-                            <div className="text-xs text-gray-500 text-center py-1">
-                              +{tksData.skills.length - 5} more skills
+                          {tksData.skills && tksData.skills.length > 0 ? (
+                            <>
+                              {tksData.skills.slice(0, 5).map((skill, index) => (
+                                <div key={index} className="text-xs p-1 bg-green-50 rounded">
+                                  <span className="font-mono text-green-700">{skill.code}:</span>
+                                  <span className="ml-1 text-gray-700">{skill.description.slice(0, 60)}...</span>
+                                </div>
+                              ))}
+                              {tksData.skills.length > 5 && (
+                                <div className="text-xs text-gray-500 text-center py-1">
+                                  +{tksData.skills.length - 5} more skills
+                                </div>
+                              )}
+                            </>
+                          ) : (
+                            <div className="text-xs text-gray-500 text-center py-4">
+                              No skills data available
                             </div>
                           )}
                         </div>
