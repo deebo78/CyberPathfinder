@@ -434,6 +434,74 @@ BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generou
     }
   }
 
+  async extractJobPostingFields(rawText: string): Promise<{
+    jobTitle?: string;
+    jobDescription?: string;
+    requiredQualifications?: string;
+    preferredQualifications?: string;
+    salaryMin?: number;
+    salaryMax?: number;
+    location?: string;
+  }> {
+    try {
+      const prompt = `
+Extract structured job posting information from the following text. Focus on identifying:
+
+1. Job Title: The main position title
+2. Job Description: Core responsibilities and overview 
+3. Required Qualifications: Must-have requirements
+4. Preferred Qualifications: Nice-to-have requirements
+5. Salary Range: Extract minimum and maximum salary figures in USD
+6. Location: Work location or "Remote" if applicable
+
+IMPORTANT SALARY EXTRACTION RULES:
+- Look for salary ranges like "$50,000 - $75,000", "$50K-75K", "50-75k", etc.
+- Convert abbreviated formats (50K = 50000, 75K = 75000)
+- If only one salary figure is given, use it for both min and max
+- If salary is mentioned as "up to $X", use X as max and leave min null
+- If hourly rate is given, convert to annual (multiply by 2080)
+- Return null for both if no salary information found
+
+Return ONLY valid JSON in this exact format:
+{
+  "jobTitle": "extracted title or null",
+  "jobDescription": "main job overview/responsibilities or null", 
+  "requiredQualifications": "required skills/experience or null",
+  "preferredQualifications": "preferred skills/experience or null",
+  "salaryMin": numeric_value_or_null,
+  "salaryMax": numeric_value_or_null,
+  "location": "location string or null"
+}
+
+Job Posting Text:
+${rawText}`;
+
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You are an expert job posting parser. Extract structured information accurately and return only valid JSON."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.1
+      });
+
+      const extracted = JSON.parse(response.choices[0].message.content || '{}');
+      return extracted;
+
+    } catch (error) {
+      console.error('Error extracting job posting fields:', error);
+      // Return empty structure on error
+      return {};
+    }
+  }
+
   async getDetailedWorkRoleMatch(workRoleId: number, jobPosting: JobPosting): Promise<any> {
     try {
       const workRole = await storage.getWorkRoleWithRelations(workRoleId);

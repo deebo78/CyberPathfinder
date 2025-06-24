@@ -518,24 +518,33 @@ export async function registerRoutes(app: Express): Promise<Server> {
         await fs.promises.unlink(filePath);
         console.log("File cleanup complete");
         
-        // Extract potential job title from first line or filename
+        // Parse structured job posting fields using AI
+        const structuredData = await aiVacancyMapper.extractJobPostingFields(extractedText);
+        
+        // Extract potential job title from first line or filename as fallback
         const lines = extractedText.split('\n').filter(line => line.trim());
-        let jobTitle = '';
+        let fallbackJobTitle = '';
         
         if (lines.length > 0) {
           const firstLine = lines[0].trim();
           if (firstLine.length < 100 && !firstLine.toLowerCase().includes('job description')) {
-            jobTitle = firstLine;
+            fallbackJobTitle = firstLine;
           } else {
             // Use filename without extension as title
-            jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
+            fallbackJobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
           }
         } else {
-          jobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
+          fallbackJobTitle = path.basename(req.file.originalname, path.extname(req.file.originalname));
         }
         
         const result = {
-          jobTitle,
+          jobTitle: structuredData.jobTitle || fallbackJobTitle,
+          jobDescription: structuredData.jobDescription || extractedText,
+          requiredQualifications: structuredData.requiredQualifications || '',
+          preferredQualifications: structuredData.preferredQualifications || '',
+          salaryMin: structuredData.salaryMin || null,
+          salaryMax: structuredData.salaryMax || null,
+          location: structuredData.location || '',
           extractedText: extractedText,
           filename: req.file.originalname
         };

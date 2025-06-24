@@ -141,17 +141,22 @@ export default function MapVacancy() {
       return response.json();
     },
     onSuccess: (data) => {
-      // Fill the job description with extracted content
-      setJobDescription(data.extractedText);
-      // If we extracted a job title, use it
+      // Fill all form fields with extracted structured data
       if (data.jobTitle && data.jobTitle !== 'untitled') {
         setJobTitle(data.jobTitle);
       }
+      setJobDescription(data.jobDescription || data.extractedText);
+      setRequiredQualifications(data.requiredQualifications || '');
+      setPreferredQualifications(data.preferredQualifications || '');
+      setSalaryMin(data.salaryMin ? String(data.salaryMin) : '');
+      setSalaryMax(data.salaryMax ? String(data.salaryMax) : '');
+      setLocation(data.location || '');
+      
       setActiveTab("manual");
       setUploadedFile(null);
       toast({
         title: "Document Processed",
-        description: "Job posting content extracted successfully. Review and add any missing details.",
+        description: `Job posting parsed successfully. ${data.salaryMin || data.salaryMax ? 'Salary range detected.' : ''} Review and analyze.`,
       });
     },
     onError: (error) => {
