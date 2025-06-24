@@ -110,7 +110,11 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 
 ## Recent Changes
 
-### June 26, 2025 - Security & UI Improvements
+### June 26, 2025 - NICE Framework TKS Integration & Security Improvements
+- **TKS Inheritance Structure**: Established relational connections between Career Tracks and NICE Framework Work Roles with automatic Tasks, Knowledge, and Skills inheritance at each career progression level
+- **Database Schema Enhancement**: Added career_level_work_roles, career_level_tasks, career_level_knowledge, and career_level_skills tables for complete TKS mapping
+- **API Endpoints**: Created `/api/career-tracks/:id/tks` and `/api/career-tracks/:id/tks-progression` endpoints to expose TKS inheritance data
+- **SOC Operations Mapping**: Implemented complete TKS inheritance for SOC Operations track (Entry: 43 tasks, 125 knowledge, 38 skills; Mid: 14 tasks, 51 knowledge, 11 skills; Senior: 46 tasks, 94 knowledge, 42 skills)
 - **Security Fix**: Removed admin page access vulnerability from "Explore Framework" button in career track details
 - **Career Tracks Display**: Fixed missing career tracks in explorer (now shows all 19 tracks properly organized)
 - **Certification Guide Enhancement**: Added level filtering buttons and compact card design for improved UX
