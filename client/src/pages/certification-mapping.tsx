@@ -106,30 +106,30 @@ export default function CertificationMapping() {
           </div>
         </div>
 
-        {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        {/* Compact Statistics */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">{certifications.length || 0}</div>
-              <div className="text-sm text-gray-600">Total Certifications</div>
+            <CardContent className="p-3 text-center">
+              <div className="text-xl font-bold text-blue-600">{certifications.length || 0}</div>
+              <div className="text-xs text-gray-600">Total Certifications</div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">19</div>
-              <div className="text-sm text-gray-600">Career Tracks</div>
+            <CardContent className="p-3 text-center">
+              <div className="text-xl font-bold text-green-600">19</div>
+              <div className="text-xs text-gray-600">Career Tracks</div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600">11</div>
-              <div className="text-sm text-gray-600">Certification Bodies</div>
+            <CardContent className="p-3 text-center">
+              <div className="text-xl font-bold text-purple-600">{new Set(certifications.map((c: any) => c.issuer)).size}</div>
+              <div className="text-xs text-gray-600">Certification Bodies</div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">100+</div>
-              <div className="text-sm text-gray-600">Job Roles</div>
+            <CardContent className="p-3 text-center">
+              <div className="text-xl font-bold text-orange-600">{filteredCertifications.length}</div>
+              <div className="text-xs text-gray-600">Filtered Results</div>
             </CardContent>
           </Card>
         </div>
