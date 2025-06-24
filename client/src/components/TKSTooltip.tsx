@@ -35,8 +35,44 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
       if (response.ok) {
         const data = await response.json();
         const levelData = data.careerLevels?.find((level: any) => level.name === levelName);
-        if (levelData?.niceFrameworkMappings) {
-          setTksData(levelData.niceFrameworkMappings);
+        if (levelData) {
+          // Extract TKS data from the level data structure
+          const tasks = levelData.careerLevelTasks?.map((clt: any) => ({
+            code: clt.task.code,
+            description: clt.task.description,
+            importance: clt.importance || 'medium'
+          })) || [];
+          
+          const knowledge = levelData.careerLevelKnowledge?.map((clk: any) => ({
+            code: clk.knowledgeItem.code,
+            description: clk.knowledgeItem.description,
+            importance: clk.importance || 'medium'
+          })) || [];
+          
+          const skills = levelData.careerLevelSkills?.map((cls: any) => ({
+            code: cls.skill.code,
+            description: cls.skill.description,
+            importance: cls.importance || 'medium'
+          })) || [];
+          
+          const workRoles = levelData.careerLevelWorkRoles?.map((clwr: any) => ({
+            code: clwr.workRole.code,
+            name: clwr.workRole.name,
+            category: clwr.workRole.category?.name || 'Unknown',
+            priority: clwr.priority || 1
+          })) || [];
+          
+          setTksData({
+            tasks,
+            knowledge,
+            skills,
+            workRoles,
+            tksStats: {
+              taskCount: tasks.length,
+              knowledgeCount: knowledge.length,
+              skillCount: skills.length
+            }
+          });
         }
       }
     } catch (error) {
@@ -56,8 +92,12 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
     fetchTKSData();
   };
 
-  const handleMouseLeave = () => {
-    setIsVisible(false);
+  const handleMouseLeave = (e: React.MouseEvent) => {
+    // Only hide if we're not hovering over the tooltip itself
+    const relatedTarget = e.relatedTarget as Element;
+    if (!relatedTarget || !relatedTarget.closest('[data-tooltip-content]')) {
+      setIsVisible(false);
+    }
   };
 
   useEffect(() => {
