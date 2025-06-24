@@ -16,6 +16,7 @@ import {
 import { aiCareerMapper } from "./ai-career-mapper";
 import { aiVacancyMapper } from "./ai-vacancy-mapper";
 import { AIResumeAnalyzer } from "./ai-resume-analyzer";
+import { getCareerTrackWithTKS, getCareerTrackTKSProgression } from "./routes/career-track-tks";
 import fs from "fs";
 import mammoth from "mammoth";
 
@@ -599,6 +600,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: "Failed to analyze profile" });
     }
   });
+
+  // Career tracks with TKS inheritance endpoints
+  app.get("/api/career-tracks/:id/tks", getCareerTrackWithTKS);
+  app.get("/api/career-tracks/:id/tks-progression", getCareerTrackTKSProgression);
 
   app.get("/api/career-tracks", async (req, res) => {
     try {
