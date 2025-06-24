@@ -25,8 +25,7 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
   const [loading, setLoading] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [hideTimeout, setHideTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [showTimeout, setShowTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [isHovering, setIsHovering] = useState(false);
 
   const fetchTKSData = async () => {
     if (tksData) return; // Already loaded
@@ -85,86 +84,49 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
   };
 
   const handleMouseEnter = (e: React.MouseEvent) => {
-    // Clear any pending timeouts
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
-    }
-    if (showTimeout) {
-      clearTimeout(showTimeout);
-      setShowTimeout(null);
-    }
-    
     const rect = e.currentTarget.getBoundingClientRect();
     setPosition({
       x: rect.left + rect.width / 2,
       y: rect.top - 10
     });
-    
-    // Add a small delay before showing to prevent flickering
-    const timeout = setTimeout(() => {
-      setIsVisible(true);
-      fetchTKSData();
-    }, 100);
-    setShowTimeout(timeout);
+    setIsHovering(true);
+    setIsVisible(true);
+    fetchTKSData();
   };
 
   const handleMouseLeave = () => {
-    // Clear any pending show timeout
-    if (showTimeout) {
-      clearTimeout(showTimeout);
-      setShowTimeout(null);
-    }
-    
-    // Add a delay to allow moving to the tooltip
-    const timeout = setTimeout(() => {
-      setIsVisible(false);
-    }, 300);
-    setHideTimeout(timeout);
+    setIsHovering(false);
   };
 
   const handleTooltipMouseEnter = () => {
-    // Clear any pending timeouts when entering tooltip
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
-    }
-    if (showTimeout) {
-      clearTimeout(showTimeout);
-      setShowTimeout(null);
-    }
-    setIsVisible(true);
+    setIsHovering(true);
   };
 
   const handleTooltipMouseLeave = () => {
-    // Clear any pending timeouts
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      setHideTimeout(null);
-    }
-    if (showTimeout) {
-      clearTimeout(showTimeout);
-      setShowTimeout(null);
-    }
-    // Hide with a small delay to prevent flickering
-    setTimeout(() => setIsVisible(false), 50);
+    setIsHovering(false);
   };
 
   useEffect(() => {
     const handleScroll = () => {
       if (isVisible) {
         setIsVisible(false);
+        setIsHovering(false);
       }
     };
 
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      // Cleanup timeouts on unmount
-      if (hideTimeout) clearTimeout(hideTimeout);
-      if (showTimeout) clearTimeout(showTimeout);
-    };
-  }, [isVisible, hideTimeout, showTimeout]);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isVisible]);
+
+  // Hide tooltip when not hovering
+  useEffect(() => {
+    if (!isHovering && isVisible) {
+      const timeout = setTimeout(() => {
+        setIsVisible(false);
+      }, 200);
+      return () => clearTimeout(timeout);
+    }
+  }, [isHovering, isVisible]);
 
   return (
     <>
