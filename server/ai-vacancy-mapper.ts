@@ -448,11 +448,17 @@ BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generou
 Extract structured job posting information from the following text. Focus on identifying:
 
 1. Job Title: The main position title
-2. Job Description: Core responsibilities and overview 
-3. Required Qualifications: Must-have requirements
-4. Preferred Qualifications: Nice-to-have requirements
+2. Job Description: COMPLETE job description including ALL sections like "Position Description", "Primary Duties and Responsibilities", "Duties", "Responsibilities", etc. Combine all descriptive content about what the role entails.
+3. Required Qualifications: Must-have requirements (sections like "Minimum Qualifications", "Required", "Must Have")
+4. Preferred Qualifications: Nice-to-have requirements (sections like "Preferred Qualifications", "Preferred", "Nice to Have")
 5. Salary Range: Extract minimum and maximum salary figures in USD
 6. Location: Work location or "Remote" if applicable
+
+IMPORTANT JOB DESCRIPTION EXTRACTION RULES:
+- Include the complete job overview, position description, and ALL detailed duties/responsibilities
+- Look for sections like "Primary Duties and Responsibilities", "Key Responsibilities", "Job Duties", "What You'll Do"
+- Combine all relevant job content into one comprehensive description
+- Do NOT just extract a summary - include the full detailed responsibilities
 
 IMPORTANT SALARY EXTRACTION RULES:
 - Look for salary ranges like "$50,000 - $75,000", "$50K-75K", "50-75k", etc.
@@ -465,7 +471,7 @@ IMPORTANT SALARY EXTRACTION RULES:
 Return ONLY valid JSON in this exact format:
 {
   "jobTitle": "extracted title or null",
-  "jobDescription": "main job overview/responsibilities or null", 
+  "jobDescription": "complete comprehensive job description including all duties and responsibilities or null", 
   "requiredQualifications": "required skills/experience or null",
   "preferredQualifications": "preferred skills/experience or null",
   "salaryMin": numeric_value_or_null,
