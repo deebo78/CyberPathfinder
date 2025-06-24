@@ -144,14 +144,16 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
 
       {isVisible && (
         <div
-          className="fixed z-50 pointer-events-none"
+          className="fixed z-50"
           style={{
-            left: position.x - 200,
-            top: position.y - 400,
+            left: Math.min(position.x - 200, window.innerWidth - 420),
+            top: Math.max(position.y - 280, 20),
             maxWidth: '400px'
           }}
+          onMouseEnter={handleTooltipMouseEnter}
+          onMouseLeave={handleTooltipMouseLeave}
         >
-          <Card className="shadow-lg border-2 border-blue-200 bg-white">
+          <Card className="shadow-lg border-2 border-blue-200 bg-white pointer-events-auto">
             <CardHeader className="pb-2">
               <CardTitle className="text-sm flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-blue-600" />
