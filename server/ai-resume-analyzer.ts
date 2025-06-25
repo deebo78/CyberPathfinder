@@ -211,12 +211,71 @@ SCORING CRITERIA:
 - Education background (15%)
 - Career trajectory (10%)
 
-SALARY BENCHMARKS (USD) - 2025 Market Rates:
-- Entry (0-2 years): $60K-85K
-- Mid (3-5 years): $85K-130K  
-- Senior (6-10 years): $130K-180K
-- Expert (11+ years): $180K-250K+
-- Executive: $250K-400K+
+DYNAMIC SALARY CALCULATION - 2025 Market Rates:
+
+BASE SALARY RANGES BY EXPERIENCE LEVEL:
+- Entry (0-2 years): $60K-85K baseline
+- Mid (3-5 years): $85K-130K baseline  
+- Senior (6-10 years): $130K-180K baseline
+- Expert (11+ years): $180K-250K baseline
+- Executive: $250K-400K+ baseline
+
+CAREER TRACK MULTIPLIERS (apply to base ranges):
+- SOC Operations: 0.9x (high supply, entry-friendly)
+- Red Team/Penetration Testing: 1.3x (specialized, high demand)
+- Digital Forensics: 1.2x (specialized skills)
+- GRC (Governance, Risk, Compliance): 1.1x (business critical)
+- Cloud Security: 1.4x (highest demand, complex skills)
+- Cybersecurity Architecture: 1.3x (strategic, technical leadership)
+- Identity and Access Management: 1.2x (critical infrastructure)
+- Vulnerability Management: 1.0x (standard demand)
+- Threat Intelligence: 1.2x (analytical expertise)
+- Secure Software Development: 1.3x (development + security)
+- Incident Response: 1.1x (operational critical)
+- Security Automation: 1.3x (technical + scripting)
+- Executive Leadership: 1.5x (C-suite premium)
+- Cybersecurity Education: 0.8x (academic/training focus)
+
+GEOGRAPHIC ADJUSTMENTS:
+- San Francisco/Silicon Valley: +35%
+- New York/Boston: +25%
+- Seattle/DC Metro: +20%
+- Austin/Denver/Chicago: +10%
+- National Average: 0% (baseline)
+- Remote positions: +5% (flexibility premium)
+- Small cities/rural: -15%
+
+CERTIFICATION PREMIUMS (add to base):
+- CISSP/CISM: +$10K-15K
+- Cloud certifications (AWS/Azure/GCP): +$8K-12K
+- Specialized (OSCP, GCIH, etc.): +$5K-10K
+- Multiple expert certs: +$15K-25K
+
+CALCULATION FORMULA:
+Final Range = (Base Range × Track Multiplier × Geographic Adjustment) + Certification Premium
+
+EXAMPLES:
+- Entry SOC Analyst in Austin: ($60K-85K × 0.9 × 1.1) + $5K = $64K-89K
+- Senior Cloud Security in SF: ($130K-180K × 1.4 × 1.35) + $15K = $261K-356K
+- Mid-level Red Team Remote: ($85K-130K × 1.3 × 1.05) + $10K = $126K-187K
+
+CRITICAL SALARY CALCULATION REQUIREMENTS:
+
+1. APPLY DYNAMIC CALCULATION: Use the formula above, never use generic $85K-130K for all positions
+2. ANALYZE LOCATION: Extract any geographic indicators from resume (city, state, remote work mentions)
+3. ASSESS CERTIFICATION VALUE: Factor in specific certifications mentioned using the premium table
+4. CONSIDER TRACK DEMAND: Apply appropriate career track multipliers based on market demand
+5. SHOW CALCULATION TRANSPARENCY: Include calculationDetails in salaryRange object
+
+EXAMPLES OF PROPER SALARY CALCULATIONS:
+- Entry SOC Analyst (Security+, Remote): 
+  Base: $60K-85K × 0.9 × 1.05 + $5K = $62K-85K
+- Senior Cloud Architect (CISSP, AWS, Seattle):
+  Base: $130K-180K × 1.4 × 1.2 + $20K = $238K-322K
+- Mid-level Red Team (OSCP, Austin):
+  Base: $85K-130K × 1.3 × 1.1 + $8K = $129K-195K
+
+Never use identical salary ranges across different tracks. Each recommendation must have unique, calculated ranges.
 
 IMPORTANT: Assess experience level based on ACTUAL years of experience and demonstrated capabilities, not just job titles. Many candidates inflate titles - focus on:
 - Years of hands-on technical experience
@@ -326,7 +385,14 @@ Respond with detailed JSON analysis following this structure:
       "salaryRange": {
         "min": number,
         "max": number,
-        "currency": "USD"
+        "currency": "USD",
+        "calculationDetails": {
+          "baseRange": "experience level baseline",
+          "trackMultiplier": "career track adjustment factor",
+          "geographicAdjustment": "location-based modification", 
+          "certificationPremium": "additional value from certifications",
+          "marketFactors": "supply/demand considerations"
+        }
       },
       "timeToTransition": "..."
     }

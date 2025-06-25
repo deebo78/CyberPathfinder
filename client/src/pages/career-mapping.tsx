@@ -43,6 +43,13 @@ interface CareerRecommendation {
     min: number;
     max: number;
     currency: string;
+    calculationDetails?: {
+      baseRange: string;
+      trackMultiplier: string;
+      geographicAdjustment: string;
+      certificationPremium: string;
+      marketFactors: string;
+    };
   };
   timeToTransition?: string;
 }
@@ -672,10 +679,10 @@ export default function CareerMapping() {
                                 Salary Range:
                               </h4>
                               <p className="text-sm font-medium text-green-600">
-                                ${recommendation.salaryRange.min}K - ${recommendation.salaryRange.max}K
+                                ${Math.round(recommendation.salaryRange.min / 1000)}K - ${Math.round(recommendation.salaryRange.max / 1000)}K
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
-                                Based on national averages
+                                {recommendation.salaryRange.calculationDetails?.baseRange || 'Based on market analysis'}
                               </p>
                             </div>
                           )}
