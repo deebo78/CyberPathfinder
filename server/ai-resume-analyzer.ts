@@ -556,7 +556,7 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
 
       // CRITICAL: Filter out invalid track-level recommendations
       if (analysis.recommendations) {
-        analysis.recommendations = analysis.recommendations.filter(rec => {
+        analysis.recommendations = analysis.recommendations.filter((rec: any) => {
           // Red Team Operations (ID: 4) - no entry-level positions
           if (rec.trackId === 4 && rec.recommendedLevel === "Entry") {
             console.warn(`Filtered out invalid Entry-level recommendation for Red Team Operations (ID: ${rec.trackId})`);
@@ -576,7 +576,7 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
         const hasEntryLevelUser = analysis.extractedData?.experienceLevel === "Entry" || 
                                  (analysis.extractedData?.experience?.totalYears && analysis.extractedData.experience.totalYears <= 2);
         
-        if (hasEntryLevelUser && !analysis.recommendations.some(rec => rec.trackId === 31)) {
+        if (hasEntryLevelUser && !analysis.recommendations.some((rec: any) => rec.trackId === 31)) {
           // Add SOC Operations as entry-friendly alternative for offensive security interests
           const socRecommendation = {
             trackId: 31,

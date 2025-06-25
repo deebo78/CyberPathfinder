@@ -1,0 +1,40 @@
+John Smith
+Email: john.smith@email.com
+Phone: (555) 123-4567
+Location: Atlanta, GA
+
+EDUCATION:
+Bachelor of Science in Cybersecurity (Expected May 2025)
+Georgia Institute of Technology
+
+EXPERIENCE:
+Cybersecurity Intern (June 2024 - Present)
+TechCorp Solutions, Atlanta, GA
+- Assisted with vulnerability assessments
+- Monitored security alerts in SOC environment
+- Participated in incident response procedures
+
+IT Help Desk Technician (August 2023 - May 2024)
+University IT Services
+- Provided technical support to students and faculty
+- Troubleshooting network and system issues
+
+CERTIFICATIONS:
+- CompTIA Security+ (March 2024)
+- CompTIA Network+ (January 2024)
+
+SKILLS:
+- Network Security Fundamentals
+- Windows and Linux Operating Systems
+- Basic Python Scripting
+- Interest in Ethical Hacking and Penetration Testing
+- SIEM Tools (Splunk basics)
+- Incident Response Procedures
+
+PROJECTS:
+- Capture The Flag (CTF) Competitions
+- Built home lab for practicing penetration testing
+- Completed SANS Cyber Ranges
+
+INTERESTS:
+Passionate about offensive security and red team operations. Goal is to become a penetration tester.
