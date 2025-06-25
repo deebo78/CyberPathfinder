@@ -263,6 +263,23 @@ CAREER LEVEL DEFINITIONS:
 - Expert (11+ years): Deep specialization, industry recognition
 - Executive: C-level, strategic leadership, business impact
 
+CRITICAL TRACK-LEVEL CONSTRAINTS:
+Some cybersecurity tracks do not have entry-level positions due to their specialized nature. You MUST respect these constraints:
+
+TRACKS WITHOUT ENTRY-LEVEL POSITIONS:
+- Red Team Operations (ID: 4): Minimum level is Mid-Level (requires 3+ years experience)
+- Executive Leadership CISO Track (ID: 42): Minimum level is Senior-Level (requires 6+ years experience)
+
+ENTRY-LEVEL RECOMMENDATION RULES:
+- If candidate has 0-2 years experience, NEVER recommend Red Team Operations or Executive Leadership
+- For entry-level candidates interested in offensive security, recommend SOC Operations, Digital Forensics, or Vulnerability Management instead
+- Entry-level candidates should build foundational skills before advancing to specialized tracks like Red Team
+
+TRACK PROGRESSION LOGIC:
+- Entry candidates interested in penetration testing → SOC Operations first (build monitoring skills)
+- Mid-level candidates with pen testing experience → Red Team Operations (if 3+ years experience)
+- Senior candidates with leadership experience → Executive tracks (if 6+ years experience)
+
 SCORING CRITERIA:
 - Technical skills alignment (30%)
 - Experience relevance (25%)
@@ -536,6 +553,66 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
       });
 
       const analysis = JSON.parse(response.choices[0].message.content || '{}');
+
+      // CRITICAL: Filter out invalid track-level recommendations
+      if (analysis.recommendations) {
+        analysis.recommendations = analysis.recommendations.filter(rec => {
+          // Red Team Operations (ID: 4) - no entry-level positions
+          if (rec.trackId === 4 && rec.recommendedLevel === "Entry") {
+            console.warn(`Filtered out invalid Entry-level recommendation for Red Team Operations (ID: ${rec.trackId})`);
+            return false;
+          }
+          
+          // Executive Leadership CISO Track (ID: 42) - no entry or mid-level positions  
+          if (rec.trackId === 42 && (rec.recommendedLevel === "Entry" || rec.recommendedLevel === "Mid-Level")) {
+            console.warn(`Filtered out invalid ${rec.recommendedLevel} recommendation for Executive Leadership (ID: ${rec.trackId})`);
+            return false;
+          }
+          
+          return true;
+        });
+
+        // If entry-level user had Red Team recommendation filtered out, add SOC Operations as alternative
+        const hasEntryLevelUser = analysis.extractedData?.experienceLevel === "Entry" || 
+                                 (analysis.extractedData?.experience?.totalYears && analysis.extractedData.experience.totalYears <= 2);
+        
+        if (hasEntryLevelUser && !analysis.recommendations.some(rec => rec.trackId === 31)) {
+          // Add SOC Operations as entry-friendly alternative for offensive security interests
+          const socRecommendation = {
+            trackId: 31,
+            trackName: "SOC Operations",
+            matchScore: 75,
+            reasoning: "SOC Operations provides essential foundational skills for cybersecurity careers. Entry-level professionals should master defensive operations and monitoring before advancing to specialized offensive tracks like Red Team Operations.",
+            recommendedLevel: "Entry",
+            nextSteps: [
+              "Gain hands-on experience with SIEM tools and security monitoring",
+              "Pursue SOC Analyst certifications (CSA, GCIH)",
+              "Build foundational incident response skills"
+            ],
+            relevantSkills: ["Security Monitoring", "Incident Response", "Network Security"],
+            gapAnalysis: {
+              strengths: ["Interest in cybersecurity", "Foundational technical skills"],
+              gaps: ["Limited hands-on security monitoring experience", "Need SOC-specific training"],
+              recommendations: ["Start with entry-level SOC analyst role", "Focus on defensive skills before offensive specialization"]
+            },
+            salaryRange: {
+              min: 54,
+              max: 77,
+              currency: "USD",
+              calculationDetails: {
+                baseRange: "Entry baseline $60K-85K",
+                trackMultiplier: "0.9x (entry-friendly)",
+                geographicAdjustment: "National average",
+                certificationPremium: "Foundation certifications",
+                marketFactors: "High availability in entry market"
+              }
+            },
+            timeToTransition: "3-6 months"
+          };
+          
+          analysis.recommendations.unshift(socRecommendation);
+        }
+      }
 
       // Ensure validationFindings exists - this is critical for credibility assessment
       if (!analysis.validationFindings) {
