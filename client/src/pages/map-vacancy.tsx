@@ -661,6 +661,77 @@ export default function MapVacancy() {
                         </div>
                       )}
 
+                      {/* Salary Analysis */}
+                      {analysis.salaryAnalysis && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">Salary Analysis</h4>
+                          <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                            {analysis.salaryAnalysis.extractedSalary.min && analysis.salaryAnalysis.extractedSalary.max && (
+                              <div className="flex justify-between text-sm">
+                                <span>Extracted Range:</span>
+                                <span className="font-medium">
+                                  ${analysis.salaryAnalysis.extractedSalary.min.toLocaleString()} - ${analysis.salaryAnalysis.extractedSalary.max.toLocaleString()}
+                                </span>
+                              </div>
+                            )}
+                            {analysis.salaryAnalysis.extractedSalary.payGrade && (
+                              <div className="flex justify-between text-sm">
+                                <span>Pay Grade:</span>
+                                <span className="font-medium">{analysis.salaryAnalysis.extractedSalary.payGrade}</span>
+                              </div>
+                            )}
+                            <div className="flex justify-between text-sm">
+                              <span>Market Alignment:</span>
+                              <Badge variant="outline" className={`${
+                                analysis.salaryAnalysis.marketAlignment === 'below_market' 
+                                  ? 'bg-red-50 text-red-700 border-red-200'
+                                  : analysis.salaryAnalysis.marketAlignment === 'above_market'
+                                  ? 'bg-blue-50 text-blue-700 border-blue-200'
+                                  : analysis.salaryAnalysis.marketAlignment === 'aligned'
+                                  ? 'bg-green-50 text-green-700 border-green-200'
+                                  : 'bg-gray-50 text-gray-700 border-gray-200'
+                              }`}>
+                                {analysis.salaryAnalysis.marketAlignment.replace('_', ' ').toUpperCase()}
+                              </Badge>
+                            </div>
+                            <div className="flex justify-between text-sm">
+                              <span>Seniority Match:</span>
+                              <Badge variant="outline" className={`${
+                                analysis.salaryAnalysis.seniorityMismatch === 'severe' 
+                                  ? 'bg-red-50 text-red-700 border-red-200'
+                                  : analysis.salaryAnalysis.seniorityMismatch === 'moderate'
+                                  ? 'bg-amber-50 text-amber-700 border-amber-200'
+                                  : analysis.salaryAnalysis.seniorityMismatch === 'minor'
+                                  ? 'bg-yellow-50 text-yellow-700 border-yellow-200'
+                                  : 'bg-green-50 text-green-700 border-green-200'
+                              }`}>
+                                {analysis.salaryAnalysis.seniorityMismatch === 'none' ? 'ALIGNED' : analysis.salaryAnalysis.seniorityMismatch.toUpperCase()}
+                              </Badge>
+                            </div>
+                            {analysis.salaryAnalysis.mismatchDetails && (
+                              <div className="text-sm text-gray-600 italic">
+                                {analysis.salaryAnalysis.mismatchDetails}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Missing Competencies */}
+                      {analysis.roleConsistencyAnalysis.missingCompetencies && analysis.roleConsistencyAnalysis.missingCompetencies.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">Missing Competencies</h4>
+                          <div className="space-y-2">
+                            {analysis.roleConsistencyAnalysis.missingCompetencies.map((competency, idx) => (
+                              <div key={idx} className="flex items-start gap-2 text-sm">
+                                <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
+                                <span className="text-gray-700">{competency}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
                       {/* Issues and Recommendations */}
                       {(analysis.roleConsistencyAnalysis.conflictsFound.length > 0 ||
                         analysis.roleConsistencyAnalysis.unrealisticExpectations.length > 0 ||
