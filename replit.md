@@ -192,7 +192,10 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 
 ## Changelog
 
-- June 17, 2025. Initial setup
+- May 26, 2025. Project inception and core foundation setup
+- May 27, 2025. NICE Framework database import and data processing
+- May 28-31, 2025. Career track development and certification mapping
+- June 17, 2025. Documentation formalization and feature enhancement
 
 ## User Preferences
 
