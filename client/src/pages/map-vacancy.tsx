@@ -36,11 +36,22 @@ interface VacancyAnalysis {
     experienceLevel: string;
   };
   matchSummary: string;
+  salaryAnalysis?: {
+    extractedSalary: {
+      min: number | null;
+      max: number | null;
+      payGrade?: string;
+    };
+    marketAlignment: 'aligned' | 'below_market' | 'above_market' | 'insufficient_data';
+    seniorityMismatch: 'none' | 'minor' | 'moderate' | 'severe';
+    mismatchDetails: string;
+  };
   roleConsistencyAnalysis?: {
     summary: string;
     conflictsFound: string[];
     unrealisticExpectations: string[];
     redundantOrDuplicateRequirements: string[];
+    missingCompetencies?: string[];
     recommendedImprovements: string[];
     overallConsistencyScore: number;
     severityLevel: 'low' | 'medium' | 'high';
@@ -74,6 +85,10 @@ interface WorkRoleMatch {
   category: string;
   specialtyArea: string;
   candidateCount?: number;
+  ksaAlignment?: {
+    matchedKSAs: string[];
+    missingCriticalKSAs: string[];
+  };
 }
 
 export default function MapVacancy() {

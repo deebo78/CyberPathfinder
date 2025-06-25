@@ -90,14 +90,14 @@ export class AIVacancyMapper {
       }));
 
       const prompt = `
-You are an expert Cyber Workforce Analyst specializing in NICE Framework alignment and job posting optimization. Your role is to:
+You are an expert cybersecurity workforce analyst specializing in NICE Framework mapping with decision-ready analysis for recruiters and hiring managers. Your enhanced role includes:
 
-1. Map job postings to appropriate NICE Framework work roles
-2. Identify best-fit career tracks from the NICE-aligned catalog
-3. Extract and organize job requirements (skills, experience, education, certifications)
-4. Analyze internal consistency and alignment within the job posting
-5. Detect role creep, unrealistic expectations, conflicting qualifications, and inconsistencies
-6. Provide actionable improvement recommendations for clearer, more effective job postings
+1. Map job postings to NICE Framework work roles with KSA transparency
+2. Analyze salary-seniority alignment and market positioning
+3. Provide gap analysis for missing competencies and framework alignment
+4. Detect role conflicts with specific impact assessment
+5. Generate actionable improvements with specific rewrites
+6. Create scoring transparency with detailed methodology
 
 JOB POSTING TO ANALYZE:
 Title: ${jobPosting.jobTitle}
@@ -151,9 +151,13 @@ RESPONSE FORMAT (JSON only):
       "workRoleName": "string",
       "workRoleCode": "string", 
       "matchPercentage": number,
-      "matchReason": "string",
+      "matchReason": "KSA-based explanation (e.g., '85% because 17 of 20 core KSA keywords map including K0003, K0049, K0305')",
       "category": "string",
-      "specialtyArea": "string"
+      "specialtyArea": "string",
+      "ksaAlignment": {
+        "matchedKSAs": ["array of matched Knowledge/Skills/Abilities codes"],
+        "missingCriticalKSAs": ["array of missing essential KSAs for this role"]
+      }
     }
   ],
   "otherNotableRoles": [similar format],
@@ -193,9 +197,19 @@ RESPONSE FORMAT (JSON only):
     "certifications": ["cert1", "cert2"],
     "experienceLevel": "Mid-Level"
   },
+  "salaryAnalysis": {
+    "extractedSalary": {
+      "min": number_or_null,
+      "max": number_or_null,
+      "payGrade": "string_if_mentioned"
+    },
+    "marketAlignment": "aligned|below_market|above_market|insufficient_data",
+    "seniorityMismatch": "none|minor|moderate|severe",
+    "mismatchDetails": "explanation of any salary-seniority gaps"
+  },
   "matchSummary": "Overall analysis summary",
   "roleConsistencyAnalysis": {
-    "summary": "Detailed assessment of job posting consistency, clarity, and alignment with industry standards",
+    "summary": "Priority assessment for revision (e.g., 'Medium priority for revision before posting')",
     "conflictsFound": [
       "SPECIFIC conflicts with exact details (e.g., 'Requires 10+ years experience but labeled as entry-level position')",
       "SPECIFIC misalignments between job title, responsibilities, and qualifications",
@@ -210,11 +224,16 @@ RESPONSE FORMAT (JSON only):
       "SPECIFIC instances of repetition with examples (e.g., 'Security clearance mentioned in 3 different sections')",
       "SPECIFIC overlapping skills that could be consolidated (e.g., 'Lists both Python programming and Python scripting separately')"
     ],
+    "missingCompetencies": [
+      "SPECIFIC missing critical skills/frameworks like NIST 800-53",
+      "Missing incident response competencies despite IR duties listed",
+      "Framework alignment gaps (e.g., no NIST cybersecurity framework mentioned)"
+    ],
     "recommendedImprovements": [
-      "SPECIFIC, actionable suggestions with clear implementation steps",
+      "SPECIFIC rewrite suggestions (e.g., 'Replace \"user profiles and roles\" with \"role-based access control (RBAC)\"')",
       "SPECIFIC NICE Framework alignments (e.g., 'Align with Systems Administration (IO-WRL-005) by focusing on...')",
       "SPECIFIC ways to improve candidate attraction (e.g., 'Split into two roles: Security Analyst and Network Administrator')",
-      "SPECIFIC language improvements (e.g., 'Replace vague requirement X with specific skill Y')"
+      "SPECIFIC language improvements with exact rewrites"
     ],
     "overallConsistencyScore": 85,
     "severityLevel": "low",
