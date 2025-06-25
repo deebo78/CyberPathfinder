@@ -112,6 +112,16 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 
 ## Recent Changes
 
+### June 25, 2025 - Enhanced Salary Calculation & Transparent Match Score System
+- **Dynamic Salary Calculation**: Implemented sophisticated salary calculation system with career track multipliers (SOC: 0.9x, Cloud: 1.4x, Red Team: 1.3x)
+- **Geographic Salary Adjustments**: Added location-based compensation modifications (SF +35%, NYC +25%, Remote +5%, etc.)
+- **Certification Premium Integration**: Factor in certification value (CISSP +$10K-15K, Cloud certs +$8K-12K, etc.)
+- **Transparent Match Score Methodology**: Added comprehensive 100-point scoring system with definable skills (60%) and soft skills analysis (40%)
+- **Score Breakdown Visualization**: Interactive details showing certification alignment, experience depth, technical skills match, and role context analysis
+- **Career Phase Level Determination**: Enhanced AI logic to accurately assign Entry/Mid/Senior/Expert/Executive levels based on comprehensive skill analysis
+- **Salary Display Fix**: Corrected frontend display to show proper salary ranges instead of zeros
+- **Calculation Transparency**: Enhanced UI to show calculation basis instead of generic "national averages" disclaimer
+
 ### June 26, 2025 - Complete NICE Framework TKS Integration & Interactive Visualization
 - **Universal TKS Inheritance**: Extended TKS inheritance to all 19 career tracks with 72 career levels mapped to 38 unique NICE Work Roles
 - **Comprehensive Database Mapping**: Established relational connections inheriting 2,655 tasks, 5,167 knowledge items, and 1,917 skills across the entire career progression system

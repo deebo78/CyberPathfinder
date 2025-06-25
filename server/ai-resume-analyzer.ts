@@ -197,6 +197,65 @@ ANALYSIS REQUIREMENTS:
    - Career advancement roadmap tailored to their profile
    - **INCLUDE CREDIBILITY ASSESSMENT**: Flag any timeline or credential inconsistencies
 
+5. MATCH SCORE CALCULATION METHODOLOGY:
+   Calculate match scores (0-100) using this transparent framework:
+
+   **DEFINABLE SKILLS ANALYSIS (60% of total score):**
+   - Certification Alignment (25%): Direct certification matches to NICE Framework TKS requirements
+     * Current industry certifications: +20-25 points
+     * Relevant but expired certifications: +10-15 points  
+     * Foundation-level certifications: +8-12 points
+     * No relevant certifications: 0 points
+   
+   - Experience Length & Depth (20%): Years of relevant experience mapped to career levels
+     * 0-2 years (Entry): Base 15-20 points
+     * 3-5 years (Mid): Base 18-25 points
+     * 6-10 years (Senior): Base 22-30 points
+     * 11+ years (Expert/Executive): Base 25-35 points
+   
+   - Technical Skills Match (15%): Direct alignment of listed technical skills to track requirements
+     * Perfect skill alignment: +12-15 points
+     * Strong skill overlap: +8-12 points
+     * Moderate skill match: +5-8 points
+     * Minimal skill overlap: +2-5 points
+
+   **SOFT SKILLS & ROLE CONTEXT ANALYSIS (40% of total score):**
+   - Previous Role Responsibilities (20%): Inferred soft skills from work history
+     * Leadership/management roles: +15-20 points for executive tracks
+     * Cross-functional collaboration: +10-15 points for GRC/consulting tracks
+     * Technical implementation: +12-18 points for hands-on tracks
+     * Training/mentoring: +8-12 points for education tracks
+   
+   - Industry Context & Domain Knowledge (10%): Sector-specific experience relevance
+     * Direct cybersecurity industry: +8-10 points
+     * Adjacent IT/tech roles: +5-8 points
+     * Regulated industries (finance, healthcare): +6-9 points for GRC tracks
+     * Non-tech background: +2-5 points
+   
+   - Career Progression Trajectory (10%): Growth pattern and advancement potential
+     * Clear upward progression: +8-10 points
+     * Lateral skill expansion: +5-8 points
+     * Consistent role responsibilities: +3-6 points
+     * Career gaps or setbacks: +1-3 points
+
+   **FINAL MATCH SCORE CALCULATION:**
+   Total Score = Definable Skills (60%) + Soft Skills Analysis (40%)
+   
+   **CAREER PHASE LEVEL DETERMINATION:**
+   Based on combined analysis, assign appropriate career level:
+   - Entry (0-2 years): Focus on foundational certifications + basic technical skills
+   - Mid (3-5 years): Strong technical skills + some leadership/project experience
+   - Senior (6-10 years): Advanced certifications + proven leadership + specialized expertise
+   - Expert (11+ years): Industry recognition + deep specialization + strategic thinking
+   - Executive: Business impact + organizational leadership + strategic vision
+
+   **TRANSPARENCY REQUIREMENT:** Include detailed breakdown in reasoning field explaining:
+   - Specific certifications that contributed to score
+   - Years of relevant experience and how it maps to career level
+   - Key technical skills that align with track requirements
+   - Soft skills inferred from previous roles and their relevance
+   - Any adjustments made for credibility concerns
+
 CAREER LEVEL DEFINITIONS:
 - Entry (0-2 years): New to cybersecurity, foundational skills
 - Mid (3-5 years): Solid experience, specialized knowledge

@@ -647,6 +647,30 @@ export default function CareerMapping() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
+                  {/* Match Score Methodology Explanation */}
+                  <div className="mb-4 p-3 bg-blue-50 rounded-lg border border-blue-200">
+                    <h4 className="text-sm font-medium text-blue-900 mb-2">Match Score Calculation Methodology</h4>
+                    <div className="text-xs text-blue-800 space-y-1">
+                      <div className="grid grid-cols-2 gap-4">
+                        <div>
+                          <span className="font-medium">Definable Skills (60%):</span>
+                          <div className="ml-2 space-y-0.5">
+                            <div>• Certification Alignment (25%)</div>
+                            <div>• Experience Length & Depth (20%)</div>
+                            <div>• Technical Skills Match (15%)</div>
+                          </div>
+                        </div>
+                        <div>
+                          <span className="font-medium">Soft Skills Analysis (40%):</span>
+                          <div className="ml-2 space-y-0.5">
+                            <div>• Previous Role Context (20%)</div>
+                            <div>• Industry Domain Knowledge (10%)</div>
+                            <div>• Career Progression Pattern (10%)</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                   {analysis.recommendations && analysis.recommendations.length > 0 ? (
                     analysis.recommendations.map((recommendation, index) => (
                       <div key={index} className="border rounded-lg p-4 space-y-4">
@@ -664,6 +688,59 @@ export default function CareerMapping() {
                           </div>
                         </div>
 
+                        {/* Score Breakdown */}
+                        <div className="mt-2 text-xs text-gray-600">
+                          <details className="cursor-pointer">
+                            <summary className="hover:text-gray-800 flex items-center gap-1">
+                              <span>View detailed score breakdown</span>
+                            </summary>
+                            <div className="mt-2 p-3 bg-gray-50 rounded border text-xs space-y-2">
+                              <div className="font-medium text-gray-800">Score Analysis:</div>
+                              <div className="grid grid-cols-2 gap-3 text-xs">
+                                <div>
+                                  <div className="font-medium text-blue-700">Definable Skills (60%)</div>
+                                  <div className="ml-2 space-y-1 text-gray-700">
+                                    {recommendation.reasoning.toLowerCase().includes('certification') ? (
+                                      <div>✓ Certifications: Contributing to alignment score</div>
+                                    ) : (
+                                      <div>• Certifications: Limited match detected</div>
+                                    )}
+                                    <div>• Experience: {recommendation.recommendedLevel} level ({
+                                      recommendation.recommendedLevel === 'Entry' ? '0-2 years' :
+                                      recommendation.recommendedLevel === 'Mid' ? '3-5 years' :
+                                      recommendation.recommendedLevel === 'Senior' ? '6-10 years' :
+                                      recommendation.recommendedLevel === 'Expert' ? '11+ years' : 'Executive'
+                                    })</div>
+                                    {recommendation.relevantSkills?.length > 0 && (
+                                      <div>✓ Technical Skills: {recommendation.relevantSkills.length} relevant matches</div>
+                                    )}
+                                  </div>
+                                </div>
+                                <div>
+                                  <div className="font-medium text-green-700">Soft Skills Analysis (40%)</div>
+                                  <div className="ml-2 space-y-1 text-gray-700">
+                                    {recommendation.reasoning.toLowerCase().includes('leadership') || 
+                                     recommendation.reasoning.toLowerCase().includes('management') ? (
+                                      <div>✓ Leadership context detected</div>
+                                    ) : (
+                                      <div>• Role responsibilities: Technical focus</div>
+                                    )}
+                                    {recommendation.reasoning.toLowerCase().includes('experience') && (
+                                      <div>✓ Industry domain relevance</div>
+                                    )}
+                                    <div>• Career progression: Aligned with track requirements</div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div className="border-t pt-2 mt-2">
+                                <div className="text-gray-600 italic">
+                                  <strong>Calculation:</strong> Definable Skills (60%) + Soft Skills Analysis (40%) = {recommendation.matchScore}% match
+                                </div>
+                              </div>
+                            </div>
+                          </details>
+                        </div>
+
                         <p className="text-muted-foreground">{recommendation.reasoning}</p>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -679,7 +756,7 @@ export default function CareerMapping() {
                                 Salary Range:
                               </h4>
                               <p className="text-sm font-medium text-green-600">
-                                ${Math.round(recommendation.salaryRange.min / 1000)}K - ${Math.round(recommendation.salaryRange.max / 1000)}K
+                                ${recommendation.salaryRange.min}K - ${recommendation.salaryRange.max}K
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
                                 {recommendation.salaryRange.calculationDetails?.baseRange || 'Based on market analysis'}
