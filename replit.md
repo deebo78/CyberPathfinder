@@ -122,6 +122,7 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Salary Display Enhancement**: Corrected frontend calculation and added transparent calculation details display
 - **Real-World Validation**: Tested with IT Program Manager profile showing $143K-198K (Senior) vs CND Analyst $62K-85K (Entry), demonstrating accurate differentiation
 - **Complete Documentation**: Created comprehensive Enhanced Salary Analysis documentation explaining methodology, calculations, and transparency features
+- **Career Level Explanation**: Added detailed documentation explaining "Recommended Level" vs current assessment with real-world examples and transition timeline guidance
 
 ### June 26, 2025 - Complete NICE Framework TKS Integration & Interactive Visualization
 - **Universal TKS Inheritance**: Extended TKS inheritance to all 19 career tracks with 72 career levels mapped to 38 unique NICE Work Roles

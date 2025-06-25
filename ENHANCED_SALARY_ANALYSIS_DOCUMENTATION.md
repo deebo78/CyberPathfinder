@@ -112,6 +112,94 @@ Instead of generic "based on national averages," the system shows:
 - "Entry-level SOC Operations with Security+ certification"
 - "Mid-level analysis with geographic adjustment for Austin market"
 
+## Career Level Recommendations Explained
+
+### Understanding "Recommended Level" vs Current Assessment
+
+The platform provides career transition guidance by distinguishing between a user's current position and their recommended target level for specialized cybersecurity tracks.
+
+**Current User Level Assessment:**
+- Derived from total experience, current role title, and overall career progression
+- Represents where the person currently stands in their cybersecurity journey
+- Based on comprehensive analysis of education, certifications, and work history
+
+**Recommended Level by Track:**
+- Specific career stage suggested for each cybersecurity specialization
+- Accounts for transferable skills and track-specific requirements
+- Provides realistic transition targets based on current capabilities
+
+### Real-World Example: Mid-Level Cybersecurity Engineer
+
+**Current Assessment:**
+- Role: Cybersecurity Engineer II (8 years total experience)
+- Education: Associate completed, Bachelor's in progress
+- Skills: OSCP certified, Python scripting, penetration testing experience
+
+**Track Recommendations:**
+- **Red Team Operations**: Mid-Level (82% match, 3-6 months transition)
+- **Secure Software Development**: Mid-Level (78% match, 6-12 months transition)
+- **Vulnerability Management**: Mid-Level (74% match, 3-6 months transition)
+
+**Rationale for Mid-Level Recommendations:**
+- Strong technical foundation supports specialist roles
+- Experience level sufficient for mid-tier positions
+- Missing elements (expired certifications, education completion) prevent Senior-level readiness
+- Practical skills enable faster transition than starting at Entry level
+
+### Level Determination Factors
+
+**Entry Level Recommendations (0-2 years experience):**
+- Recent graduates or career changers
+- Basic certifications (Security+, Network+)
+- Limited hands-on cybersecurity experience
+- Salary range: $60K-85K baseline
+
+**Mid-Level Recommendations (3-8 years experience):**
+- Established technical skills in cybersecurity
+- Relevant certifications and practical experience
+- Proven ability in current role but transitioning to specialization
+- Salary range: $85K-130K baseline
+
+**Senior Level Recommendations (8-15 years experience):**
+- Deep expertise in cybersecurity fundamentals
+- Advanced certifications (CISSP, CISM)
+- Leadership experience and strategic thinking
+- Salary range: $130K-180K baseline
+
+**Expert/Executive Recommendations (15+ years experience):**
+- Industry recognition and thought leadership
+- Multiple advanced certifications and clearances
+- Extensive management and architectural experience
+- Salary range: $180K-400K+ baseline
+
+### Transition Timeline Guidance
+
+Each recommendation includes realistic progression timelines:
+
+**3-6 Month Transitions:**
+- Strong skill alignment with target track
+- Minimal additional training required
+- Existing experience directly applicable
+
+**6-12 Month Transitions:**
+- Moderate skill gaps requiring focused development
+- Additional certifications or training recommended
+- Some experience overlap but new competencies needed
+
+**12+ Month Transitions:**
+- Significant skill development required
+- Multiple certifications or educational requirements
+- Career pivot requiring substantial preparation
+
+### Credibility Impact on Recommendations
+
+The system adjusts recommendations based on resume validation findings:
+
+**High Credibility (85-100):** Full level recommendations displayed
+**Moderate Credibility (70-84):** Standard recommendations with confidence notes
+**Low Credibility (50-69):** Conservative level adjustments applied
+**Critical Issues (<50):** Entry-level recommendations regardless of claims
+
 ## Integration with Match Score System
 
 The salary analysis integrates with the transparent match score methodology:
