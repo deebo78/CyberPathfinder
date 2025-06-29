@@ -265,6 +265,10 @@ CRITICAL SCORING INSTRUCTIONS:
    - <40: Critical problems (total deductions >60)
 4. IF YOU FIND NO REAL ISSUES: Score 95-100, don't manufacture problems
 5. IF YOU FIND MAJOR ISSUES: Score must be <75, with specific examples
+6. MATHEMATICAL CONSISTENCY REQUIRED: overallConsistencyScore MUST EQUAL scoringBreakdown.finalScore
+   - Calculate: finalScore = baseScore - sum(all deduction points)
+   - Use the SAME calculated value for both overallConsistencyScore and finalScore
+   - Never have different values for these two fields
 
 DETAILED ANALYSIS GUIDELINES:
 
@@ -410,6 +414,22 @@ BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generou
           overallConsistencyScore: 75,
           severityLevel: "low"
         };
+      }
+
+      // CRITICAL FIX: Ensure scoring consistency between overallConsistencyScore and finalScore
+      if (analysis.roleConsistencyAnalysis?.scoringBreakdown) {
+        // Calculate finalScore from base score minus deductions
+        const baseScore = analysis.roleConsistencyAnalysis.scoringBreakdown.baseScore || 100;
+        const totalDeductions = (analysis.roleConsistencyAnalysis.scoringBreakdown.deductions || [])
+          .reduce((sum: number, deduction: any) => sum + Math.abs(deduction.points || 0), 0);
+        
+        const calculatedFinalScore = Math.max(0, baseScore - totalDeductions);
+        
+        // Use the mathematically correct score for both fields
+        analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore = calculatedFinalScore;
+        analysis.roleConsistencyAnalysis.overallConsistencyScore = calculatedFinalScore;
+        
+        console.log(`Score consistency fix: Base ${baseScore} - Deductions ${totalDeductions} = Final ${calculatedFinalScore}`);
       }
 
       return analysis as VacancyAnalysis;
