@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Loader2, BookOpen, Target, Zap } from 'lucide-react';
+import { Loader2, BookOpen, Target, Zap, Download } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 interface TKSData {
   tasks: Array<{ code: string; description: string; importance: string }>;
@@ -128,6 +130,62 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
     }
   }, [isHovering, isVisible]);
 
+  const exportToExcel = () => {
+    if (!tksData) return;
+
+    // Create a new workbook
+    const workbook = XLSX.utils.book_new();
+
+    // Tasks sheet
+    const tasksData = [
+      ['Task Code', 'Description', 'Importance'],
+      ...tksData.tasks.map(task => [task.code, task.description, task.importance])
+    ];
+    const tasksSheet = XLSX.utils.aoa_to_sheet(tasksData);
+    XLSX.utils.book_append_sheet(workbook, tasksSheet, 'Tasks');
+
+    // Knowledge sheet
+    const knowledgeData = [
+      ['Knowledge Code', 'Description', 'Importance'],
+      ...tksData.knowledge.map(knowledge => [knowledge.code, knowledge.description, knowledge.importance])
+    ];
+    const knowledgeSheet = XLSX.utils.aoa_to_sheet(knowledgeData);
+    XLSX.utils.book_append_sheet(workbook, knowledgeSheet, 'Knowledge');
+
+    // Skills sheet
+    const skillsData = [
+      ['Skill Code', 'Description', 'Importance'],
+      ...tksData.skills.map(skill => [skill.code, skill.description, skill.importance])
+    ];
+    const skillsSheet = XLSX.utils.aoa_to_sheet(skillsData);
+    XLSX.utils.book_append_sheet(workbook, skillsSheet, 'Skills');
+
+    // Work Roles sheet
+    const workRolesData = [
+      ['Work Role Code', 'Name', 'Category', 'Priority'],
+      ...tksData.workRoles.map(role => [role.code, role.name, role.category, role.priority])
+    ];
+    const workRolesSheet = XLSX.utils.aoa_to_sheet(workRolesData);
+    XLSX.utils.book_append_sheet(workbook, workRolesSheet, 'Work Roles');
+
+    // Summary sheet
+    const summaryData = [
+      ['Metric', 'Count'],
+      ['Total Tasks', tksData.tksStats.taskCount],
+      ['Total Knowledge Items', tksData.tksStats.knowledgeCount],
+      ['Total Skills', tksData.tksStats.skillCount],
+      ['Total Work Roles', tksData.workRoles.length]
+    ];
+    const summarySheet = XLSX.utils.aoa_to_sheet(summaryData);
+    XLSX.utils.book_append_sheet(workbook, summarySheet, 'Summary');
+
+    // Generate filename
+    const filename = `NICE_TKS_${levelName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.xlsx`;
+
+    // Save the file
+    XLSX.writeFile(workbook, filename);
+  };
+
   return (
     <>
       <div
@@ -151,10 +209,24 @@ export function TKSTooltip({ careerTrackId, levelName, children, className }: TK
         >
           <Card className="shadow-lg border-2 border-blue-200 bg-white pointer-events-auto w-96">
             <CardHeader className="pb-2">
-              <CardTitle className="text-sm flex items-center gap-2">
-                <BookOpen className="w-4 h-4 text-blue-600" />
-                NICE Framework Requirements - {levelName}
-              </CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-blue-600" />
+                  NICE Framework Requirements - {levelName}
+                </CardTitle>
+                {tksData && (
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={exportToExcel}
+                    className="h-6 px-2 text-xs"
+                    title="Export TKS data to Excel"
+                  >
+                    <Download className="w-3 h-3 mr-1" />
+                    Export
+                  </Button>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="p-3">
               {loading ? (
