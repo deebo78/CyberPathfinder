@@ -209,6 +209,14 @@ RESPONSE FORMAT (JSON only):
     "redundantOrDuplicateRequirements": ["All redundancies"],
     "missingCompetencies": ["All missing cybersecurity competencies"],
     "recommendedImprovements": ["All specific improvement suggestions"],
+    "exampleRewrites": [
+      {
+        "section": "section name",
+        "original": "original problematic text",
+        "improved": "specific rewrite suggestion",
+        "rationale": "explanation of why this improves the posting"
+      }
+    ],
     "overallConsistencyScore": calculated_final_score,
     "severityLevel": "critical|high|medium|low",
     "scoringBreakdown": {
@@ -220,6 +228,25 @@ RESPONSE FORMAT (JSON only):
     }
   }
 }
+
+REWRITE EXAMPLES REQUIREMENT:
+For any significant issues identified, provide 3-5 specific rewrite examples in the exampleRewrites array:
+
+EXAMPLE REWRITE FORMAT:
+{
+  "section": "Education Requirements",
+  "original": "High school diploma/GED required",
+  "improved": "Bachelor's degree in Computer Science, Information Technology, or related field required; Master's degree preferred",
+  "rationale": "Director-level positions typically require advanced education to match responsibility scope and industry standards"
+}
+
+REWRITE FOCUS AREAS:
+- Education requirements that don't match role seniority
+- Job descriptions lacking cybersecurity competencies
+- Experience requirements with contradictions
+- Missing salary transparency
+- Vague technical requirements
+- Role titles that don't match responsibilities
 
 BE BRUTALLY HONEST: This role has fundamental problems that require major revision before posting.`;
 

@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen, Upload, FileText, Loader2, AlertTriangle } from "lucide-react";
+import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen, Upload, FileText, Loader2, AlertTriangle, Edit3 } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -53,8 +53,14 @@ interface VacancyAnalysis {
     redundantOrDuplicateRequirements: string[];
     missingCompetencies?: string[];
     recommendedImprovements: string[];
+    exampleRewrites?: Array<{
+      section: string;
+      original: string;
+      improved: string;
+      rationale: string;
+    }>;
     overallConsistencyScore: number;
-    severityLevel: 'low' | 'medium' | 'high';
+    severityLevel: 'low' | 'medium' | 'high' | 'critical';
     scoringBreakdown?: {
       baseScore: number;
       deductions: Array<{
@@ -769,6 +775,50 @@ export default function MapVacancy() {
                               <div key={idx} className="flex items-start gap-2 text-sm">
                                 <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                                 <span className="text-gray-700">{improvement}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Example Rewrites */}
+                      {analysis.roleConsistencyAnalysis.exampleRewrites && analysis.roleConsistencyAnalysis.exampleRewrites.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2 flex items-center gap-2">
+                            <Edit3 className="h-4 w-4" />
+                            Example Rewrites
+                          </h4>
+                          <div className="space-y-4">
+                            {analysis.roleConsistencyAnalysis.exampleRewrites.map((rewrite, idx) => (
+                              <div key={idx} className="border rounded-lg p-4 bg-gray-50">
+                                <div className="flex items-center gap-2 mb-2">
+                                  <Badge variant="outline" className="text-xs">
+                                    {rewrite.section}
+                                  </Badge>
+                                </div>
+                                
+                                <div className="space-y-3">
+                                  <div>
+                                    <h5 className="text-xs font-medium text-red-700 mb-1">Original (Problematic):</h5>
+                                    <p className="text-sm text-gray-700 bg-red-50 border border-red-200 rounded p-2 italic">
+                                      "{rewrite.original}"
+                                    </p>
+                                  </div>
+                                  
+                                  <div>
+                                    <h5 className="text-xs font-medium text-green-700 mb-1">Improved Version:</h5>
+                                    <p className="text-sm text-gray-900 bg-green-50 border border-green-200 rounded p-2 font-medium">
+                                      "{rewrite.improved}"
+                                    </p>
+                                  </div>
+                                  
+                                  <div>
+                                    <h5 className="text-xs font-medium text-blue-700 mb-1">Why This Improves The Posting:</h5>
+                                    <p className="text-xs text-gray-600">
+                                      {rewrite.rationale}
+                                    </p>
+                                  </div>
+                                </div>
                               </div>
                             ))}
                           </div>
