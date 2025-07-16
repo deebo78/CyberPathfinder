@@ -118,7 +118,16 @@ Start with base score of 100, then apply MANDATORY deductions:
 
 CRITICAL DEDUCTIONS (Apply ALL that match):
 - Non-Cybersecurity Role: -40 points (if job lacks cybersecurity competencies/frameworks/responsibilities)
-- Education-Level Mismatch: -25 points (high school for Director, no degree for Senior, etc.)
+- Education-Level Mismatch: NUANCED SCORING based on gap size:
+  • High School → Director/Executive: -25 points (4+ level gap)
+  • High School → Senior: -20 points (3 level gap)
+  • High School → Mid-Level: -15 points (2 level gap)
+  • Associates → Director/Executive: -20 points (3 level gap)
+  • Associates → Senior: -15 points (2 level gap)
+  • Associates → Mid-Level: -10 points (1 level gap)
+  • Bachelor's → Director/Executive: -10 points (1 level gap)
+  • Bachelor's → Senior: -5 points (minor gap)
+  • Master's → Director/Executive: -3 points (minimal gap)
 - Missing Salary Range: -20 points (for Mid-Level and above roles)
 - Major Experience Contradictions: -20 points (3 years required vs 15+ years preferred)
 - Role Scope Conflicts: -20 points (combining 3+ distinct job functions)
@@ -164,10 +173,16 @@ EXAMPLE DEDUCTION APPLICATION:
 For a "Director Portfolio & Program Management" role with only high school education required, no cybersecurity competencies, and no salary range:
 - Base Score: 100
 - Non-Cybersecurity Role: -40 (lacks any cybersecurity frameworks, tools, or responsibilities)
-- Education-Level Mismatch: -25 (high school for Director role)
+- Education-Level Mismatch: -25 (High School → Director = 4+ level gap)
 - Missing Salary Range: -20 (Director level requires compensation transparency)
 - Major Experience Contradictions: -20 (3 years minimum vs 15+ years preferred)
 - Final Score: 100 - 40 - 25 - 20 - 20 = -5 (minimum 0)
+
+NUANCED EDUCATION SCORING EXAMPLES:
+- Associates → Senior Role: -15 points (2 level gap)
+- Bachelor's → Director Role: -10 points (1 level gap)
+- Master's → Director Role: -3 points (minimal gap)
+- Bachelor's → Senior Role: -5 points (minor gap)
 
 RESPONSE FORMAT (JSON only):
 {

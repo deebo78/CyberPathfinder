@@ -149,11 +149,18 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Certification Guide Enhancement**: Added level filtering buttons and compact card design for improved UX
 - **Navigation Enhancement**: Added Certifications tab to main navigation with Award icon
 
-### July 16, 2025 - Map Vacancy Analysis System Critical Fix
+### July 16, 2025 - Map Vacancy Analysis System Critical Fix & Nuanced Education Scoring
 - **Critical AI Analysis Fix**: Resolved major issue where problematic job postings were incorrectly rated as "almost perfect"
 - **Enhanced Scoring Logic**: Implemented strict deduction-based scoring system with critical issue detection (-40 points for non-cybersecurity roles)
-- **Education-Level Validation**: Added detection of education-seniority mismatches (high school for Director roles, etc.)
+- **Nuanced Education Scoring**: Added graduated education-level mismatch penalties based on actual gap size:
+  • High School → Director: -25 points (4+ level gap)
+  • Associates → Senior: -15 points (2 level gap)  
+  • Bachelor's → Director: -10 points (1 level gap)
+  • Bachelor's → Senior: -5 points (minor gap)
+  • Master's → Director: -3 points (minimal gap)
+- **Education-Level Validation**: Enhanced detection of education-seniority mismatches with proportional penalties
 - **Cybersecurity Relevance Test**: Enhanced AI to properly identify non-cybersecurity roles attempting to claim framework alignment
+- **Example Rewrites Feature**: Added visual before/after text suggestions with rationale for problematic sections
 - **Transparent Deduction System**: Fixed score consistency override that was masking AI analysis results
 - **Real-World Validation**: Tested with Director Portfolio Management role - correctly identified as critical (0/100) vs previous false 90/100 rating
 - **Issue Detection Accuracy**: Now properly flags missing salary ranges, experience contradictions, and lack of cybersecurity competencies
