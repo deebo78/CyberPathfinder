@@ -149,6 +149,16 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Certification Guide Enhancement**: Added level filtering buttons and compact card design for improved UX
 - **Navigation Enhancement**: Added Certifications tab to main navigation with Award icon
 
+### July 16, 2025 - Map Vacancy Analysis System Critical Fix
+- **Critical AI Analysis Fix**: Resolved major issue where problematic job postings were incorrectly rated as "almost perfect"
+- **Enhanced Scoring Logic**: Implemented strict deduction-based scoring system with critical issue detection (-40 points for non-cybersecurity roles)
+- **Education-Level Validation**: Added detection of education-seniority mismatches (high school for Director roles, etc.)
+- **Cybersecurity Relevance Test**: Enhanced AI to properly identify non-cybersecurity roles attempting to claim framework alignment
+- **Transparent Deduction System**: Fixed score consistency override that was masking AI analysis results
+- **Real-World Validation**: Tested with Director Portfolio Management role - correctly identified as critical (0/100) vs previous false 90/100 rating
+- **Issue Detection Accuracy**: Now properly flags missing salary ranges, experience contradictions, and lack of cybersecurity competencies
+- **Severity Classification**: Accurate critical/high/medium/low severity levels based on actual issues found rather than generous scoring
+
 ### June 19, 2025 - Advanced Resume Validation & Credibility Assessment System (MVP Complete)
 - **Timeline Consistency Analysis**: Enhanced AI to detect impossible chronological claims like 15+ years experience starting 2009 vs 2020 degree completion
 - **Credential Authority Validation**: System flags expired certifications (CISSP expired 2018) being used to claim current training authority

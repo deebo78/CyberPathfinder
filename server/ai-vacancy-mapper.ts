@@ -90,14 +90,14 @@ export class AIVacancyMapper {
       }));
 
       const prompt = `
-You are an expert cybersecurity workforce analyst specializing in NICE Framework mapping with decision-ready analysis for recruiters and hiring managers. Your enhanced role includes:
+You are an expert cybersecurity workforce analyst specializing in NICE Framework mapping. Your primary role is to critically evaluate cybersecurity job postings for accuracy, realism, and framework alignment.
 
-1. Map job postings to NICE Framework work roles with KSA transparency
-2. Analyze salary-seniority alignment and market positioning
-3. Provide gap analysis for missing competencies and framework alignment
-4. Detect role conflicts with specific impact assessment
-5. Generate actionable improvements with specific rewrites
-6. Create scoring transparency with detailed methodology
+CRITICAL EVALUATION PRIORITIES:
+1. CYBERSECURITY RELEVANCE: Immediately flag non-cybersecurity roles attempting to claim cybersecurity alignment
+2. EDUCATION-LEVEL MISMATCHES: Detect when education requirements don't match role seniority
+3. SALARY TRANSPARENCY: Heavily penalize missing compensation information for senior roles
+4. EXPERIENCE CONTRADICTIONS: Identify conflicting experience requirements
+5. UNREALISTIC SCOPE: Flag roles that combine multiple distinct job functions
 
 JOB POSTING TO ANALYZE:
 Title: ${jobPosting.jobTitle}
@@ -113,35 +113,61 @@ ${JSON.stringify(workRolesSummary, null, 2)}
 AVAILABLE CAREER TRACKS:
 ${JSON.stringify(careerTracksSummary, null, 2)}
 
-ANALYSIS FRAMEWORK:
-Career Progression Levels (standard across tracks):
-- Entry-Level: 0-2 years experience, bachelor's degree preferred, basic certifications
-- Mid-Level: 3-5 years experience, specialized skills, intermediate certifications
-- Senior-Level: 6-10 years experience, leadership responsibilities, advanced certifications  
-- Expert-Level: 10+ years experience, technical leadership, expert certifications
-- Executive-Level: 15+ years experience, strategic leadership, executive responsibilities
+STRICT SCORING METHODOLOGY:
+Start with base score of 100, then apply MANDATORY deductions:
 
-CONSISTENCY ANALYSIS CRITERIA & SCORING:
-- Role Scope Conflicts: Combining incompatible responsibilities (-15 to -25 points)
-- Experience Misalignment: Requirements inconsistent with stated level (-10 to -20 points)
-- Education Contradictions: Conflicting degree requirements (-5 to -15 points)
-- Certification Confusion: Mixing entry-level and expert certifications (-10 to -20 points)
-- Skills Overload: Unrealistic breadth of technical skills (-15 to -25 points)
-- Compensation Misalignment: Salary ranges inconsistent with experience/responsibility (-10 to -15 points)
-  * NO DEDUCTION if salary range is provided and within market ranges
-  * Entry-Level: $45K-75K typical, <$40K = major undercompensation (-15 points)
-  * Mid-Level: $75K-110K typical, <$65K = undercompensation (-10 points)  
-  * Senior-Level: $110K-150K typical, <$100K = undercompensation (-10 points)
-  * Expert-Level: $150K-200K typical, <$140K = undercompensation (-10 points)
-  * Executive-Level: $200K+ typical, <$180K = undercompensation (-15 points)
-  * Missing salary information: -10 points (only if no salary range provided)
-- Redundant Requirements: Duplicate or overlapping qualifications (-5 to -10 points)
+CRITICAL DEDUCTIONS (Apply ALL that match):
+- Non-Cybersecurity Role: -40 points (if job lacks cybersecurity competencies/frameworks/responsibilities)
+- Education-Level Mismatch: -25 points (high school for Director, no degree for Senior, etc.)
+- Missing Salary Range: -20 points (for Mid-Level and above roles)
+- Major Experience Contradictions: -20 points (3 years required vs 15+ years preferred)
+- Role Scope Conflicts: -20 points (combining 3+ distinct job functions)
 
-SCORING METHODOLOGY:
-- Start with base score of 100
-- Deduct points for each identified issue based on severity
-- Final score ranges: 90-100 (excellent), 75-89 (good), 60-74 (fair), 40-59 (poor), 0-39 (critical issues)
-- Severity levels: high (score <60), medium (60-79), low (80+)
+MAJOR DEDUCTIONS:
+- Skills Overload: -15 points (expert in 5+ unrelated technologies)
+- Certification Confusion: -15 points (mixing entry and expert certs)
+- Experience Misalignment: -15 points (experience doesn't match stated level)
+- Compensation Below Market: -15 points (salary significantly below market)
+
+MODERATE DEDUCTIONS:
+- Redundant Requirements: -10 points (duplicate qualifications)
+- Missing Cybersecurity Frameworks: -10 points (no NIST, ISO, NICE mention)
+- Vague Requirements: -10 points (non-specific technical requirements)
+
+MINOR DEDUCTIONS:
+- Minor Inconsistencies: -5 points (small language contradictions)
+
+FINAL SCORE INTERPRETATION:
+- 90-100: Excellent (minimal issues, ready to post)
+- 75-89: Good (minor improvements needed)
+- 60-74: Fair (significant revisions required)
+- 40-59: Poor (major overhaul needed)
+- 0-39: Critical (completely unusable, fundamental problems)
+
+CYBERSECURITY RELEVANCE TEST:
+A role is NOT cybersecurity-related if it lacks:
+- Cybersecurity frameworks (NIST, ISO 27001, NICE)
+- Security tools and technologies
+- Risk management responsibilities
+- Incident response duties
+- Security compliance requirements
+- Vulnerability management tasks
+- Security architecture responsibilities
+
+NON-CYBERSECURITY INDICATORS:
+- General IT project management without security focus
+- Basic network administration without security context
+- Pure software development without security considerations
+- Business operations without security responsibilities
+
+EXAMPLE DEDUCTION APPLICATION:
+For a "Director Portfolio & Program Management" role with only high school education required, no cybersecurity competencies, and no salary range:
+- Base Score: 100
+- Non-Cybersecurity Role: -40 (lacks any cybersecurity frameworks, tools, or responsibilities)
+- Education-Level Mismatch: -25 (high school for Director role)
+- Missing Salary Range: -20 (Director level requires compensation transparency)
+- Major Experience Contradictions: -20 (3 years minimum vs 15+ years preferred)
+- Final Score: 100 - 40 - 25 - 20 - 20 = -5 (minimum 0)
 
 RESPONSE FORMAT (JSON only):
 {
@@ -151,51 +177,19 @@ RESPONSE FORMAT (JSON only):
       "workRoleName": "string",
       "workRoleCode": "string", 
       "matchPercentage": number,
-      "matchReason": "KSA-based explanation (e.g., '85% because 17 of 20 core KSA keywords map including K0003, K0049, K0305')",
+      "matchReason": "Honest assessment of alignment or lack thereof",
       "category": "string",
-      "specialtyArea": "string",
-      "ksaAlignment": {
-        "matchedKSAs": ["array of matched Knowledge/Skills/Abilities codes"],
-        "missingCriticalKSAs": ["array of missing essential KSAs for this role"]
-      }
+      "specialtyArea": "string"
     }
   ],
-  "otherNotableRoles": [similar format],
-  "bestTrackMatch": {
-    "trackId": number,
-    "trackName": "string",
-    "matchPercentage": number,
-    "careerProgression": [
-      {
-        "level": "Entry-Level",
-        "title": "Junior [Role Title]",
-        "description": "Brief description of this level",
-        "typicalExperience": "0-2 years",
-        "keyResponsibilities": ["responsibility1", "responsibility2"],
-        "isJobMatch": false
-      },
-      {
-        "level": "Mid-Level", 
-        "title": "[Role Title]",
-        "description": "Brief description of this level",
-        "typicalExperience": "3-5 years",
-        "keyResponsibilities": ["responsibility1", "responsibility2"],
-        "isJobMatch": true
-      }
-    ],
-    "jobPositionLevel": "Mid-Level",
-    "levelAlignment": {
-      "isAligned": true/false,
-      "issues": ["issue1 if not aligned"],
-      "recommendations": ["recommendation1", "recommendation2"]
-    }
-  },
+  "otherNotableRoles": [],
+  "bestTrackMatch": null_if_not_cybersecurity_role,
   "extractedRequirements": {
     "skills": ["skill1", "skill2"],
     "experience": ["experience requirement"],
     "education": ["education requirement"],
     "certifications": ["cert1", "cert2"],
-    "experienceLevel": "Mid-Level"
+    "experienceLevel": "determined level"
   },
   "salaryAnalysis": {
     "extractedSalary": {
@@ -203,153 +197,31 @@ RESPONSE FORMAT (JSON only):
       "max": number_or_null,
       "payGrade": "string_if_mentioned"
     },
-    "marketAlignment": "aligned|below_market|above_market|insufficient_data",
-    "seniorityMismatch": "none|minor|moderate|severe",
+    "marketAlignment": "insufficient_data",
+    "seniorityMismatch": "severe|moderate|minor|none",
     "mismatchDetails": "explanation of any salary-seniority gaps"
   },
-  "matchSummary": "Overall analysis summary",
+  "matchSummary": "Honest overall assessment",
   "roleConsistencyAnalysis": {
-    "summary": "Priority assessment for revision (e.g., 'Medium priority for revision before posting')",
-    "conflictsFound": [
-      "SPECIFIC conflicts with exact details (e.g., 'Requires 10+ years experience but labeled as entry-level position')",
-      "SPECIFIC misalignments between job title, responsibilities, and qualifications",
-      "SPECIFIC contradictions in technical requirements or certifications"
-    ],
-    "unrealisticExpectations": [
-      "SPECIFIC examples of scope creep (e.g., 'Combines network security, application development, and project management - typically 3 separate roles')",
-      "SPECIFIC skill combinations that are market-unrealistic (e.g., 'Expert-level skills in 8+ unrelated technologies')",
-      "SPECIFIC experience mismatches (e.g., 'Junior role requiring senior-level decision-making authority')"
-    ],
-    "redundantOrDuplicateRequirements": [
-      "SPECIFIC instances of repetition with examples (e.g., 'Security clearance mentioned in 3 different sections')",
-      "SPECIFIC overlapping skills that could be consolidated (e.g., 'Lists both Python programming and Python scripting separately')"
-    ],
-    "missingCompetencies": [
-      "SPECIFIC missing critical skills/frameworks like NIST 800-53",
-      "Missing incident response competencies despite IR duties listed",
-      "Framework alignment gaps (e.g., no NIST cybersecurity framework mentioned)"
-    ],
-    "recommendedImprovements": [
-      "SPECIFIC rewrite suggestions (e.g., 'Replace \"user profiles and roles\" with \"role-based access control (RBAC)\"')",
-      "SPECIFIC NICE Framework alignments (e.g., 'Align with Systems Administration (IO-WRL-005) by focusing on...')",
-      "SPECIFIC ways to improve candidate attraction (e.g., 'Split into two roles: Security Analyst and Network Administrator')",
-      "SPECIFIC language improvements with exact rewrites"
-    ],
-    "overallConsistencyScore": 85,
-    "severityLevel": "low",
+    "summary": "HIGH PRIORITY for revision before posting" (if score <60),
+    "conflictsFound": ["All specific conflicts identified"],
+    "unrealisticExpectations": ["All unrealistic requirements"],
+    "redundantOrDuplicateRequirements": ["All redundancies"],
+    "missingCompetencies": ["All missing cybersecurity competencies"],
+    "recommendedImprovements": ["All specific improvement suggestions"],
+    "overallConsistencyScore": calculated_final_score,
+    "severityLevel": "critical|high|medium|low",
     "scoringBreakdown": {
       "baseScore": 100,
       "deductions": [
-        {"category": "Skills Overload", "points": -10, "reason": "Specific explanation"},
-        {"category": "Redundant Requirements", "points": -5, "reason": "Specific explanation"}
+        {"category": "Exact Category Name", "points": -exact_points, "reason": "Specific explanation with evidence"}
       ],
-      "finalScore": 85
+      "finalScore": exact_calculated_result
     }
   }
 }
 
-CRITICAL SCORING INSTRUCTIONS:
-1. BE MATHEMATICALLY PRECISE: Apply exact deductions based on specific issues found
-2. MANDATORY DEDUCTION AMOUNTS:
-   - Skills Overload (5+ unrelated techs): -15 to -25 points
-   - Role Scope Conflicts (mixing roles): -15 to -25 points  
-   - Experience Contradictions: -10 to -20 points
-   - Certification Confusion: -10 to -20 points
-   - Redundant Requirements: -5 to -10 points
-   - Compensation Misalignment: -10 to -15 points
-3. SCORE RANGES ARE STRICT:
-   - 90-100: Excellent (only 1-2 minor issues, total deductions ≤10)
-   - 75-89: Good (moderate issues, total deductions 11-25)
-   - 60-74: Fair (significant problems, total deductions 26-40)
-   - 40-59: Poor (major issues, total deductions 41-60)
-   - <40: Critical problems (total deductions >60)
-4. IF YOU FIND NO REAL ISSUES: Score 95-100, don't manufacture problems
-5. IF YOU FIND MAJOR ISSUES: Score must be <75, with specific examples
-6. MATHEMATICAL CONSISTENCY REQUIRED: overallConsistencyScore MUST EQUAL scoringBreakdown.finalScore
-   - Calculate: finalScore = baseScore - sum(all deduction points)
-   - Use the SAME calculated value for both overallConsistencyScore and finalScore
-   - Never have different values for these two fields
-
-DETAILED ANALYSIS GUIDELINES:
-
-1. CONFLICT DETECTION - Look for these specific issues:
-   - Title vs. Responsibility Mismatch: "Senior" title but entry-level tasks (-15 points)
-   - Experience Contradictions: "2 years required" in one section, "5+ years" in another (-10 points)
-   - Certification Conflicts: Mixing CISSP (expert) with CompTIA A+ (entry-level) (-15 points)
-   - Salary vs. Requirements: $45K salary for senior architect role (-15 points)
-   - Technical Impossibilities: Expert in both Windows and Linux kernel development (-20 points)
-
-2. UNREALISTIC EXPECTATIONS - Identify these patterns:
-   - Role Consolidation: "Security Analyst + Network Admin + Project Manager" (-20 points)
-   - Technology Overload: Expert in Python, Java, C++, JavaScript, Go, Rust (-25 points)
-   - Timeline Unrealism: "5+ years DevSecOps experience" for $50K entry role (-15 points)
-   - Market Scarcity: Expert-level skills in 8+ unrelated technologies (-25 points)
-   - Level Inflation: "Junior analyst" managing enterprise security budget (-20 points)
-
-3. REDUNDANCY DETECTION - Find these duplications:
-   - Skill Repetition: "Python programming" and "Python scripting" listed separately (-5 points)
-   - Experience Double-Counting: "3 years IT experience" and "3+ years technical experience" (-5 points)
-   - Education Overlap: "Computer Science degree" and "Bachelor's in CS" listed separately (-5 points)
-   - Certification Redundancy: Requiring both CISSP and CISM when one covers the other (-10 points)
-
-4. IMPROVEMENT RECOMMENDATIONS - Provide specific actions:
-   - "Split into [Role A] focusing on [X] and [Role B] focusing on [Y]"
-   - "Reduce required technologies from [list] to core 3: [specific techs]"
-   - "Align salary range with [specific market data/level]"
-   - "Replace '[vague requirement]' with '[specific, measurable requirement]'"
-   - "Map to NICE Framework role [Code] by emphasizing [specific tasks/skills]"
-
-5. MARKET INTELLIGENCE - Add context about:
-   - Typical salary ranges for the identified role and experience level
-   - Common skill gaps in the current cybersecurity market
-   - Certification pathways that align with career progression
-   - Geographic considerations if location affects requirements
-
-6. NICE FRAMEWORK ALIGNMENT - Enhance recommendations with:
-   - Specific NICE work role codes that best match the position
-   - Tasks from the NICE Framework that should be emphasized
-   - Knowledge, Skills, and Abilities (KSAs) that are missing but should be included
-   - Career progression pathway within the NICE Framework
-
-7. CANDIDATE ATTRACTION IMPROVEMENTS - Suggest:
-   - How to make the role more appealing to diverse candidates
-   - Ways to clarify growth opportunities and career development
-   - Benefits or perks that would strengthen the posting
-   - Language adjustments to improve inclusivity
-
-EXAMPLES OF SCORING IN ACTION:
-
-EXCELLENT JOB POSTING (95 points):
-- Clear role definition aligned with single NICE work role
-- Realistic experience requirements matching stated level
-- Logical skill progression and related technologies
-- Minor deduction: -5 for missing preferred certifications
-
-GOOD JOB POSTING (80 points):
-- Generally well-structured with clear requirements
-- Some technology breadth but manageable scope
-- Minor inconsistencies in experience language
-- Deductions: -10 redundant requirements, -10 slightly broad tech scope
-
-FAIR JOB POSTING (65 points):
-- Mixed responsibilities from multiple distinct roles
-- Experience requirements somewhat unrealistic for level
-- Several redundant or overlapping requirements
-- Deductions: -15 role mixing, -10 experience mismatch, -10 redundancy
-
-POOR JOB POSTING (45 points):
-- Combines 3+ distinct job functions inappropriately
-- Major experience contradictions between sections
-- Unrealistic technology expertise expectations
-- Deductions: -25 role consolidation, -15 contradictions, -15 tech overload
-
-CRITICAL COMPENSATION LOGIC:
-- If salary range is provided (not "Not specified"), DO NOT deduct points for missing salary
-- Only apply compensation misalignment deductions if salary is provided BUT below market rates
-- If location is provided (not "Not specified"), DO NOT deduct points for missing location
-- Evaluate provided salary against experience level benchmarks
-
-BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generous with broken job postings.`;
+BE BRUTALLY HONEST: This role has fundamental problems that require major revision before posting.`;
 
       // Try gpt-4o-mini first as fallback, then gpt-4o
       let response;
@@ -416,20 +288,18 @@ BE BRUTALLY HONEST: If you see major issues, score accordingly. Don't be generou
         };
       }
 
-      // CRITICAL FIX: Ensure scoring consistency between overallConsistencyScore and finalScore
+      // Only validate the scoring structure exists, don't override AI calculations
       if (analysis.roleConsistencyAnalysis?.scoringBreakdown) {
-        // Calculate finalScore from base score minus deductions
-        const baseScore = analysis.roleConsistencyAnalysis.scoringBreakdown.baseScore || 100;
-        const totalDeductions = (analysis.roleConsistencyAnalysis.scoringBreakdown.deductions || [])
-          .reduce((sum: number, deduction: any) => sum + Math.abs(deduction.points || 0), 0);
+        const finalScore = analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore;
+        const overallScore = analysis.roleConsistencyAnalysis.overallConsistencyScore;
         
-        const calculatedFinalScore = Math.max(0, baseScore - totalDeductions);
+        console.log(`AI Analysis Score: Overall ${overallScore}, Final ${finalScore}`);
         
-        // Use the mathematically correct score for both fields
-        analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore = calculatedFinalScore;
-        analysis.roleConsistencyAnalysis.overallConsistencyScore = calculatedFinalScore;
-        
-        console.log(`Score consistency fix: Base ${baseScore} - Deductions ${totalDeductions} = Final ${calculatedFinalScore}`);
+        // Only fix if there's a genuine mismatch (more than 1 point difference)
+        if (Math.abs(finalScore - overallScore) > 1) {
+          console.log(`Warning: Score mismatch detected - using AI's calculated score: ${finalScore}`);
+          analysis.roleConsistencyAnalysis.overallConsistencyScore = finalScore;
+        }
       }
 
       return analysis as VacancyAnalysis;
