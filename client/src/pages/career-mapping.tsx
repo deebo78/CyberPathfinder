@@ -759,7 +759,7 @@ export default function CareerMapping() {
                                 ${recommendation.salaryRange.min}K - ${recommendation.salaryRange.max}K
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
-                                {recommendation.salaryRange.calculationDetails?.baseRange || 'Based on market analysis'}
+                                Based on national averages
                               </p>
                             </div>
                           )}
