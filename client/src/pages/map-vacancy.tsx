@@ -633,49 +633,68 @@ export default function MapVacancy() {
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
-                      {/* Overall Score */}
-                      <div className="text-center p-4 bg-gray-50 rounded-lg">
-                        <div className="text-2xl font-bold text-gray-900 mb-1">
-                          {analysis.roleConsistencyAnalysis.overallConsistencyScore}/100
+                      {/* Quality Assessment Display */}
+                      {analysis.qualityAssessment ? (
+                        <div className="space-y-4">
+                          {(() => {
+                            const lines = analysis.qualityAssessment.split('\n');
+                            const severityLine = lines[0] || 'MODERATE PRIORITY';
+                            const summaryLine = lines.find((line: string) => line.startsWith('Summary:'));
+                            const issueLines = lines.filter((line: string) => line.startsWith('—'));
+                            
+                            const getSeverityStyle = (severity: string) => {
+                              if (severity.includes('CRITICAL')) return 'bg-red-50 text-red-700 border-red-200';
+                              if (severity.includes('HIGH')) return 'bg-orange-50 text-orange-700 border-orange-200';
+                              if (severity.includes('MODERATE')) return 'bg-amber-50 text-amber-700 border-amber-200';
+                              if (severity.includes('LOW')) return 'bg-yellow-50 text-yellow-700 border-yellow-200';
+                              if (severity.includes('READY')) return 'bg-green-50 text-green-700 border-green-200';
+                              return 'bg-gray-50 text-gray-700 border-gray-200';
+                            };
+
+                            return (
+                              <>
+                                <div className="text-center p-4 bg-gray-50 rounded-lg">
+                                  <div className="text-lg font-bold text-gray-900 mb-1">
+                                    Quality Assessment
+                                  </div>
+                                  <Badge 
+                                    variant="outline" 
+                                    className={`mt-2 ${getSeverityStyle(severityLine)}`}
+                                  >
+                                    {severityLine}
+                                  </Badge>
+                                </div>
+                                
+                                {summaryLine && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-900 mb-2">Summary</h4>
+                                    <p className="text-sm text-gray-700">{summaryLine.replace('Summary: ', '')}</p>
+                                  </div>
+                                )}
+                                
+                                {issueLines.length > 0 && (
+                                  <div>
+                                    <h4 className="text-sm font-medium text-gray-900 mb-2">Issues Identified</h4>
+                                    <div className="bg-red-50 rounded-lg p-3 space-y-2">
+                                      <ul className="text-sm text-red-700 space-y-1">
+                                        {issueLines.map((issue: string, index: number) => (
+                                          <li key={index} className="flex items-start gap-2">
+                                            <span className="text-red-500 mt-0.5 font-bold">•</span>
+                                            <span>{issue.replace('— ', '')}</span>
+                                          </li>
+                                        ))}
+                                      </ul>
+                                    </div>
+                                  </div>
+                                )}
+                              </>
+                            );
+                          })()}
                         </div>
-                        <div className="text-sm text-gray-600">Overall Consistency Score</div>
-                        <Badge 
-                          variant="outline" 
-                          className={`mt-2 ${
-                            analysis.roleConsistencyAnalysis.severityLevel === 'high' 
-                              ? 'bg-red-50 text-red-700 border-red-200'
-                              : analysis.roleConsistencyAnalysis.severityLevel === 'medium'
-                              ? 'bg-amber-50 text-amber-700 border-amber-200'
-                              : 'bg-green-50 text-green-700 border-green-200'
-                          }`}
-                        >
-                          {analysis.roleConsistencyAnalysis.severityLevel.toUpperCase()} PRIORITY
-                        </Badge>
-                      </div>
-
-                      {/* Summary */}
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-900 mb-2">Summary</h4>
-                        <p className="text-sm text-gray-700">{analysis.roleConsistencyAnalysis.summary}</p>
-                      </div>
-
-                      {/* Scoring Breakdown */}
-                      {analysis.roleConsistencyAnalysis.scoringBreakdown && (
+                      ) : (
                         <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">Scoring Breakdown</h4>
-                          <div className="bg-gray-50 rounded-lg p-3 space-y-2">
-                            <div className="flex justify-between text-sm">
-                              <span>Base Score:</span>
-                              <span className="font-medium">{analysis.roleConsistencyAnalysis.scoringBreakdown.baseScore}</span>
-                            </div>
-                            {analysis.roleConsistencyAnalysis.scoringBreakdown.deductions.map((deduction, idx) => (
-                              <div key={idx} className="flex justify-between text-sm text-red-600">
-                                <span>{deduction.category}:</span>
-                                <span>-{deduction.points}</span>
-                              </div>
-                            ))}
-
-                          </div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">Summary</h4>
+                          <p className="text-sm text-gray-700">{analysis.roleConsistencyAnalysis.summary}</p>
                         </div>
                       )}
 

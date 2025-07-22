@@ -26,12 +26,15 @@ interface VacancyAnalysis {
   primaryMatches: WorkRoleMatch[];
   otherNotableRoles: WorkRoleMatch[];
   bestTrackMatch: {
-    trackId: number;
-    trackName: string;
-    matchPercentage: number;
-    careerProgression: CareerLevel[];
-    jobPositionLevel: string;
-    levelAlignment: {
+    id: number;
+    name: string;
+    description?: string;
+    trackId?: number;
+    trackName?: string;
+    matchPercentage?: number;
+    careerProgression?: CareerLevel[];
+    jobPositionLevel?: string;
+    levelAlignment?: {
       isAligned: boolean;
       issues: string[];
       recommendations: string[];
@@ -44,7 +47,42 @@ interface VacancyAnalysis {
     certifications: string[];
     experienceLevel: string;
   };
+  salaryAnalysis?: {
+    extractedSalary: {
+      min: number | null;
+      max: number | null;
+      payGrade: string | null;
+    };
+    marketAlignment: string;
+    seniorityMismatch: string;
+    mismatchDetails: string;
+  };
   matchSummary: string;
+  qualityAssessment?: string;
+  roleConsistencyAnalysis?: {
+    summary: string;
+    conflictsFound: string[];
+    unrealisticExpectations: string[];
+    redundantOrDuplicateRequirements: string[];
+    missingCompetencies: string[];
+    recommendedImprovements: string[];
+    exampleRewrites?: Array<{
+      section: string;
+      original: string;
+      improved: string;
+      rationale: string;
+    }>;
+    overallConsistencyScore?: number;
+    severityLevel: string;
+    scoringBreakdown?: {
+      baseScore: number;
+      deductions: Array<{
+        category: string;
+        points: number;
+        reason: string;
+      }>;
+    };
+  };
 }
 
 interface CareerLevel {
@@ -90,14 +128,7 @@ export class AIVacancyMapper {
       }));
 
       const prompt = `
-You are an expert cybersecurity workforce analyst specializing in NICE Framework mapping. Your primary role is to critically evaluate cybersecurity job postings for accuracy, realism, and framework alignment.
-
-CRITICAL EVALUATION PRIORITIES:
-1. CYBERSECURITY RELEVANCE: Immediately flag non-cybersecurity roles attempting to claim cybersecurity alignment
-2. EDUCATION-LEVEL MISMATCHES: Detect when education requirements don't match role seniority
-3. SALARY TRANSPARENCY: Heavily penalize missing compensation information for senior roles
-4. EXPERIENCE CONTRADICTIONS: Identify conflicting experience requirements
-5. UNREALISTIC SCOPE: Flag roles that combine multiple distinct job functions
+You are an expert cybersecurity workforce analyst specializing in NICE Framework mapping. Analyze this job posting for alignment with NICE work roles and assess its overall quality using a severity-based approach.
 
 JOB POSTING TO ANALYZE:
 Title: ${jobPosting.jobTitle}
@@ -113,84 +144,51 @@ ${JSON.stringify(workRolesSummary, null, 2)}
 AVAILABLE CAREER TRACKS:
 ${JSON.stringify(careerTracksSummary, null, 2)}
 
-STRICT SCORING METHODOLOGY:
-Start with base score of 100, then apply MANDATORY deductions. BE MATHEMATICALLY PRECISE - calculate the EXACT score step by step:
+ANALYSIS INSTRUCTIONS:
 
-CRITICAL DEDUCTIONS (Apply ALL that match):
-- Non-Cybersecurity Role: -40 points (if job lacks cybersecurity competencies/frameworks/responsibilities)
-- Education-Level Mismatch: NUANCED SCORING based on gap size:
-  • High School → Director/Executive: -25 points (4+ level gap)
-  • High School → Senior: -20 points (3 level gap)
-  • High School → Mid-Level: -15 points (2 level gap)
-  • Associates → Director/Executive: -20 points (3 level gap)
-  • Associates → Senior: -15 points (2 level gap)
-  • Associates → Mid-Level: -10 points (1 level gap)
-  • Bachelor's → Director/Executive: -10 points (1 level gap)
-  • Bachelor's → Senior: -5 points (minor gap)
-  • Master's → Director/Executive: -3 points (minimal gap)
-- Missing Salary Range: -20 points (for Mid-Level and above roles)
-- Major Experience Contradictions: -20 points (3 years required vs 15+ years preferred)
-- Role Scope Conflicts: -20 points (combining 3+ distinct job functions)
+1. WORK ROLE MATCHING:
+- Find the best matching NICE work roles for this position
+- Match based on job duties, required skills, and responsibilities described
+- Provide realistic match percentages (10-100%)
+- Be honest about poor fits - most non-cybersecurity roles should have 0-20% matches
+- For genuine cybersecurity roles, matches should be 60-95%
 
-MAJOR DEDUCTIONS:
-- Skills Overload: -15 points (expert in 5+ unrelated technologies)
-- Certification Confusion: -15 points (mixing entry and expert certs)
-- Experience Misalignment: -15 points (experience doesn't match stated level)
-- Compensation Below Market: -15 points (salary significantly below market)
+2. CAREER TRACK RECOMMENDATION:
+- Recommend the most appropriate career track from the available options
+- Consider the job's focus area, required skills, and seniority level
+- Set bestTrackMatch to null if the role is not genuinely cybersecurity-related
 
-MODERATE DEDUCTIONS:
-- Redundant Requirements: -10 points (duplicate qualifications)
-- Missing Cybersecurity Frameworks: -10 points (no NIST, ISO, NICE mention)
-- Vague Requirements: -10 points (non-specific technical requirements)
+3. JOB POSTING QUALITY ASSESSMENT:
+Perform these three steps:
 
-MINOR DEDUCTIONS:
-- Minor Inconsistencies: -5 points (small language contradictions)
+Step 1: 🕵️‍♂️ Detect Inconsistencies & Omissions
+Look for any of these issues (and flag others you judge equivalent):
+• Non-Cybersecurity Role
+• Education-Level Mismatch
+• Missing Salary Range / Compensation Transparency
+• Major Experience Contradictions
+• Role Level Blurred or Undefined (entry vs. senior, etc.)
+• Certification Requirements Unclear or Unrealistic
+• GRC vs. Technical Scope Misalignment
+• Any other red-flag likely to confuse or deter qualified applicants
 
-FINAL SCORE INTERPRETATION:
-- 90-100: Excellent (minimal issues, ready to post)
-- 75-89: Good (minor improvements needed)
-- 60-74: Fair (significant revisions required)
-- 40-59: Poor (major overhaul needed)
-- 0-39: Critical (completely unusable, fundamental problems)
+Step 2: 📝 List Issues (No Numbers)
+Output each problem as its own bullet beginning with an em-dash (—).
+Keep each bullet concise.
+**Do not** attach numeric scores, weights, or percentages anywhere.
 
-CYBERSECURITY RELEVANCE TEST:
-A role is NOT cybersecurity-related if it lacks:
-- Cybersecurity frameworks (NIST, ISO 27001, NICE)
-- Security tools and technologies
-- Risk management responsibilities
-- Incident response duties
-- Security compliance requirements
-- Vulnerability management tasks
-- Security architecture responsibilities
+Step 3: 🚦 Assign ONE Overall Severity Category
+Based on the quantity *and* seriousness of the issues, choose **exactly one** label:
+• **CRITICAL PRIORITY** (3+ major inconsistencies **or** the role itself is not cybersecurity)
+• **HIGH PRIORITY** (2 major **or** 3+ medium issues)
+• **MODERATE PRIORITY** (1 major **or** 2 medium issues)
+• **LOW PRIORITY** (only minor improvements needed)
+• **READY TO POST** (no meaningful issues detected)
 
-NON-CYBERSECURITY INDICATORS:
-- General IT project management without security focus
-- Basic network administration without security context
-- Pure software development without security considerations
-- Business operations without security responsibilities
-
-MANDATORY SCORING CALCULATION STEPS:
-1. Start with base score: 100
-2. Identify ALL applicable deductions from above categories
-3. Apply EXACT point deductions (no approximations)
-4. Show your math: 100 - deduction1 - deduction2 - deduction3 = final_score
-5. Ensure final score matches calculated result
-
-EXAMPLE DEDUCTION APPLICATION:
-For a "Director Portfolio & Program Management" role with only high school education required, no cybersecurity competencies, and no salary range:
-- Base Score: 100
-- Non-Cybersecurity Role: -40 (lacks any cybersecurity frameworks, tools, or responsibilities)
-- Education-Level Mismatch: -25 (High School → Director = 4+ level gap)
-- Missing Salary Range: -20 (Director level requires compensation transparency)
-- Major Experience Contradictions: -20 (3 years minimum vs 15+ years preferred)
-- CALCULATION: 100 - 40 - 25 - 20 - 20 = -5 (minimum 0)
-- Final Score: 0
-
-NUANCED EDUCATION SCORING EXAMPLES:
-- Associates → Senior Role: -15 points (2 level gap)
-- Bachelor's → Director Role: -10 points (1 level gap)
-- Master's → Director Role: -3 points (minimal gap)
-- Bachelor's → Senior Role: -5 points (minor gap)
+FORMAT FOR QUALITY ASSESSMENT:
+Place the severity category first, followed by a one-sentence summary and the issue list:
+Example:
+"qualityAssessment": "CRITICAL PRIORITY\\nSummary: This role lacks cybersecurity relevance and has multiple critical inconsistencies.\\nIssues:\\n— Education-Level Mismatch: High school requirement for Director-level position\\n— Non-Cybersecurity Role: No mention of security frameworks or tools\\n— Missing Salary Range: No compensation transparency for senior role"
 
 RESPONSE FORMAT (JSON only):
 {
@@ -225,8 +223,9 @@ RESPONSE FORMAT (JSON only):
     "mismatchDetails": "explanation of any salary-seniority gaps"
   },
   "matchSummary": "Honest overall assessment",
+  "qualityAssessment": "SEVERITY CATEGORY\nSummary: One-sentence overall health assessment\nIssues:\n— Issue 1 description\n— Issue 2 description\n— Additional issues as needed",
   "roleConsistencyAnalysis": {
-    "summary": "HIGH PRIORITY for revision before posting" (if score <60),
+    "summary": "Overall priority level for revision",
     "conflictsFound": ["All specific conflicts identified"],
     "unrealisticExpectations": ["All unrealistic requirements"],
     "redundantOrDuplicateRequirements": ["All redundancies"],
@@ -240,20 +239,12 @@ RESPONSE FORMAT (JSON only):
         "rationale": "explanation of why this improves the posting"
       }
     ],
-    "overallConsistencyScore": calculated_final_score,
-    "severityLevel": "critical|high|medium|low",
-    "scoringBreakdown": {
-      "baseScore": 100,
-      "deductions": [
-        {"category": "Exact Category Name", "points": -exact_points, "reason": "Specific explanation with evidence"}
-      ],
-      "finalScore": exact_calculated_result
-    }
+    "severityLevel": "critical|high|moderate|low|ready"
   }
 }
 
 REWRITE EXAMPLES REQUIREMENT:
-For any significant issues identified, provide 3-5 specific rewrite examples in the exampleRewrites array:
+For any significant issues identified, provide 3-5 specific rewrite examples in the exampleRewrites array.
 
 EXAMPLE REWRITE FORMAT:
 {
@@ -263,15 +254,7 @@ EXAMPLE REWRITE FORMAT:
   "rationale": "Director-level positions typically require advanced education to match responsibility scope and industry standards"
 }
 
-REWRITE FOCUS AREAS:
-- Education requirements that don't match role seniority
-- Job descriptions lacking cybersecurity competencies
-- Experience requirements with contradictions
-- Missing salary transparency
-- Vague technical requirements
-- Role titles that don't match responsibilities
-
-BE BRUTALLY HONEST: This role has fundamental problems that require major revision before posting.`;
+Be thorough in identifying improvement opportunities but focus on the most critical issues first.`;
 
       // Try gpt-4o-mini first as fallback, then gpt-4o
       let response;
@@ -340,24 +323,13 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
         };
       }
 
-      // Server-side scoring consistency validation - use single authoritative score
-      const aiScore = analysis.roleConsistencyAnalysis?.overallConsistencyScore || 0;
-      console.log(`AI Analysis Score: ${aiScore}`);
-      
-      // Calculate rule-based validated score
-      const validatedScore = this.validateAndCorrectScoring(jobPosting, analysis);
-      
-      // Always use the validated score as the single source of truth
-      if (analysis.roleConsistencyAnalysis) {
-        analysis.roleConsistencyAnalysis.overallConsistencyScore = validatedScore;
-        
-        // Remove the confusing finalScore from breakdown - just keep deductions for transparency
-        if (analysis.roleConsistencyAnalysis.scoringBreakdown) {
-          delete analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore;
-        }
-        
-        console.log(`Using validated score: ${validatedScore}/100`);
+      console.log('Job posting analysis completed successfully');
+      // Add default qualityAssessment if missing
+      if (!analysis.qualityAssessment) {
+        analysis.qualityAssessment = "MODERATE PRIORITY\nSummary: Analysis completed with standard assessment.\nIssues:\n— No specific issues identified in initial analysis";
       }
+      
+      console.log(`Quality Assessment: ${analysis.qualityAssessment.split('\n')[0]}`); // Log the severity level
 
       return analysis as VacancyAnalysis;
 
@@ -375,26 +347,33 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
         primaryMatches: [],
         otherNotableRoles: [],
         bestTrackMatch: {
-          trackId: 1,
-          trackName: 'General Cybersecurity',
-          matchPercentage: 50,
-          matchReason: 'Unable to perform AI analysis due to API error'
+          id: 1,
+          name: 'General Cybersecurity',
+          description: 'Unable to perform AI analysis due to API error'
         },
         extractedRequirements: {
           skills: ['General cybersecurity knowledge'],
           experience: ['Entry to mid-level experience'],
           education: ['Bachelor\'s degree preferred'],
-          certifications: ['Security+ or equivalent']
+          certifications: ['Security+ or equivalent'],
+          experienceLevel: 'Entry'
+        },
+        salaryAnalysis: {
+          extractedSalary: { min: null, max: null, payGrade: null },
+          marketAlignment: 'insufficient_data',
+          seniorityMismatch: 'unknown',
+          mismatchDetails: 'Unable to analyze due to API error'
         },
         matchSummary: 'Analysis could not be completed due to API error. Manual review recommended.',
+        qualityAssessment: 'MODERATE PRIORITY\nSummary: Unable to perform analysis due to API error.\nIssues:\n— API connection failed, manual review required',
         roleConsistencyAnalysis: {
           summary: 'Unable to perform consistency analysis due to API error.',
           conflictsFound: [],
           unrealisticExpectations: [],
           redundantOrDuplicateRequirements: [],
+          missingCompetencies: [],
           recommendedImprovements: ['Please verify job posting requirements manually'],
-          overallConsistencyScore: 50,
-          severityLevel: 'medium' as const
+          severityLevel: 'moderate'
         }
       } as VacancyAnalysis;
     }
@@ -517,123 +496,7 @@ Response in JSON format with detailed analysis.`;
     }
   }
 
-  /**
-   * Rule-based scoring validation to ensure consistency
-   */
-  private validateAndCorrectScoring(jobPosting: any, analysis: any): number {
-    let calculatedScore = 100;
-    const issues = [];
 
-    // Check for cybersecurity relevance
-    const jobText = `${jobPosting.jobTitle} ${jobPosting.jobDescription} ${jobPosting.requiredQualifications || ''}`.toLowerCase();
-    const cybersecurityKeywords = ['cybersecurity', 'security', 'nist', 'iso 27001', 'incident response', 'vulnerability', 'risk management', 'siem', 'firewall', 'encryption'];
-    const hasCybersecurityContext = cybersecurityKeywords.some(keyword => jobText.includes(keyword));
-    
-    if (!hasCybersecurityContext) {
-      calculatedScore -= 40;
-      issues.push('Non-cybersecurity role: -40 points');
-    }
-
-    // Education-level mismatch validation
-    const educationText = `${jobPosting.requiredQualifications || ''} ${jobPosting.preferredQualifications || ''}`.toLowerCase();
-    const titleLevel = this.extractSeniorityLevel(jobPosting.jobTitle);
-    const educationLevel = this.extractEducationLevel(educationText);
-    
-    const educationDeduction = this.calculateEducationDeduction(titleLevel, educationLevel);
-    if (educationDeduction > 0) {
-      calculatedScore -= educationDeduction;
-      issues.push(`Education mismatch (${educationLevel} for ${titleLevel}): -${educationDeduction} points`);
-    }
-
-    // Missing salary range for senior roles
-    if (['senior', 'director', 'executive'].includes(titleLevel) && (!jobPosting.salaryMin || !jobPosting.salaryMax)) {
-      calculatedScore -= 20;
-      issues.push('Missing salary range: -20 points');
-    }
-
-    // Experience contradictions
-    const experienceText = `${jobPosting.requiredQualifications || ''} ${jobPosting.preferredQualifications || ''}`;
-    const hasContradictions = this.hasExperienceContradictions(experienceText);
-    console.log(`Experience contradiction check: "${experienceText.substring(0, 100)}..." → ${hasContradictions}`);
-    
-    if (hasContradictions) {
-      calculatedScore -= 20;
-      issues.push('Experience contradictions: -20 points');
-    }
-
-    // Ensure minimum score of 0
-    const finalCalculatedScore = Math.max(0, calculatedScore);
-
-    if (issues.length > 0) {
-      console.log(`Rule-based scoring validation found: ${issues.join(', ')} → Calculated: ${calculatedScore}, Final: ${finalCalculatedScore}`);
-    }
-
-    return finalCalculatedScore;
-  }
-
-  private extractSeniorityLevel(jobTitle: string): string {
-    const title = jobTitle.toLowerCase();
-    if (title.includes('director') || title.includes('chief') || title.includes('executive')) return 'director';
-    if (title.includes('senior') || title.includes('lead') || title.includes('principal')) return 'senior';
-    if (title.includes('mid') || title.includes('specialist') || title.includes('analyst')) return 'mid';
-    return 'entry';
-  }
-
-  private extractEducationLevel(educationText: string): string {
-    const text = educationText.toLowerCase();
-    if (text.includes('high school') || text.includes('ged')) return 'high_school';
-    if (text.includes('associate')) return 'associates';
-    if (text.includes('master') || text.includes('mba')) return 'masters';
-    if (text.includes('bachelor') || text.includes('degree')) return 'bachelors';
-    return 'unknown';
-  }
-
-  private calculateEducationDeduction(titleLevel: string, educationLevel: string): number {
-    const deductionMatrix = {
-      'high_school': {
-        'director': 25, // 4+ level gap
-        'senior': 20,   // 3 level gap
-        'mid': 15,      // 2 level gap
-        'entry': 0      // appropriate
-      },
-      'associates': {
-        'director': 20, // 3 level gap
-        'senior': 15,   // 2 level gap
-        'mid': 10,      // 1 level gap
-        'entry': 0      // appropriate
-      },
-      'bachelors': {
-        'director': 10, // 1 level gap
-        'senior': 5,    // minor gap
-        'mid': 0,       // appropriate
-        'entry': 0      // over-qualified but not penalized
-      },
-      'masters': {
-        'director': 3,  // minimal gap
-        'senior': 0,    // appropriate
-        'mid': 0,       // over-qualified but not penalized
-        'entry': 0      // over-qualified but not penalized
-      }
-    };
-
-    return deductionMatrix[educationLevel]?.[titleLevel] || 0;
-  }
-
-  private hasExperienceContradictions(experienceText: string): boolean {
-    // Look for patterns like "3 years required" vs "15+ years preferred"
-    const requiredMatch = experienceText.match(/(\d+)\s*years?\s*(required|minimum)/i);
-    const preferredMatch = experienceText.match(/(\d+)\+?\s*years?\s*(preferred|desired)/i);
-    
-    if (requiredMatch && preferredMatch) {
-      const requiredYears = parseInt(requiredMatch[1]);
-      const preferredYears = parseInt(preferredMatch[1]);
-      
-      // Flag contradiction if there's more than 10 years difference
-      return (preferredYears - requiredYears) > 10;
-    }
-    
-    return false;
-  }
 }
 
 export const aiVacancyMapper = new AIVacancyMapper();
