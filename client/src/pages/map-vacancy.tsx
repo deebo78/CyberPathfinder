@@ -530,78 +530,93 @@ export default function MapVacancy() {
                   <CardContent>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
-                        <h3 className="font-semibold text-gray-900">{analysis.bestTrackMatch.trackName}</h3>
-                        <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-                          {analysis.bestTrackMatch.matchPercentage}% match
-                        </Badge>
+                        <h3 className="font-semibold text-gray-900">{analysis.bestTrackMatch.name || analysis.bestTrackMatch.trackName}</h3>
+                        {analysis.bestTrackMatch.matchPercentage && (
+                          <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                            {analysis.bestTrackMatch.matchPercentage}% match
+                          </Badge>
+                        )}
                       </div>
                       
-                      <div className="text-sm text-gray-600">
-                        Position Level: <span className="font-medium">{analysis.bestTrackMatch.jobPositionLevel}</span>
-                      </div>
+                      {analysis.bestTrackMatch.jobPositionLevel && (
+                        <div className="text-sm text-gray-600">
+                          Position Level: <span className="font-medium">{analysis.bestTrackMatch.jobPositionLevel}</span>
+                        </div>
+                      )}
 
                       {/* Level Alignment */}
-                      <div className="border rounded-lg p-3">
-                        <div className="flex items-center gap-2 mb-2">
-                          {analysis.bestTrackMatch.levelAlignment.isAligned ? (
-                            <CheckCircle2 className="h-4 w-4 text-green-600" />
-                          ) : (
-                            <AlertCircle className="h-4 w-4 text-amber-600" />
+                      {analysis.bestTrackMatch.levelAlignment && (
+                        <div className="border rounded-lg p-3">
+                          <div className="flex items-center gap-2 mb-2">
+                            {analysis.bestTrackMatch.levelAlignment.isAligned ? (
+                              <CheckCircle2 className="h-4 w-4 text-green-600" />
+                            ) : (
+                              <AlertCircle className="h-4 w-4 text-amber-600" />
+                            )}
+                            <span className="text-sm font-medium">
+                              {analysis.bestTrackMatch.levelAlignment.isAligned ? "Well Aligned" : "Needs Adjustment"}
+                            </span>
+                          </div>
+                          
+                          {analysis.bestTrackMatch.levelAlignment.issues && analysis.bestTrackMatch.levelAlignment.issues.length > 0 && (
+                            <div className="mb-2">
+                              <p className="text-xs text-gray-600 mb-1">Issues:</p>
+                              <ul className="text-xs text-gray-700 space-y-1">
+                                {analysis.bestTrackMatch.levelAlignment.issues.map((issue, idx) => (
+                                  <li key={idx}>• {issue}</li>
+                                ))}
+                              </ul>
+                            </div>
                           )}
-                          <span className="text-sm font-medium">
-                            {analysis.bestTrackMatch.levelAlignment.isAligned ? "Well Aligned" : "Needs Adjustment"}
-                          </span>
+                          
+                          {analysis.bestTrackMatch.levelAlignment.recommendations && analysis.bestTrackMatch.levelAlignment.recommendations.length > 0 && (
+                            <div>
+                              <p className="text-xs text-gray-600 mb-1">Recommendations:</p>
+                              <ul className="text-xs text-gray-700 space-y-1">
+                                {analysis.bestTrackMatch.levelAlignment.recommendations.map((rec, idx) => (
+                                  <li key={idx}>• {rec}</li>
+                                ))}
+                              </ul>
+                            </div>
+                          )}
                         </div>
-                        
-                        {analysis.bestTrackMatch.levelAlignment.issues.length > 0 && (
-                          <div className="mb-2">
-                            <p className="text-xs text-gray-600 mb-1">Issues:</p>
-                            <ul className="text-xs text-gray-700 space-y-1">
-                              {analysis.bestTrackMatch.levelAlignment.issues.map((issue, idx) => (
-                                <li key={idx}>• {issue}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                        
-                        {analysis.bestTrackMatch.levelAlignment.recommendations.length > 0 && (
-                          <div>
-                            <p className="text-xs text-gray-600 mb-1">Recommendations:</p>
-                            <ul className="text-xs text-gray-700 space-y-1">
-                              {analysis.bestTrackMatch.levelAlignment.recommendations.map((rec, idx) => (
-                                <li key={idx}>• {rec}</li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
-                      </div>
+                      )}
 
                       {/* Career Progression */}
-                      <div>
-                        <h4 className="text-sm font-medium text-gray-900 mb-2">Career Progression</h4>
-                        <div className="space-y-2">
-                          {analysis.bestTrackMatch.careerProgression.map((level, idx) => (
-                            <div
-                              key={idx}
-                              className={`p-2 rounded border ${
-                                level.isJobMatch 
-                                  ? 'bg-blue-50 border-blue-200' 
-                                  : 'bg-gray-50 border-gray-200'
-                              }`}
-                            >
-                              <div className="flex items-center justify-between">
-                                <span className="text-sm font-medium">{level.title}</span>
-                                {level.isJobMatch && (
-                                  <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
-                                    Current Level
-                                  </Badge>
-                                )}
+                      {analysis.bestTrackMatch.careerProgression && analysis.bestTrackMatch.careerProgression.length > 0 && (
+                        <div>
+                          <h4 className="text-sm font-medium text-gray-900 mb-2">Career Progression</h4>
+                          <div className="space-y-2">
+                            {analysis.bestTrackMatch.careerProgression.map((level, idx) => (
+                              <div
+                                key={idx}
+                                className={`p-2 rounded border ${
+                                  level.isJobMatch 
+                                    ? 'bg-blue-50 border-blue-200' 
+                                    : 'bg-gray-50 border-gray-200'
+                                }`}
+                              >
+                                <div className="flex items-center justify-between">
+                                  <span className="text-sm font-medium">{level.title}</span>
+                                  {level.isJobMatch && (
+                                    <Badge variant="outline" className="text-xs bg-blue-100 text-blue-700">
+                                      Current Level
+                                    </Badge>
+                                  )}
+                                </div>
+                                <p className="text-xs text-gray-600 mt-1">{level.typicalExperience}</p>
                               </div>
-                              <p className="text-xs text-gray-600 mt-1">{level.typicalExperience}</p>
-                            </div>
-                          ))}
+                            ))}
+                          </div>
                         </div>
-                      </div>
+                      )}
+                      
+                      {/* Track Description */}
+                      {analysis.bestTrackMatch.description && (
+                        <div className="border-t pt-3 mt-3">
+                          <p className="text-sm text-gray-600">{analysis.bestTrackMatch.description}</p>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>
