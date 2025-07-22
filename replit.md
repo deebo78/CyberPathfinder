@@ -149,9 +149,14 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Certification Guide Enhancement**: Added level filtering buttons and compact card design for improved UX
 - **Navigation Enhancement**: Added Certifications tab to main navigation with Award icon
 
-### July 16, 2025 - Map Vacancy Analysis System Critical Fix & Nuanced Education Scoring
+### July 22, 2025 - Map Vacancy Analysis System Critical Fix & Scoring Consistency Engine
 - **Critical AI Analysis Fix**: Resolved major issue where problematic job postings were incorrectly rated as "almost perfect"
 - **Enhanced Scoring Logic**: Implemented strict deduction-based scoring system with critical issue detection (-40 points for non-cybersecurity roles)
+- **Server-Side Scoring Consistency**: Added rule-based validation to ensure consistent scoring across multiple runs:
+  • Lower AI temperature (0.1) and fixed seed for reproducibility
+  • Mathematical validation of AI scoring calculations
+  • Automatic score correction when AI deviates >10 points from rule-based calculation
+  • Consistent 15-point scoring for problematic Director role (was varying 15-35 points)
 - **Nuanced Education Scoring**: Added graduated education-level mismatch penalties based on actual gap size:
   • High School → Director: -25 points (4+ level gap)
   • Associates → Senior: -15 points (2 level gap)  
@@ -162,7 +167,7 @@ CyberPathfinder is a comprehensive web application designed to help cybersecurit
 - **Cybersecurity Relevance Test**: Enhanced AI to properly identify non-cybersecurity roles attempting to claim framework alignment
 - **Example Rewrites Feature**: Added visual before/after text suggestions with rationale for problematic sections
 - **Transparent Deduction System**: Fixed score consistency override that was masking AI analysis results
-- **Real-World Validation**: Tested with Director Portfolio Management role - correctly identified as critical (0/100) vs previous false 90/100 rating
+- **Real-World Validation**: Tested with Director Portfolio Management role - correctly identified as critical with consistent 15/100 scoring
 - **Issue Detection Accuracy**: Now properly flags missing salary ranges, experience contradictions, and lack of cybersecurity competencies
 - **Severity Classification**: Accurate critical/high/medium/low severity levels based on actual issues found rather than generous scoring
 

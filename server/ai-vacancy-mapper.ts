@@ -114,7 +114,7 @@ AVAILABLE CAREER TRACKS:
 ${JSON.stringify(careerTracksSummary, null, 2)}
 
 STRICT SCORING METHODOLOGY:
-Start with base score of 100, then apply MANDATORY deductions:
+Start with base score of 100, then apply MANDATORY deductions. BE MATHEMATICALLY PRECISE - calculate the EXACT score step by step:
 
 CRITICAL DEDUCTIONS (Apply ALL that match):
 - Non-Cybersecurity Role: -40 points (if job lacks cybersecurity competencies/frameworks/responsibilities)
@@ -169,6 +169,13 @@ NON-CYBERSECURITY INDICATORS:
 - Pure software development without security considerations
 - Business operations without security responsibilities
 
+MANDATORY SCORING CALCULATION STEPS:
+1. Start with base score: 100
+2. Identify ALL applicable deductions from above categories
+3. Apply EXACT point deductions (no approximations)
+4. Show your math: 100 - deduction1 - deduction2 - deduction3 = final_score
+5. Ensure final score matches calculated result
+
 EXAMPLE DEDUCTION APPLICATION:
 For a "Director Portfolio & Program Management" role with only high school education required, no cybersecurity competencies, and no salary range:
 - Base Score: 100
@@ -176,7 +183,8 @@ For a "Director Portfolio & Program Management" role with only high school educa
 - Education-Level Mismatch: -25 (High School → Director = 4+ level gap)
 - Missing Salary Range: -20 (Director level requires compensation transparency)
 - Major Experience Contradictions: -20 (3 years minimum vs 15+ years preferred)
-- Final Score: 100 - 40 - 25 - 20 - 20 = -5 (minimum 0)
+- CALCULATION: 100 - 40 - 25 - 20 - 20 = -5 (minimum 0)
+- Final Score: 0
 
 NUANCED EDUCATION SCORING EXAMPLES:
 - Associates → Senior Role: -15 points (2 level gap)
@@ -273,7 +281,7 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
           messages: [
             {
               role: "system",
-              content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles."
+              content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles. Use EXACT mathematical calculations for scoring - do not approximate."
             },
             {
               role: "user", 
@@ -281,7 +289,8 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
             }
           ],
           response_format: { type: "json_object" },
-          temperature: 0.3
+          temperature: 0.1, // Lower temperature for more consistent responses
+          seed: 12345 // Fixed seed for reproducible results
         });
       } catch (miniError) {
         console.log('gpt-4o-mini failed, trying gpt-4o:', miniError);
@@ -290,7 +299,7 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
           messages: [
             {
               role: "system",
-              content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles."
+              content: "You are an expert cybersecurity workforce analyst specializing in the NICE Framework. Provide detailed, accurate analysis of job postings and their alignment with NICE work roles. Use EXACT mathematical calculations for scoring - do not approximate."
             },
             {
               role: "user", 
@@ -298,7 +307,8 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
             }
           ],
           response_format: { type: "json_object" },
-          temperature: 0.3
+          temperature: 0.1, // Lower temperature for more consistent responses
+          seed: 12345 // Fixed seed for reproducible results
         });
       }
 
@@ -330,14 +340,24 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
         };
       }
 
-      // Only validate the scoring structure exists, don't override AI calculations
+      // Server-side scoring consistency validation
       if (analysis.roleConsistencyAnalysis?.scoringBreakdown) {
         const finalScore = analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore;
         const overallScore = analysis.roleConsistencyAnalysis.overallConsistencyScore;
         
         console.log(`AI Analysis Score: Overall ${overallScore}, Final ${finalScore}`);
         
-        // Only fix if there's a genuine mismatch (more than 1 point difference)
+        // Calculate expected score based on rule-based validation
+        const validatedScore = this.validateAndCorrectScoring(jobPosting, analysis);
+        
+        // If AI score differs significantly from rule-based calculation, use validated score
+        if (Math.abs(finalScore - validatedScore) > 10) {
+          console.log(`Score correction applied: AI ${finalScore} → Validated ${validatedScore}`);
+          analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore = validatedScore;
+          analysis.roleConsistencyAnalysis.overallConsistencyScore = validatedScore;
+        }
+        
+        // Ensure overall score matches final score
         if (Math.abs(finalScore - overallScore) > 1) {
           console.log(`Warning: Score mismatch detected - using AI's calculated score: ${finalScore}`);
           analysis.roleConsistencyAnalysis.overallConsistencyScore = finalScore;
@@ -500,6 +520,121 @@ Response in JSON format with detailed analysis.`;
       console.error('Detailed Work Role Match Error:', error);
       throw new Error('Failed to get detailed work role match: ' + (error as Error).message);
     }
+  }
+
+  /**
+   * Rule-based scoring validation to ensure consistency
+   */
+  private validateAndCorrectScoring(jobPosting: any, analysis: any): number {
+    let calculatedScore = 100;
+    const issues = [];
+
+    // Check for cybersecurity relevance
+    const jobText = `${jobPosting.jobTitle} ${jobPosting.jobDescription} ${jobPosting.requiredQualifications || ''}`.toLowerCase();
+    const cybersecurityKeywords = ['cybersecurity', 'security', 'nist', 'iso 27001', 'incident response', 'vulnerability', 'risk management', 'siem', 'firewall', 'encryption'];
+    const hasCybersecurityContext = cybersecurityKeywords.some(keyword => jobText.includes(keyword));
+    
+    if (!hasCybersecurityContext) {
+      calculatedScore -= 40;
+      issues.push('Non-cybersecurity role: -40 points');
+    }
+
+    // Education-level mismatch validation
+    const educationText = `${jobPosting.requiredQualifications || ''} ${jobPosting.preferredQualifications || ''}`.toLowerCase();
+    const titleLevel = this.extractSeniorityLevel(jobPosting.jobTitle);
+    const educationLevel = this.extractEducationLevel(educationText);
+    
+    const educationDeduction = this.calculateEducationDeduction(titleLevel, educationLevel);
+    if (educationDeduction > 0) {
+      calculatedScore -= educationDeduction;
+      issues.push(`Education mismatch (${educationLevel} for ${titleLevel}): -${educationDeduction} points`);
+    }
+
+    // Missing salary range for senior roles
+    if (['senior', 'director', 'executive'].includes(titleLevel) && (!jobPosting.salaryMin || !jobPosting.salaryMax)) {
+      calculatedScore -= 20;
+      issues.push('Missing salary range: -20 points');
+    }
+
+    // Experience contradictions
+    const experienceText = `${jobPosting.requiredQualifications || ''} ${jobPosting.preferredQualifications || ''}`;
+    if (this.hasExperienceContradictions(experienceText)) {
+      calculatedScore -= 20;
+      issues.push('Experience contradictions: -20 points');
+    }
+
+    // Ensure minimum score of 0
+    calculatedScore = Math.max(0, calculatedScore);
+
+    if (issues.length > 0) {
+      console.log(`Rule-based scoring validation found: ${issues.join(', ')} → Final: ${calculatedScore}`);
+    }
+
+    return calculatedScore;
+  }
+
+  private extractSeniorityLevel(jobTitle: string): string {
+    const title = jobTitle.toLowerCase();
+    if (title.includes('director') || title.includes('chief') || title.includes('executive')) return 'director';
+    if (title.includes('senior') || title.includes('lead') || title.includes('principal')) return 'senior';
+    if (title.includes('mid') || title.includes('specialist') || title.includes('analyst')) return 'mid';
+    return 'entry';
+  }
+
+  private extractEducationLevel(educationText: string): string {
+    const text = educationText.toLowerCase();
+    if (text.includes('high school') || text.includes('ged')) return 'high_school';
+    if (text.includes('associate')) return 'associates';
+    if (text.includes('master') || text.includes('mba')) return 'masters';
+    if (text.includes('bachelor') || text.includes('degree')) return 'bachelors';
+    return 'unknown';
+  }
+
+  private calculateEducationDeduction(titleLevel: string, educationLevel: string): number {
+    const deductionMatrix = {
+      'high_school': {
+        'director': 25, // 4+ level gap
+        'senior': 20,   // 3 level gap
+        'mid': 15,      // 2 level gap
+        'entry': 0      // appropriate
+      },
+      'associates': {
+        'director': 20, // 3 level gap
+        'senior': 15,   // 2 level gap
+        'mid': 10,      // 1 level gap
+        'entry': 0      // appropriate
+      },
+      'bachelors': {
+        'director': 10, // 1 level gap
+        'senior': 5,    // minor gap
+        'mid': 0,       // appropriate
+        'entry': 0      // over-qualified but not penalized
+      },
+      'masters': {
+        'director': 3,  // minimal gap
+        'senior': 0,    // appropriate
+        'mid': 0,       // over-qualified but not penalized
+        'entry': 0      // over-qualified but not penalized
+      }
+    };
+
+    return deductionMatrix[educationLevel]?.[titleLevel] || 0;
+  }
+
+  private hasExperienceContradictions(experienceText: string): boolean {
+    // Look for patterns like "3 years required" vs "15+ years preferred"
+    const requiredMatch = experienceText.match(/(\d+)\s*years?\s*(required|minimum)/i);
+    const preferredMatch = experienceText.match(/(\d+)\+?\s*years?\s*(preferred|desired)/i);
+    
+    if (requiredMatch && preferredMatch) {
+      const requiredYears = parseInt(requiredMatch[1]);
+      const preferredYears = parseInt(preferredMatch[1]);
+      
+      // Flag contradiction if there's more than 10 years difference
+      return (preferredYears - requiredYears) > 10;
+    }
+    
+    return false;
   }
 }
 
