@@ -204,7 +204,11 @@ RESPONSE FORMAT (JSON only):
     }
   ],
   "otherNotableRoles": [],
-  "bestTrackMatch": null_if_not_cybersecurity_role,
+  "bestTrackMatch": {
+    "id": track_id_number,
+    "name": "track_name_from_available_tracks",
+    "description": "track_description_from_available_tracks"
+  } // or null if not cybersecurity related,
   "extractedRequirements": {
     "skills": ["skill1", "skill2"],
     "experience": ["experience requirement"],
@@ -324,9 +328,27 @@ Be thorough in identifying improvement opportunities but focus on the most criti
       }
 
       console.log('Job posting analysis completed successfully');
+      
       // Add default qualityAssessment if missing
       if (!analysis.qualityAssessment) {
         analysis.qualityAssessment = "MODERATE PRIORITY\nSummary: Analysis completed with standard assessment.\nIssues:\n— No specific issues identified in initial analysis";
+      }
+      
+      // Post-process bestTrackMatch if it's just an ID
+      if (analysis.bestTrackMatch && typeof analysis.bestTrackMatch === 'number') {
+        const trackId = analysis.bestTrackMatch;
+        const matchingTrack = careerTracksSummary.find(track => track.id === trackId);
+        if (matchingTrack) {
+          analysis.bestTrackMatch = {
+            id: matchingTrack.id,
+            name: matchingTrack.name,
+            description: matchingTrack.description || matchingTrack.overview || 'Career track in cybersecurity field'
+          };
+          console.log(`Converted track ID ${trackId} to track object: ${matchingTrack.name}`);
+        } else {
+          console.warn(`Track ID ${trackId} not found in available tracks`);
+          analysis.bestTrackMatch = null;
+        }
       }
       
       console.log(`Quality Assessment: ${analysis.qualityAssessment.split('\n')[0]}`); // Log the severity level
