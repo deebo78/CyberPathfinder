@@ -137,8 +137,6 @@ Response format:
       const analysis = JSON.parse(response.choices[0].message.content || '{}');
       
       // Programmatic validation to enforce level constraints
-      console.log('Original recommendations:', analysis.recommendations?.map((r: any) => ({ id: r.trackId, name: r.trackName })));
-      console.log('User profile for validation:', { experience: profile.experience, currentLevel: profile.currentLevel, education: profile.education });
       
       if (analysis.recommendations) {
         analysis.recommendations = analysis.recommendations.filter((rec: any) => {
@@ -162,7 +160,6 @@ Response format:
                                (experienceText.match(/(\d+)/) && parseInt(experienceText.match(/(\d+)/)?.[1] || '0') < 3);
             
             if (isEntryLevel) {
-              console.log(`Blocking Red Team for entry-level user: ${JSON.stringify(profile)}`);
               return false; // Filter out Red Team for entry-level
             }
           }
@@ -184,8 +181,7 @@ Response format:
       return analysis as CareerAnalysis;
 
     } catch (error) {
-      console.error('AI Career Mapping Error:', error);
-      throw new Error('Failed to analyze career profile: ' + error.message);
+      throw new Error('Failed to analyze career profile: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   }
 
@@ -197,7 +193,8 @@ Response format:
       }
 
       const trackDetails = await storage.getCareerTrackWithPositions(trackId);
-      const relatedWorkRoles = await storage.getWorkRolesByCategory(track.categories);
+      // Note: categories field may not exist in current schema
+      const relatedWorkRoles = [];
 
       const prompt = `Provide detailed career guidance for the "${track.name}" career track based on this user's profile.
 
@@ -240,8 +237,7 @@ Format as JSON with detailed actionable guidance.`;
       return JSON.parse(response.choices[0].message.content || '{}');
 
     } catch (error) {
-      console.error('Detailed Track Recommendation Error:', error);
-      throw new Error('Failed to generate detailed recommendation: ' + error.message);
+      throw new Error('Failed to generate detailed recommendation: ' + (error instanceof Error ? error.message : 'Unknown error'));
     }
   }
 }

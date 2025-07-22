@@ -559,13 +559,11 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
         analysis.recommendations = analysis.recommendations.filter((rec: any) => {
           // Red Team Operations (ID: 4) - no entry-level positions
           if (rec.trackId === 4 && rec.recommendedLevel === "Entry") {
-            console.warn(`Filtered out invalid Entry-level recommendation for Red Team Operations (ID: ${rec.trackId})`);
             return false;
           }
           
           // Executive Leadership CISO Track (ID: 42) - no entry or mid-level positions  
           if (rec.trackId === 42 && (rec.recommendedLevel === "Entry" || rec.recommendedLevel === "Mid-Level")) {
-            console.warn(`Filtered out invalid ${rec.recommendedLevel} recommendation for Executive Leadership (ID: ${rec.trackId})`);
             return false;
           }
           
@@ -616,7 +614,7 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
 
       // Ensure validationFindings exists - this is critical for credibility assessment
       if (!analysis.validationFindings) {
-        console.warn("AI did not generate validationFindings - creating intelligent fallback");
+        // AI did not generate validationFindings - creating intelligent fallback
         
         // Analyze the text content for credibility issues
         const resumeText = resumeData.content.toLowerCase();

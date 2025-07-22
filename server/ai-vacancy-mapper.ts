@@ -344,14 +344,12 @@ Be thorough in identifying improvement opportunities but focus on the most criti
             name: matchingTrack.name,
             description: matchingTrack.description || matchingTrack.overview || 'Career track in cybersecurity field'
           };
-          console.log(`Converted track ID ${trackId} to track object: ${matchingTrack.name}`);
         } else {
-          console.warn(`Track ID ${trackId} not found in available tracks`);
           analysis.bestTrackMatch = null;
         }
       }
       
-      console.log(`Quality Assessment: ${analysis.qualityAssessment.split('\n')[0]}`); // Log the severity level
+
 
       return analysis as VacancyAnalysis;
 
@@ -364,7 +362,7 @@ Be thorough in identifying improvement opportunities but focus on the most criti
       }
       
       // For other errors, provide fallback analysis
-      console.warn('OpenAI API failed, providing fallback analysis');
+      // OpenAI API failed, providing fallback analysis
       return {
         primaryMatches: [],
         otherNotableRoles: [],
