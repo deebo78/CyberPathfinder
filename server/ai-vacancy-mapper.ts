@@ -553,19 +553,22 @@ Response in JSON format with detailed analysis.`;
 
     // Experience contradictions
     const experienceText = `${jobPosting.requiredQualifications || ''} ${jobPosting.preferredQualifications || ''}`;
-    if (this.hasExperienceContradictions(experienceText)) {
+    const hasContradictions = this.hasExperienceContradictions(experienceText);
+    console.log(`Experience contradiction check: "${experienceText.substring(0, 100)}..." → ${hasContradictions}`);
+    
+    if (hasContradictions) {
       calculatedScore -= 20;
       issues.push('Experience contradictions: -20 points');
     }
 
     // Ensure minimum score of 0
-    calculatedScore = Math.max(0, calculatedScore);
+    const finalCalculatedScore = Math.max(0, calculatedScore);
 
     if (issues.length > 0) {
-      console.log(`Rule-based scoring validation found: ${issues.join(', ')} → Final: ${calculatedScore}`);
+      console.log(`Rule-based scoring validation found: ${issues.join(', ')} → Calculated: ${calculatedScore}, Final: ${finalCalculatedScore}`);
     }
 
-    return calculatedScore;
+    return finalCalculatedScore;
   }
 
   private extractSeniorityLevel(jobTitle: string): string {
