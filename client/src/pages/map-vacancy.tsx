@@ -675,8 +675,8 @@ export default function MapVacancy() {
                               </div>
                             ))}
                             <div className="border-t pt-2 flex justify-between text-sm font-medium">
-                              <span>Final Score:</span>
-                              <span>{analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore}</span>
+                              <span>Calculated Score:</span>
+                              <span>{analysis.roleConsistencyAnalysis.overallConsistencyScore}/100</span>
                             </div>
                           </div>
                         </div>

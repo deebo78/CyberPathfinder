@@ -340,28 +340,23 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
         };
       }
 
-      // Server-side scoring consistency validation
-      if (analysis.roleConsistencyAnalysis?.scoringBreakdown) {
-        const finalScore = analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore;
-        const overallScore = analysis.roleConsistencyAnalysis.overallConsistencyScore;
+      // Server-side scoring consistency validation - use single authoritative score
+      const aiScore = analysis.roleConsistencyAnalysis?.overallConsistencyScore || 0;
+      console.log(`AI Analysis Score: ${aiScore}`);
+      
+      // Calculate rule-based validated score
+      const validatedScore = this.validateAndCorrectScoring(jobPosting, analysis);
+      
+      // Always use the validated score as the single source of truth
+      if (analysis.roleConsistencyAnalysis) {
+        analysis.roleConsistencyAnalysis.overallConsistencyScore = validatedScore;
         
-        console.log(`AI Analysis Score: Overall ${overallScore}, Final ${finalScore}`);
-        
-        // Calculate expected score based on rule-based validation
-        const validatedScore = this.validateAndCorrectScoring(jobPosting, analysis);
-        
-        // If AI score differs significantly from rule-based calculation, use validated score
-        if (Math.abs(finalScore - validatedScore) > 10) {
-          console.log(`Score correction applied: AI ${finalScore} → Validated ${validatedScore}`);
-          analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore = validatedScore;
-          analysis.roleConsistencyAnalysis.overallConsistencyScore = validatedScore;
-        } else {
-          // Ensure overall score matches final score when no correction is needed
-          if (Math.abs(finalScore - overallScore) > 1) {
-            console.log(`Score alignment: Setting overall score to match final score: ${finalScore}`);
-            analysis.roleConsistencyAnalysis.overallConsistencyScore = finalScore;
-          }
+        // Remove the confusing finalScore from breakdown - just keep deductions for transparency
+        if (analysis.roleConsistencyAnalysis.scoringBreakdown) {
+          delete analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore;
         }
+        
+        console.log(`Using validated score: ${validatedScore}/100`);
       }
 
       return analysis as VacancyAnalysis;
