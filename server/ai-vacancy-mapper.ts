@@ -355,12 +355,12 @@ BE BRUTALLY HONEST: This role has fundamental problems that require major revisi
           console.log(`Score correction applied: AI ${finalScore} → Validated ${validatedScore}`);
           analysis.roleConsistencyAnalysis.scoringBreakdown.finalScore = validatedScore;
           analysis.roleConsistencyAnalysis.overallConsistencyScore = validatedScore;
-        }
-        
-        // Ensure overall score matches final score
-        if (Math.abs(finalScore - overallScore) > 1) {
-          console.log(`Warning: Score mismatch detected - using AI's calculated score: ${finalScore}`);
-          analysis.roleConsistencyAnalysis.overallConsistencyScore = finalScore;
+        } else {
+          // Ensure overall score matches final score when no correction is needed
+          if (Math.abs(finalScore - overallScore) > 1) {
+            console.log(`Score alignment: Setting overall score to match final score: ${finalScore}`);
+            analysis.roleConsistencyAnalysis.overallConsistencyScore = finalScore;
+          }
         }
       }
 
