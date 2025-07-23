@@ -767,8 +767,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      console.error("Error analyzing resume:", error);
-      res.status(500).json({ message: "Failed to analyze resume: " + (error as Error).message });
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      res.status(500).json({ 
+        message: "Failed to analyze resume: " + errorMessage,
+        details: errorMessage.includes('OpenAI API') ? 'API service temporarily unavailable' : 'Resume processing error'
+      });
     }
   });
 

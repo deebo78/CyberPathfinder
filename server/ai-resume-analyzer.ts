@@ -552,7 +552,19 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
         response_format: { type: "json_object" },
       });
 
-      const analysis = JSON.parse(response.choices[0].message.content || '{}');
+      const responseContent = response.choices[0].message.content || '{}';
+      
+      // Enhanced error handling for non-JSON responses
+      if (!responseContent.trim().startsWith('{')) {
+        throw new Error(`OpenAI API returned invalid JSON response: ${responseContent.substring(0, 200)}...`);
+      }
+
+      let analysis;
+      try {
+        analysis = JSON.parse(responseContent);
+      } catch (parseError) {
+        throw new Error(`Failed to parse OpenAI response as JSON: ${parseError instanceof Error ? parseError.message : 'Parse error'}. Response: ${responseContent.substring(0, 300)}`);
+      }
 
       // CRITICAL: Filter out invalid track-level recommendations
       if (analysis.recommendations) {
@@ -777,8 +789,24 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
       return analysis as ResumeAnalysisResult;
 
     } catch (error) {
-      console.error('AI Resume Analysis Error:', error);
-      throw new Error('Failed to analyze resume: ' + (error as Error).message);
+      // Enhanced error handling with specific OpenAI error codes
+      if (error instanceof Error) {
+        if (error.message.includes('429')) {
+          throw new Error('OpenAI API rate limit exceeded. Please try again in a few moments.');
+        } else if (error.message.includes('401')) {
+          throw new Error('OpenAI API authentication failed. Please check your API key.');
+        } else if (error.message.includes('404')) {
+          throw new Error('OpenAI API endpoint not found. Model may not be available.');
+        } else if (error.message.includes('insufficient_quota')) {
+          throw new Error('OpenAI API quota exceeded. Please check your account usage.');
+        } else if (error.message.includes('JSON')) {
+          throw new Error('OpenAI API returned invalid response format: ' + error.message);
+        } else {
+          throw new Error('Resume analysis failed: ' + error.message);
+        }
+      } else {
+        throw new Error('Resume analysis failed: Unknown error occurred');
+      }
     }
   }
 
