@@ -2,7 +2,7 @@ import {
   categories, specialtyAreas, workRoles, tasks, knowledgeItems, skills,
   workRoleTasks, workRoleKnowledge, workRoleSkills, importHistory,
   careerTracks, careerLevels, careerPositions, certifications, careerLevelCertifications,
-  resumeAnalyses,
+  careerLevelWorkRoles, resumeAnalyses,
   type Category, type InsertCategory,
   type SpecialtyArea, type InsertSpecialtyArea,
   type WorkRole, type InsertWorkRole,
@@ -550,6 +550,79 @@ export class DatabaseStorage implements IStorage {
   async deleteResumeAnalysis(id: number): Promise<boolean> {
     const result = await db.delete(resumeAnalyses).where(eq(resumeAnalyses.id, id));
     return (result.rowCount || 0) > 0;
+  }
+
+  // Career Track Work Role Export Methods
+  async getCareerTrackWorkRoleComposition(): Promise<any[]> {
+    // Get all career tracks with their levels and associated work roles
+    const tracks = await db.query.careerTracks.findMany({
+      orderBy: (careerTracks, { asc }) => [asc(careerTracks.name)],
+      with: {
+        careerLevels: {
+          orderBy: (careerLevels, { asc }) => [asc(careerLevels.sortOrder)],
+          with: {
+            careerLevelWorkRoles: {
+              with: {
+                workRole: {
+                  with: {
+                    category: true,
+                    specialtyArea: true
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    return tracks.map(track => ({
+      trackId: track.id,
+      trackName: track.name,
+      trackDescription: track.description,
+      levels: track.careerLevels.map(level => ({
+        levelId: level.id,
+        levelName: level.name,
+        experienceRange: level.experienceRange,
+        workRoles: level.careerLevelWorkRoles.map(clwr => ({
+          workRoleId: clwr.workRole.id,
+          workRoleCode: clwr.workRole.code,
+          workRoleName: clwr.workRole.name,
+          workRoleDescription: clwr.workRole.description,
+          category: clwr.workRole.category?.name || 'Uncategorized',
+          specialtyArea: clwr.workRole.specialtyArea?.name || 'General',
+          priority: clwr.priority || 1
+        }))
+      }))
+    }));
+  }
+
+  async getDetailedCareerTrackWorkRoleMapping(): Promise<any[]> {
+    // More detailed export with additional metadata
+    return await db.select({
+      trackId: careerTracks.id,
+      trackName: careerTracks.name,
+      trackDescription: careerTracks.description,
+      levelId: careerLevels.id,
+      levelName: careerLevels.name,
+      levelExperienceRange: careerLevels.experienceRange,
+      levelDescription: careerLevels.description,
+      levelSortOrder: careerLevels.sortOrder,
+      workRoleId: workRoles.id,
+      workRoleCode: workRoles.code,
+      workRoleName: workRoles.name,
+      workRoleDescription: workRoles.description,
+      categoryName: categories.name,
+      specialtyAreaName: specialtyAreas.name,
+      priority: careerLevelWorkRoles.priority
+    })
+    .from(careerTracks)
+    .leftJoin(careerLevels, eq(careerTracks.id, careerLevels.careerTrackId))
+    .leftJoin(careerLevelWorkRoles, eq(careerLevels.id, careerLevelWorkRoles.careerLevelId))
+    .leftJoin(workRoles, eq(careerLevelWorkRoles.workRoleId, workRoles.id))
+    .leftJoin(categories, eq(workRoles.categoryId, categories.id))
+    .leftJoin(specialtyAreas, eq(workRoles.specialtyAreaId, specialtyAreas.id))
+    .orderBy(careerTracks.name, careerLevels.sortOrder, careerLevelWorkRoles.priority);
   }
 
 }

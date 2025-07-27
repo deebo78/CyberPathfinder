@@ -1,6 +1,6 @@
 import { Link, useLocation } from "wouter";
 import { cn } from "@/lib/utils";
-import { Home, TrendingUp, Building2, Star, Award } from "lucide-react";
+import { Home, TrendingUp, Building2, Star, Award, Download } from "lucide-react";
 
 const mainNavigation = [
   { name: "Home", href: "/", icon: Home },
@@ -8,6 +8,7 @@ const mainNavigation = [
   { name: "Map Vacancy", href: "/map-vacancy", icon: Building2 },
   { name: "Career Tracks", href: "/career-tracks", icon: Star },
   { name: "Certifications", href: "/certification-mapping", icon: Award },
+  { name: "Export Data", href: "/export", icon: Download },
 ];
 
 export default function MainNavigation() {

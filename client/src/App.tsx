@@ -23,6 +23,7 @@ import Categories from "@/pages/categories";
 import Relationships from "@/pages/relationships";
 import Admin from "@/pages/admin";
 import TestPage from "@/pages/test-page";
+import ExportDashboard from "@/pages/export-dashboard";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -35,6 +36,7 @@ function Router() {
     "/map-vacancy", 
     "/career-tracks",
     "/certification-mapping",
+    "/export",
     "/test"
   ];
   const shouldShowSidebar = !isLandingPage && !noSidebarPages.some(page => location.startsWith(page));
@@ -64,6 +66,7 @@ function Router() {
             <Route path="/career-tracks/:id" component={CareerTrackDetail} />
             <Route path="/career-tracks" component={CareerTracksExplorer} />
             <Route path="/certification-mapping" component={CertificationMapping} />
+            <Route path="/export" component={ExportDashboard} />
             <Route path="/work-roles" component={WorkRoles} />
             <Route path="/tasks" component={Tasks} />
             <Route path="/knowledge" component={Knowledge} />
