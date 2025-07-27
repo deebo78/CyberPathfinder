@@ -37,6 +37,33 @@ const exportOptions = [
 
 export default function ExportDashboard() {
   const [downloading, setDownloading] = useState<string | null>(null);
+  const isDeveloperMode = import.meta.env.VITE_ENABLE_ADMIN === 'true';
+
+  // Show restricted access message for non-admin users
+  if (!isDeveloperMode) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="text-center">
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+            Access Restricted
+          </h1>
+          <p className="text-gray-600 dark:text-gray-300 mb-6">
+            The Export Data functionality is restricted to administrative users.
+          </p>
+          <div className="bg-blue-50 dark:bg-blue-950 p-6 rounded-lg max-w-2xl mx-auto">
+            <h2 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-2">
+              For Administrators
+            </h2>
+            <p className="text-blue-800 dark:text-blue-200">
+              To access the export functionality, ensure you have administrative privileges 
+              and the VITE_ENABLE_ADMIN environment variable is properly configured.
+              Refer to the EXPORT_DATA_ACCESS_GUIDE.md for detailed instructions.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleExport = async (exportType: string, filename: string) => {
     setDownloading(exportType);

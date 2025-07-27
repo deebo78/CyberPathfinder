@@ -8,17 +8,22 @@ const mainNavigation = [
   { name: "Map Vacancy", href: "/map-vacancy", icon: Building2 },
   { name: "Career Tracks", href: "/career-tracks", icon: Star },
   { name: "Certifications", href: "/certification-mapping", icon: Award },
-  { name: "Export Data", href: "/export", icon: Download },
 ];
 
 export default function MainNavigation() {
   const [location] = useLocation();
+  const isDeveloperMode = import.meta.env.VITE_ENABLE_ADMIN === 'true';
+
+  // Add export data option for admin users only
+  const navigationItems = isDeveloperMode 
+    ? [...mainNavigation, { name: "Export Data", href: "/export", icon: Download }]
+    : mainNavigation;
 
   return (
     <div className="bg-white border-b border-gray-200 shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav className="flex space-x-8">
-          {mainNavigation.map((item) => {
+          {navigationItems.map((item) => {
             const Icon = item.icon;
             const isActive = location === item.href || 
               (item.href !== "/" && location.startsWith(item.href));

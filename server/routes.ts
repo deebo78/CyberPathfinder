@@ -373,9 +373,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Export endpoint
+  // Export endpoint - restricted to admin users
   app.get("/api/export/:type", async (req, res) => {
     try {
+      // Check for admin access
+      const isAdminEnabled = process.env.VITE_ENABLE_ADMIN === 'true';
+      if (!isAdminEnabled) {
+        return res.status(403).json({ 
+          message: "Access denied. Export functionality requires administrative privileges." 
+        });
+      }
+
       const { type } = req.params;
       
       let data;
