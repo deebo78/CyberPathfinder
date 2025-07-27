@@ -639,7 +639,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   app.get("/api/career-tracks", async (req, res) => {
     try {
       // Return only the authentic 19 career tracks
-      const authenticTrackIds = [31, 4, 5, 6, 8, 2, 35, 37, 30, 41, 48, 42, 38, 43, 39, 44, 45, 14, 22];
+      const authenticTrackIds = [31, 4, 5, 6, 8, 2, 35, 37, 30, 41, 48, 42, 38, 43, 39, 44, 45, 14, 22, 46];
       const allTracks = await storage.getCareerTracks();
       const tracks = allTracks.filter(track => authenticTrackIds.includes(track.id));
       res.json(tracks);
