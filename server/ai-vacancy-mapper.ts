@@ -267,18 +267,18 @@ RESPONSE FORMAT (JSON only):
   "matchSummary": "Honest overall assessment",
   "qualityAssessment": "SEVERITY CATEGORY\nSummary: One-sentence overall health assessment\nIssues:\n— Issue 1 description\n— Issue 2 description\n— Additional issues as needed",
   "roleConsistencyAnalysis": {
-    "summary": "Overall priority level for revision",
-    "conflictsFound": ["All specific conflicts identified"],
-    "unrealisticExpectations": ["All unrealistic requirements"],
-    "redundantOrDuplicateRequirements": ["All redundancies"],
+    "summary": "Overall priority level for revision with specific rationale",
+    "conflictsFound": ["All specific conflicts identified with quoted text"],
+    "unrealisticExpectations": ["All unrealistic requirements with specific examples"],
+    "redundantOrDuplicateRequirements": ["All redundancies with quoted examples"],
     "missingCompetencies": ["All missing cybersecurity competencies"],
-    "recommendedImprovements": ["All specific improvement suggestions"],
+    "recommendedImprovements": ["All specific improvement suggestions with actionable steps"],
     "internalConsistencyCheck": "Validation that all recommended changes work together harmoniously without creating new conflicts",
     "coherentSolutionSet": "Summary of how all recommendations align to create a consistent, improved job posting",
     "exampleRewrites": [
       {
         "section": "section name",
-        "original": "original problematic text",
+        "original": "exact problematic text from job posting",
         "improved": "specific rewrite suggestion",
         "rationale": "DETAILED explanation including: 1) What specific problem this fixes, 2) Why this change improves candidate attraction, 3) How it aligns with industry standards, 4) What impact the original wording had on qualified candidates, 5) How this change works with other recommendations to create a coherent job posting"
       }
@@ -302,7 +302,14 @@ EXAMPLE REWRITE FORMAT:
   "rationale": "CISSP, CRISC, CISA, and CISM are professional-level certifications that typically require 3-5 years of experience and demonstrate advanced expertise in cybersecurity governance, risk management, and compliance. Calling them 'intermediate-level' misrepresents their difficulty and value, potentially deterring qualified candidates who recognize these as senior-level achievements. The CISSP alone requires 5 years of experience in two or more security domains, making it clearly a professional-level certification. This mischaracterization could also lead to compensation issues since professional-level certifications command higher salaries than intermediate ones."
 }
 
-CRITICAL: For every issue mentioned in qualityAssessment, provide a corresponding rewrite example showing the specific text that needs to be changed and exactly how to improve it.
+CRITICAL REQUIREMENT: For EVERY issue mentioned in qualityAssessment, provide a corresponding rewrite example in the exampleRewrites array.
+DO NOT leave the roleConsistencyAnalysis partially filled. Complete ALL fields with substantive content.
+
+MANDATORY REWRITE EXAMPLES:
+- If you identify "Certification Prerequisite Errors" → provide rewrite for certification requirements
+- If you identify "Salary-Experience Misalignment" → provide rewrite for salary or experience section  
+- If you identify "Education-Level Mismatch" → provide rewrite for education requirements
+- If you identify "Role Level Blurred" → provide rewrite for job title or role description
 
 RATIONALE REQUIREMENTS:
 Each rewrite rationale must be comprehensive and educational, including:
