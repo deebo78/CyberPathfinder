@@ -188,10 +188,16 @@ Look for any of these issues (and flag others you judge equivalent):
 • Any other red-flag likely to confuse or deter qualified applicants
 
 SALARY ANALYSIS FOCUS:
-- Only flag salary issues when there is a clear mismatch between compensation and experience/education requirements
-- DO NOT suggest generic wording improvements like "commensurate with experience and qualifications"
-- DO flag when salary is significantly below or above market rate for the stated experience level
+- Always evaluate salary alignment using market benchmarks, never default to "insufficient_data"
 - Reference market benchmarks: Entry ($45K-75K), Mid ($75K-110K), Senior ($110K-150K), Expert ($150K-200K)
+- Project Management roles typically command 10-20% premium over general IT roles
+- Compare extracted salary against experience level and role responsibilities
+- Set marketAlignment to:
+  * "aligned" if salary falls within expected range for experience/role level
+  * "below_market" if salary is >15% below benchmark for experience level
+  * "above_market" if salary is >20% above benchmark for experience level
+  * "insufficient_data" ONLY if no salary information is provided in job posting
+- Always provide specific analysis in mismatchDetails explaining the alignment assessment
 
 CRITICAL: Use the Certification Level Reference to validate any certification requirements mentioned in the job posting. Flag when:
 - Professional/Expert-level certifications are incorrectly labeled as "intermediate" or "entry-level"
@@ -260,7 +266,7 @@ RESPONSE FORMAT (JSON only):
       "max": number_or_null,
       "payGrade": "string_if_mentioned"
     },
-    "marketAlignment": "insufficient_data",
+    "marketAlignment": "aligned|below_market|above_market|insufficient_data",
     "seniorityMismatch": "severe|moderate|minor|none",
     "mismatchDetails": "explanation of any salary-seniority gaps"
   },
