@@ -262,12 +262,14 @@ RESPONSE FORMAT (JSON only):
     "redundantOrDuplicateRequirements": ["All redundancies"],
     "missingCompetencies": ["All missing cybersecurity competencies"],
     "recommendedImprovements": ["All specific improvement suggestions"],
+    "internalConsistencyCheck": "Validation that all recommended changes work together harmoniously without creating new conflicts",
+    "coherentSolutionSet": "Summary of how all recommendations align to create a consistent, improved job posting",
     "exampleRewrites": [
       {
         "section": "section name",
         "original": "original problematic text",
         "improved": "specific rewrite suggestion",
-        "rationale": "explanation of why this improves the posting"
+        "rationale": "explanation of why this improves the posting AND how it aligns with other recommendations"
       }
     ],
     "severityLevel": "critical|high|moderate|low|ready"
@@ -289,7 +291,21 @@ EXAMPLE REWRITE FORMAT:
   "rationale": "CISSP, CRISC, CISA, and CISM are professional-level certifications, not intermediate-level, according to industry standards"
 }
 
-CRITICAL: For every issue mentioned in qualityAssessment, provide a corresponding rewrite example showing the specific text that needs to be changed and exactly how to improve it.`;
+CRITICAL: For every issue mentioned in qualityAssessment, provide a corresponding rewrite example showing the specific text that needs to be changed and exactly how to improve it.
+
+INTERNAL CONSISTENCY VALIDATION:
+Before finalizing recommendations, validate that all suggested changes work together harmoniously:
+- If suggesting role level changes AND certification level changes, ensure they align (e.g., don't suggest "intermediate role" with "professional certifications")
+- If suggesting salary changes AND experience changes, ensure compensation matches new experience requirements
+- If suggesting education changes AND certification changes, ensure they're complementary not contradictory
+- Provide ONE coherent set of recommendations that work together as a complete solution
+
+EXAMPLE COHERENT SOLUTION SET:
+If certifications are professional-level (CISSP, CISA, CISM), then:
+- Role level should be "Senior" or "Professional" level
+- Experience should be 5+ years minimum
+- Salary should align with senior/professional range ($110K-150K)
+- Education should match professional expectations (Bachelor's required, Master's preferred)`;
 
       // Try gpt-4o-mini first as fallback, then gpt-4o
       let response;
