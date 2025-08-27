@@ -197,9 +197,11 @@ CRITICAL: Use the Certification Level Reference to validate any certification re
 - Foundation-level certifications are required for senior positions
 - Certification requirements don't align with the stated experience level or salary range
 
-Step 2: 📝 List Issues (No Numbers)
+Step 2: 📝 List Issues with Specific Examples
 Output each problem as its own bullet beginning with an em-dash (—).
-Keep each bullet concise.
+For each issue identified, provide SPECIFIC examples from the job posting that demonstrate the problem.
+Include exact quotes or phrases that cause the confusion or misalignment.
+Format: — Issue Type: Specific problem description with "quoted examples from posting"
 **Do not** attach numeric scores, weights, or percentages anywhere.
 
 Step 3: 🚦 Assign ONE Overall Severity Category
@@ -211,9 +213,9 @@ Based on the quantity *and* seriousness of the issues, choose **exactly one** la
 • **READY TO POST** (no meaningful issues detected)
 
 FORMAT FOR QUALITY ASSESSMENT:
-Place the severity category first, followed by a one-sentence summary and the issue list:
+Place the severity category first, followed by a one-sentence summary and detailed issue list with specific examples:
 Example:
-"qualityAssessment": "CRITICAL PRIORITY\\nSummary: This role lacks cybersecurity relevance and has multiple critical inconsistencies.\\nIssues:\\n— Education-Level Mismatch: High school requirement for Director-level position\\n— Non-Cybersecurity Role: No mention of security frameworks or tools\\n— Missing Salary Range: No compensation transparency for senior role"
+"qualityAssessment": "CRITICAL PRIORITY\\nSummary: This role lacks cybersecurity relevance and has multiple critical inconsistencies.\\nIssues:\\n— Education-Level Mismatch: High school requirement stated for Director-level position requiring \"strategic leadership and executive decision-making\"\\n— Non-Cybersecurity Role: No mention of security frameworks, tools, or cybersecurity competencies in job description\\n— Certification Level Mischaracterization: CISSP and CISM described as \"intermediate-level\" when they are Professional-level certifications"
 
 RESPONSE FORMAT (JSON only):
 {
@@ -273,20 +275,21 @@ RESPONSE FORMAT (JSON only):
 }
 
 REWRITE EXAMPLES REQUIREMENT:
-For any significant issues identified, provide 3-5 specific rewrite examples in the exampleRewrites array.
+For EVERY significant issue identified in the qualityAssessment, provide specific rewrite examples in the exampleRewrites array.
+Include the exact problematic text from the job posting and show how to fix it.
 
 IMPORTANT: DO NOT provide rewrite examples for salary sections unless there is a clear salary-experience misalignment.
 DO NOT suggest adding generic phrases like "commensurate with experience and qualifications" to salary ranges.
 
 EXAMPLE REWRITE FORMAT:
 {
-  "section": "Education Requirements",
-  "original": "High school diploma/GED required",
-  "improved": "Bachelor's degree in Computer Science, Information Technology, or related field required; Master's degree preferred",
-  "rationale": "Director-level positions typically require advanced education to match responsibility scope and industry standards"
+  "section": "Certification Requirements",
+  "original": "Possesses or obtains within 12 months of employment an intermediate-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
+  "improved": "Possesses or obtains within 12 months of employment a professional-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
+  "rationale": "CISSP, CRISC, CISA, and CISM are professional-level certifications, not intermediate-level, according to industry standards"
 }
 
-Be thorough in identifying improvement opportunities but focus on the most critical issues first.`;
+CRITICAL: For every issue mentioned in qualityAssessment, provide a corresponding rewrite example showing the specific text that needs to be changed and exactly how to improve it.`;
 
       // Try gpt-4o-mini first as fallback, then gpt-4o
       let response;
