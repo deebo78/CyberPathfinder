@@ -516,10 +516,15 @@ IMPORTANT JOB DESCRIPTION EXTRACTION RULES:
 IMPORTANT SALARY EXTRACTION RULES:
 - Look for salary ranges like "$50,000 - $75,000", "$50K-75K", "50-75k", etc.
 - Convert abbreviated formats (50K = 50000, 75K = 75000)
-- If only one salary figure is given, use it for both min and max
+- CRITICAL: If only one salary figure is given (e.g., "$54,000", "54K"), use it for BOTH min and max
 - If salary is mentioned as "up to $X", use X as max and leave min null
 - If hourly rate is given, convert to annual (multiply by 2080)
 - Return null for both if no salary information found
+
+SINGLE SALARY VALUE EXAMPLES:
+- "$54,000" → min: 54000, max: 54000
+- "54K" → min: 54000, max: 54000  
+- "Salary: $54,000" → min: 54000, max: 54000
 
 Return ONLY valid JSON in this exact format:
 {
