@@ -269,7 +269,7 @@ RESPONSE FORMAT (JSON only):
         "section": "section name",
         "original": "original problematic text",
         "improved": "specific rewrite suggestion",
-        "rationale": "explanation of why this improves the posting AND how it aligns with other recommendations"
+        "rationale": "DETAILED explanation including: 1) What specific problem this fixes, 2) Why this change improves candidate attraction, 3) How it aligns with industry standards, 4) What impact the original wording had on qualified candidates, 5) How this change works with other recommendations to create a coherent job posting"
       }
     ],
     "severityLevel": "critical|high|moderate|low|ready"
@@ -288,10 +288,21 @@ EXAMPLE REWRITE FORMAT:
   "section": "Certification Requirements",
   "original": "Possesses or obtains within 12 months of employment an intermediate-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
   "improved": "Possesses or obtains within 12 months of employment a professional-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
-  "rationale": "CISSP, CRISC, CISA, and CISM are professional-level certifications, not intermediate-level, according to industry standards"
+  "rationale": "CISSP, CRISC, CISA, and CISM are professional-level certifications that typically require 3-5 years of experience and demonstrate advanced expertise in cybersecurity governance, risk management, and compliance. Calling them 'intermediate-level' misrepresents their difficulty and value, potentially deterring qualified candidates who recognize these as senior-level achievements. The CISSP alone requires 5 years of experience in two or more security domains, making it clearly a professional-level certification. This mischaracterization could also lead to compensation issues since professional-level certifications command higher salaries than intermediate ones."
 }
 
 CRITICAL: For every issue mentioned in qualityAssessment, provide a corresponding rewrite example showing the specific text that needs to be changed and exactly how to improve it.
+
+RATIONALE REQUIREMENTS:
+Each rewrite rationale must be comprehensive and educational, including:
+1. SPECIFIC PROBLEM: What exactly is wrong with the original text
+2. INDUSTRY CONTEXT: Why this matters in cybersecurity hiring
+3. CANDIDATE IMPACT: How the original wording affects qualified applicants
+4. MARKET ALIGNMENT: How the change aligns with industry standards
+5. COHERENCE: How this change works with other recommendations
+6. MEASURABLE BENEFIT: What improvement this creates (better candidate quality, reduced confusion, etc.)
+
+Minimum 3-4 sentences per rationale. Avoid generic explanations.
 
 INTERNAL CONSISTENCY VALIDATION:
 Before finalizing recommendations, validate that all suggested changes work together harmoniously:
