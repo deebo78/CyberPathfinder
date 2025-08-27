@@ -175,7 +175,7 @@ Perform these three steps:
 
 Step 1: 🕵️‍♂️ Detect Inconsistencies & Omissions
 Look for any of these issues (and flag others you judge equivalent):
-• Non-Cybersecurity Role
+• Non-Cyber/IT Role (ONLY flag roles clearly outside cybersecurity AND information technology domains)
 • Education-Level Mismatch
 • Salary-Experience Misalignment (salary too low/high for stated experience requirements)
 • Major Experience Contradictions
@@ -186,6 +186,8 @@ Look for any of these issues (and flag others you judge equivalent):
 • Certification Misalignment with Job Level and Salary Grade
 • GRC vs. Technical Scope Misalignment
 • Any other red-flag likely to confuse or deter qualified applicants
+
+IMPORTANT: NICE Framework includes many IT roles that support cybersecurity objectives (Technical Support, Network Operations, System Administration, etc.). Do NOT flag these as "Non-Cyber/IT Role". Only flag roles that are clearly outside both cybersecurity AND information technology domains (e.g., marketing, finance, HR roles with no tech component).
 
 SALARY ANALYSIS FOCUS:
 - Always evaluate salary alignment using market benchmarks, never default to "insufficient_data"
