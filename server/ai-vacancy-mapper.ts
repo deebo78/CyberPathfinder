@@ -177,7 +177,7 @@ Step 1: 🕵️‍♂️ Detect Inconsistencies & Omissions
 Look for any of these issues (and flag others you judge equivalent):
 • Non-Cybersecurity Role
 • Education-Level Mismatch
-• Missing Salary Range / Compensation Transparency
+• Salary-Experience Misalignment (salary too low/high for stated experience requirements)
 • Major Experience Contradictions
 • Role Level Blurred or Undefined (entry vs. senior, etc.)
 • Certification Requirements Unclear or Unrealistic
@@ -185,6 +185,12 @@ Look for any of these issues (and flag others you judge equivalent):
 • Certification Misalignment with Job Level and Salary Grade
 • GRC vs. Technical Scope Misalignment
 • Any other red-flag likely to confuse or deter qualified applicants
+
+SALARY ANALYSIS FOCUS:
+- Only flag salary issues when there is a clear mismatch between compensation and experience/education requirements
+- DO NOT suggest generic wording improvements like "commensurate with experience and qualifications"
+- DO flag when salary is significantly below or above market rate for the stated experience level
+- Reference market benchmarks: Entry ($45K-75K), Mid ($75K-110K), Senior ($110K-150K), Expert ($150K-200K)
 
 CRITICAL: Use the Certification Level Reference to validate any certification requirements mentioned in the job posting. Flag when:
 - Professional/Expert-level certifications are incorrectly labeled as "intermediate" or "entry-level"
@@ -268,6 +274,9 @@ RESPONSE FORMAT (JSON only):
 
 REWRITE EXAMPLES REQUIREMENT:
 For any significant issues identified, provide 3-5 specific rewrite examples in the exampleRewrites array.
+
+IMPORTANT: DO NOT provide rewrite examples for salary sections unless there is a clear salary-experience misalignment.
+DO NOT suggest adding generic phrases like "commensurate with experience and qualifications" to salary ranges.
 
 EXAMPLE REWRITE FORMAT:
 {
