@@ -182,6 +182,7 @@ Look for any of these issues (and flag others you judge equivalent):
 • Role Level Blurred or Undefined (entry vs. senior, etc.)
 • Certification Requirements Unclear or Unrealistic
 • Certification Level Mischaracterization (e.g., calling CISSP, CISA, CISM "intermediate" when they are Professional-level)
+• Certification Prerequisite Errors (e.g., stating eligibility for PMP with insufficient experience for education level)
 • Certification Misalignment with Job Level and Salary Grade
 • GRC vs. Technical Scope Misalignment
 • Any other red-flag likely to confuse or deter qualified applicants
@@ -196,6 +197,16 @@ CRITICAL: Use the Certification Level Reference to validate any certification re
 - Professional/Expert-level certifications are incorrectly labeled as "intermediate" or "entry-level"
 - Foundation-level certifications are required for senior positions
 - Certification requirements don't align with the stated experience level or salary range
+- Certification prerequisite requirements are factually incorrect (e.g., PMP eligibility requires 5 years experience with high school diploma, not 3 years)
+
+CERTIFICATION PREREQUISITE VALIDATION:
+Common certification prerequisites to validate:
+- PMP: Requires 5 years experience (high school) OR 3 years experience (bachelor's degree)
+- CISSP: Requires 5 years experience in 2+ security domains
+- CISA: Requires 5 years experience in IS auditing, control, or security
+- CISM: Requires 5 years experience in information security management
+- CRISC: Requires 3 years experience in IS risk and control
+Flag when job postings state eligibility requirements that contradict these official prerequisites.
 
 Step 2: 📝 List Issues with Specific Examples
 Output each problem as its own bullet beginning with an em-dash (—).
