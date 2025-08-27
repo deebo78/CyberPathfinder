@@ -106,9 +106,10 @@ export class AIVacancyMapper {
 
   async analyzeJobPosting(jobPosting: JobPosting): Promise<VacancyAnalysis> {
     try {
-      // Get all work roles and career tracks from the database
+      // Get all work roles, career tracks, and certifications from the database
       const workRoles = await storage.getWorkRoles();
       const careerTracks = await storage.getCareerTracks();
+      const certifications = await storage.getCertifications();
       
       // Create a summary of work roles for the AI
       const workRolesSummary = workRoles.map(role => ({
@@ -127,6 +128,14 @@ export class AIVacancyMapper {
         overview: track.overview
       }));
 
+      // Create certification reference for level validation
+      const certificationReference = certifications.map(cert => ({
+        code: cert.code,
+        name: cert.name,
+        level: cert.level,
+        issuer: cert.issuer
+      }));
+
       const prompt = `
 You are an expert cybersecurity workforce analyst specializing in NICE Framework mapping. Analyze this job posting for alignment with NICE work roles and assess its overall quality using a severity-based approach.
 
@@ -143,6 +152,9 @@ ${JSON.stringify(workRolesSummary, null, 2)}
 
 AVAILABLE CAREER TRACKS:
 ${JSON.stringify(careerTracksSummary, null, 2)}
+
+CERTIFICATION LEVEL REFERENCE:
+${JSON.stringify(certificationReference, null, 2)}
 
 ANALYSIS INSTRUCTIONS:
 
@@ -169,8 +181,15 @@ Look for any of these issues (and flag others you judge equivalent):
 • Major Experience Contradictions
 • Role Level Blurred or Undefined (entry vs. senior, etc.)
 • Certification Requirements Unclear or Unrealistic
+• Certification Level Mischaracterization (e.g., calling CISSP, CISA, CISM "intermediate" when they are Professional-level)
+• Certification Misalignment with Job Level and Salary Grade
 • GRC vs. Technical Scope Misalignment
 • Any other red-flag likely to confuse or deter qualified applicants
+
+CRITICAL: Use the Certification Level Reference to validate any certification requirements mentioned in the job posting. Flag when:
+- Professional/Expert-level certifications are incorrectly labeled as "intermediate" or "entry-level"
+- Foundation-level certifications are required for senior positions
+- Certification requirements don't align with the stated experience level or salary range
 
 Step 2: 📝 List Issues (No Numbers)
 Output each problem as its own bullet beginning with an em-dash (—).

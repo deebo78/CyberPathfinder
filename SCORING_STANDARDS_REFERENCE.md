@@ -60,18 +60,22 @@ This document provides the complete scoring methodology used by CyberPathfinder'
 - ❌ "Senior role with 2-3 years required experience" (-15 points)
 - ✅ "Mid-level role requiring 3-5 years experience" (no deduction)
 
-### 4. Certification Confusion (-10 to -20 points)
-**Definition**: Mixing beginner and expert certifications inappropriately
+### 4. Certification Level Mischaracterization (-10 to -20 points)
+**Definition**: Incorrectly characterizing certification difficulty levels or mixing inappropriate certification levels
 
 **Deduction Triggers**:
-- Entry + intermediate certs: -10 points
-- Entry + expert certs: -15 points
+- Professional/Expert certs labeled as "intermediate": -15 points
+- Foundation certs required for senior roles: -10 points
+- Entry + expert certs mixed inappropriately: -15 points
 - Conflicting certification paths: -20 points
 
 **Examples**:
-- ❌ "CompTIA Security+ and CISSP required" (-15 points)
+- ❌ "CISSP, CISA, CISM characterized as intermediate-level" (-15 points)
+- ❌ "CompTIA Security+ and CISSP both required for same role" (-15 points)
+- ❌ "Security+ required for Senior Security Architect" (-10 points)
 - ❌ "CCNA and CCIE certification paths" (-20 points)
-- ✅ "CompTIA Security+ or equivalent entry-level certification" (no deduction)
+- ✅ "CISSP or equivalent professional-level certification" (no deduction)
+- ✅ "CompTIA Security+ or equivalent foundation certification" (no deduction)
 
 ### 5. Compensation Misalignment (-10 to -15 points)
 **Definition**: Salary ranges inconsistent with experience level and market rates
@@ -143,7 +147,7 @@ When specific deductions are applied, the system provides standardized improveme
 1. **Skills Overload**: "Reduce required technologies to core 3-4 essential skills"
 2. **Role Conflicts**: "Split into [Role A] and [Role B] for better candidate targeting"
 3. **Experience Misalignment**: "Adjust experience requirement to [X-Y] years for stated level"
-4. **Certification Issues**: "Focus on [specific certification path] appropriate for level"
+4. **Certification Level Mischaracterization**: "Correctly characterize certification levels (Foundation/Associate/Professional/Expert) and align with job requirements"
 5. **Compensation**: "Increase salary range to $X-Y to align with market rates"
 6. **Redundancy**: "Consolidate overlapping requirements in qualifications section"
 
