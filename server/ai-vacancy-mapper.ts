@@ -191,13 +191,19 @@ SALARY ANALYSIS FOCUS:
 - Always evaluate salary alignment using market benchmarks, never default to "insufficient_data"
 - Reference market benchmarks: Entry ($45K-75K), Mid ($75K-110K), Senior ($110K-150K), Expert ($150K-200K)
 - Project Management roles typically command 10-20% premium over general IT roles
-- Compare extracted salary against experience level and role responsibilities
-- Set marketAlignment to:
-  * "aligned" if salary falls within expected range for experience/role level
-  * "below_market" if salary is >15% below benchmark for experience level
-  * "above_market" if salary is >20% above benchmark for experience level
-  * "insufficient_data" ONLY if no salary information is provided in job posting
-- Always provide specific analysis in mismatchDetails explaining the alignment assessment
+
+EXPLICIT SALARY EVALUATION RULES:
+1. Determine experience level from job posting (Entry/Mid/Senior/Expert)
+2. Compare salary range midpoint against benchmark range
+3. For Mid-level (3+ years experience): benchmark is $75K-110K
+   - If salary midpoint < $75K → "below_market"
+   - If salary midpoint $75K-110K → "aligned" 
+   - If salary midpoint > $132K (120% of $110K) → "above_market"
+4. Always calculate and show your work in mismatchDetails
+5. "insufficient_data" ONLY if no salary range provided
+
+EXAMPLE: $47,982 - $63,351 midpoint = $55,667 for Mid-level role
+Since $55,667 < $75,000 (mid-level minimum) = "below_market"
 
 CRITICAL: Use the Certification Level Reference to validate any certification requirements mentioned in the job posting. Flag when:
 - Professional/Expert-level certifications are incorrectly labeled as "intermediate" or "entry-level"
