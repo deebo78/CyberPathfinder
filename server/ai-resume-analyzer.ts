@@ -1,5 +1,13 @@
 import OpenAI from "openai";
 import { storage } from "./storage";
+import { 
+  MarketTier, 
+  getLocationTier, 
+  getExecutiveSalaryBand, 
+  getExecutiveSalaryCaps, 
+  getExecutiveRoleFactor, 
+  EXECUTIVE_CERT_PREMIUMS 
+} from "@shared/compensation";
 
 interface ResumeData {
   filename: string;
@@ -70,6 +78,7 @@ interface CareerRecommendation {
     min: number;
     max: number;
     currency: string;
+    calculationDetails?: string;
   };
   timeToTransition: string;
 }
@@ -114,6 +123,181 @@ export class AIResumeAnalyzer {
       throw new Error("OPENAI_API_KEY environment variable is required");
     }
     this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+
+  /**
+   * Calculates salary range using separate logic for executive vs non-executive positions
+   * @param trackId - Career track ID
+   * @param recommendedLevel - Experience level (Entry, Mid-Level, Senior-Level, Expert-Level, Executive)
+   * @param location - Geographic location string
+   * @param certifications - Array of certification names
+   * @param trackName - Career track name for context
+   * @returns Salary range object with calculation details
+   */
+  private calculateSalaryRange(
+    trackId: number,
+    recommendedLevel: string,
+    location?: string,
+    certifications: string[] = [],
+    trackName?: string
+  ): { min: number; max: number; calculationDetails: string } {
+    // Check if this is an executive position
+    const isExecutive = trackId === 42 || recommendedLevel === "Executive";
+    
+    if (isExecutive) {
+      return this.calculateExecutiveSalary(location, certifications, trackName);
+    } else {
+      return this.calculateNonExecutiveSalary(recommendedLevel, trackId, location, certifications, trackName);
+    }
+  }
+
+  /**
+   * Calculates salary for executive positions using market-tiered approach
+   */
+  private calculateExecutiveSalary(
+    location?: string,
+    certifications: string[] = [],
+    trackName?: string
+  ): { min: number; max: number; calculationDetails: string } {
+    const tier = getLocationTier(location);
+    const baseBand = getExecutiveSalaryBand(tier);
+    const caps = getExecutiveSalaryCaps(tier);
+    
+    // Determine role factor (replaces old 1.5x multiplier)
+    const roleFactor = getExecutiveRoleFactor();
+    
+    // Calculate certification premium (reduced for executives)
+    let certPremium = 0;
+    const hasCISSPOrCISM = certifications.some(cert => 
+      cert.toUpperCase().includes('CISSP') || cert.toUpperCase().includes('CISM')
+    );
+    const hasCISA = certifications.some(cert => cert.toUpperCase().includes('CISA'));
+    const hasCloudCerts = certifications.some(cert => 
+      cert.toUpperCase().includes('AWS') || 
+      cert.toUpperCase().includes('AZURE') || 
+      cert.toUpperCase().includes('GCP')
+    );
+    const hasMultipleExpertCerts = certifications.length >= 3;
+    
+    if (hasCISSPOrCISM) certPremium += EXECUTIVE_CERT_PREMIUMS.CISSP;
+    if (hasCISA) certPremium += EXECUTIVE_CERT_PREMIUMS.CISA;
+    if (hasCloudCerts) certPremium += EXECUTIVE_CERT_PREMIUMS.cloud_specialty;
+    if (hasMultipleExpertCerts) certPremium += EXECUTIVE_CERT_PREMIUMS.multiple_expert;
+    
+    // Apply role factor and certification premium
+    let minSalary = Math.round((baseBand.min * roleFactor) + certPremium);
+    let maxSalary = Math.round((baseBand.max * roleFactor) + certPremium);
+    
+    // Apply caps to prevent overflow
+    minSalary = Math.max(caps.floor, Math.min(minSalary, caps.ceiling));
+    maxSalary = Math.max(caps.floor, Math.min(maxSalary, caps.ceiling));
+    
+    const calculationDetails = `Executive Tier ${tier}: Base $${(baseBand.min/1000).toFixed(0)}K-$${(baseBand.max/1000).toFixed(0)}K × ${roleFactor} role factor + $${(certPremium/1000).toFixed(0)}K certs = $${(minSalary/1000).toFixed(0)}K-$${(maxSalary/1000).toFixed(0)}K (capped at Tier ${tier} limits)`;
+    
+    return {
+      min: Math.round(minSalary / 1000), // Convert to thousands for consistency
+      max: Math.round(maxSalary / 1000),
+      calculationDetails
+    };
+  }
+
+  /**
+   * Calculates salary for non-executive positions using existing multiplier approach
+   */
+  private calculateNonExecutiveSalary(
+    recommendedLevel: string,
+    trackId: number,
+    location?: string,
+    certifications: string[] = [],
+    trackName?: string
+  ): { min: number; max: number; calculationDetails: string } {
+    // Base salary ranges by experience level
+    const baseSalaryRanges = {
+      'Entry': { min: 60, max: 85 },
+      'Mid-Level': { min: 85, max: 130 },
+      'Senior-Level': { min: 130, max: 180 },
+      'Expert-Level': { min: 180, max: 250 }
+    };
+    
+    // Career track multipliers (excluding executive 1.5x)
+    const trackMultipliers: Record<number, { multiplier: number; name: string }> = {
+      31: { multiplier: 0.9, name: 'SOC Operations' },
+      4: { multiplier: 1.3, name: 'Red Team/Penetration Testing' },
+      5: { multiplier: 1.2, name: 'Digital Forensics' },
+      6: { multiplier: 1.1, name: 'GRC (Governance, Risk, Compliance)' },
+      8: { multiplier: 1.4, name: 'Cloud Security' },
+      2: { multiplier: 1.3, name: 'Cybersecurity Architecture' },
+      35: { multiplier: 1.2, name: 'Identity and Access Management' },
+      37: { multiplier: 1.0, name: 'Vulnerability Management' },
+      30: { multiplier: 1.2, name: 'Threat Intelligence' },
+      41: { multiplier: 1.3, name: 'Secure Software Development' },
+      48: { multiplier: 1.1, name: 'Incident Response' },
+      38: { multiplier: 1.3, name: 'Security Automation' },
+      43: { multiplier: 0.8, name: 'Cybersecurity Education' }
+    };
+    
+    // Geographic adjustments
+    const getGeoAdjustment = (location?: string): { multiplier: number; description: string } => {
+      if (!location) return { multiplier: 1.0, description: 'National Average' };
+      
+      const loc = location.toLowerCase();
+      if (loc.includes('san francisco') || loc.includes('silicon valley')) {
+        return { multiplier: 1.35, description: 'San Francisco/Silicon Valley (+35%)' };
+      }
+      if (loc.includes('new york') || loc.includes('boston')) {
+        return { multiplier: 1.25, description: 'New York/Boston (+25%)' };
+      }
+      if (loc.includes('seattle') || loc.includes('washington') || loc.includes(' dc')) {
+        return { multiplier: 1.20, description: 'Seattle/DC Metro (+20%)' };
+      }
+      if (loc.includes('austin') || loc.includes('denver') || loc.includes('chicago')) {
+        return { multiplier: 1.10, description: 'Austin/Denver/Chicago (+10%)' };
+      }
+      if (loc.includes('remote')) {
+        return { multiplier: 1.05, description: 'Remote (+5%)' };
+      }
+      if (loc.includes('rural') || loc.includes('small')) {
+        return { multiplier: 0.85, description: 'Small cities/rural (-15%)' };
+      }
+      
+      // Check if it's a smaller city by using our tier system
+      const tier = getLocationTier(location);
+      if (tier === MarketTier.TIER_D) {
+        return { multiplier: 0.85, description: 'Small market (-15%)' };
+      }
+      
+      return { multiplier: 1.0, description: 'National Average' };
+    };
+    
+    const baseRange = baseSalaryRanges[recommendedLevel as keyof typeof baseSalaryRanges] || baseSalaryRanges['Entry'];
+    const trackInfo = trackMultipliers[trackId] || { multiplier: 1.0, name: trackName || 'Standard' };
+    const geoInfo = getGeoAdjustment(location);
+    
+    // Certification premiums
+    let certPremium = 0;
+    if (certifications.some(cert => cert.toUpperCase().includes('CISSP') || cert.toUpperCase().includes('CISM'))) {
+      certPremium += 12; // $12K for CISSP/CISM
+    }
+    if (certifications.some(cert => cert.toUpperCase().includes('AWS') || cert.toUpperCase().includes('AZURE'))) {
+      certPremium += 10; // $10K for cloud certs
+    }
+    if (certifications.some(cert => cert.toUpperCase().includes('OSCP') || cert.toUpperCase().includes('GCIH'))) {
+      certPremium += 7; // $7K for specialized
+    }
+    if (certifications.length >= 3) {
+      certPremium += 8; // $8K for multiple certs
+    }
+    
+    const minSalary = Math.round((baseRange.min * trackInfo.multiplier * geoInfo.multiplier) + certPremium);
+    const maxSalary = Math.round((baseRange.max * trackInfo.multiplier * geoInfo.multiplier) + certPremium);
+    
+    const calculationDetails = `${recommendedLevel}: $${baseRange.min}K-$${baseRange.max}K × ${trackInfo.multiplier} (${trackInfo.name}) × ${geoInfo.multiplier} (${geoInfo.description}) + $${certPremium}K certs = $${minSalary}K-$${maxSalary}K`;
+    
+    return {
+      min: minSalary,
+      max: maxSalary,
+      calculationDetails
+    };
   }
 
   async analyzeResume(resumeData: ResumeData): Promise<ResumeAnalysisResult> {
@@ -287,71 +471,21 @@ SCORING CRITERIA:
 - Education background (15%)
 - Career trajectory (10%)
 
-DYNAMIC SALARY CALCULATION - 2025 Market Rates:
+SALARY EXPECTATIONS:
 
-BASE SALARY RANGES BY EXPERIENCE LEVEL:
-- Entry (0-2 years): $60K-85K baseline
-- Mid (3-5 years): $85K-130K baseline  
-- Senior (6-10 years): $130K-180K baseline
-- Expert (11+ years): $180K-250K baseline
-- Executive: $250K-400K+ baseline
+IMPORTANT: Salary calculations are handled by a separate system that accounts for:
+- Executive positions using market-tiered salary bands (avoiding unrealistic ranges in smaller markets)
+- Geographic adjustments based on actual market data
+- Career track demand multipliers
+- Certification premiums appropriate to experience level
 
-CAREER TRACK MULTIPLIERS (apply to base ranges):
-- SOC Operations: 0.9x (high supply, entry-friendly)
-- Red Team/Penetration Testing: 1.3x (specialized, high demand)
-- Digital Forensics: 1.2x (specialized skills)
-- GRC (Governance, Risk, Compliance): 1.1x (business critical)
-- Cloud Security: 1.4x (highest demand, complex skills)
-- Cybersecurity Architecture: 1.3x (strategic, technical leadership)
-- Identity and Access Management: 1.2x (critical infrastructure)
-- Vulnerability Management: 1.0x (standard demand)
-- Threat Intelligence: 1.2x (analytical expertise)
-- Secure Software Development: 1.3x (development + security)
-- Incident Response: 1.1x (operational critical)
-- Security Automation: 1.3x (technical + scripting)
-- Executive Leadership: 1.5x (C-suite premium)
-- Cybersecurity Education: 0.8x (academic/training focus)
+For your analysis, focus on providing career recommendations without specific salary calculations. The system will automatically generate realistic, location-appropriate salary ranges for each recommendation based on the candidate's experience level, location, certifications, and chosen career track.
 
-GEOGRAPHIC ADJUSTMENTS:
-- San Francisco/Silicon Valley: +35%
-- New York/Boston: +25%
-- Seattle/DC Metro: +20%
-- Austin/Denver/Chicago: +10%
-- National Average: 0% (baseline)
-- Remote positions: +5% (flexibility premium)
-- Small cities/rural: -15%
-
-CERTIFICATION PREMIUMS (add to base):
-- CISSP/CISM: +$10K-15K
-- Cloud certifications (AWS/Azure/GCP): +$8K-12K
-- Specialized (OSCP, GCIH, etc.): +$5K-10K
-- Multiple expert certs: +$15K-25K
-
-CALCULATION FORMULA:
-Final Range = (Base Range × Track Multiplier × Geographic Adjustment) + Certification Premium
-
-EXAMPLES:
-- Entry SOC Analyst in Austin: ($60K-85K × 0.9 × 1.1) + $5K = $64K-89K
-- Senior Cloud Security in SF: ($130K-180K × 1.4 × 1.35) + $15K = $261K-356K
-- Mid-level Red Team Remote: ($85K-130K × 1.3 × 1.05) + $10K = $126K-187K
-
-CRITICAL SALARY CALCULATION REQUIREMENTS:
-
-1. APPLY DYNAMIC CALCULATION: Use the formula above, never use generic $85K-130K for all positions
-2. ANALYZE LOCATION: Extract any geographic indicators from resume (city, state, remote work mentions)
-3. ASSESS CERTIFICATION VALUE: Factor in specific certifications mentioned using the premium table
-4. CONSIDER TRACK DEMAND: Apply appropriate career track multipliers based on market demand
-5. SHOW CALCULATION TRANSPARENCY: Include calculationDetails in salaryRange object
-
-EXAMPLES OF PROPER SALARY CALCULATIONS:
-- Entry SOC Analyst (Security+, Remote): 
-  Base: $60K-85K × 0.9 × 1.05 + $5K = $62K-85K
-- Senior Cloud Architect (CISSP, AWS, Seattle):
-  Base: $130K-180K × 1.4 × 1.2 + $20K = $238K-322K
-- Mid-level Red Team (OSCP, Austin):
-  Base: $85K-130K × 1.3 × 1.1 + $8K = $129K-195K
-
-Never use identical salary ranges across different tracks. Each recommendation must have unique, calculated ranges.
+Do NOT attempt to calculate salary ranges yourself. Instead, focus on:
+1. Accurate experience level assessment
+2. Strong career track recommendations with detailed reasoning
+3. Identification of relevant certifications and skills
+4. Geographic location extraction from the resume
 
 IMPORTANT: Assess experience level based on ACTUAL years of experience and demonstrated capabilities, not just job titles. Many candidates inflate titles - focus on:
 - Years of hands-on technical experience
@@ -751,6 +885,60 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
             additionalVerificationNeeded: issues.length > 0 ? ["Educational timeline verification", "Certification status confirmation"] : []
           }
         };
+      }
+
+      // Apply salary calculations to career recommendations
+      if (analysis.careerRecommendations && Array.isArray(analysis.careerRecommendations)) {
+        const location = analysis.extractedData?.personalInfo?.location;
+        const certifications = analysis.extractedData?.certifications?.map((cert: any) => cert.name) || [];
+        
+        analysis.careerRecommendations = analysis.careerRecommendations.map((rec: any) => {
+          // Calculate salary using our new system
+          const salaryCalc = this.calculateSalaryRange(
+            rec.trackId,
+            rec.recommendedLevel,
+            location,
+            certifications,
+            rec.trackName
+          );
+          
+          // Update salary range with calculated values
+          rec.salaryRange = {
+            min: salaryCalc.min,
+            max: salaryCalc.max,
+            currency: 'USD',
+            calculationDetails: salaryCalc.calculationDetails
+          };
+          
+          return rec;
+        });
+      }
+      
+      // Also handle the 'recommendations' field if it exists (different naming)
+      if (analysis.recommendations && Array.isArray(analysis.recommendations)) {
+        const location = analysis.extractedData?.personalInfo?.location;
+        const certifications = analysis.extractedData?.certifications?.map((cert: any) => cert.name) || [];
+        
+        analysis.recommendations = analysis.recommendations.map((rec: any) => {
+          // Calculate salary using our new system
+          const salaryCalc = this.calculateSalaryRange(
+            rec.trackId,
+            rec.recommendedLevel,
+            location,
+            certifications,
+            rec.trackName
+          );
+          
+          // Update salary range with calculated values
+          rec.salaryRange = {
+            min: salaryCalc.min,
+            max: salaryCalc.max,
+            currency: 'USD',
+            calculationDetails: salaryCalc.calculationDetails
+          };
+          
+          return rec;
+        });
       }
 
       // Validate and ensure all required fields exist
