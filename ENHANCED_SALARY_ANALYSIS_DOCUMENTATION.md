@@ -1,32 +1,54 @@
-# Enhanced Salary Analysis System
+# Enhanced Market-Tiered Salary Analysis System
 
 ## Overview
 
-The CyberPathfinder platform features a sophisticated salary calculation engine that provides accurate, personalized compensation analysis based on multiple market factors. Unlike generic salary tools that show identical ranges across all positions, our system dynamically calculates compensation based on specific career tracks, experience levels, geographic locations, and certification portfolios.
+The CyberPathfinder platform features a sophisticated salary calculation engine with separate calculation paths for executive and non-executive positions. This dual-approach system addresses the unique compensation dynamics of different career levels while providing accurate, personalized compensation analysis based on multiple market factors. Unlike generic salary tools that show identical ranges across all positions, our system prevents unrealistic salary projections (especially for executives in smaller markets) while maintaining accuracy for all cybersecurity specializations.
 
-## Dynamic Salary Calculation Methodology
+## Dual-Path Salary Calculation Methodology
 
-### Base Salary Framework
+### Executive Position Calculation (Market-Tiered Approach)
 
-The system establishes baseline salary ranges by experience level, derived from 2025 cybersecurity market data:
+Executive positions (CISO Leadership Track and Executive-level roles) use geographic market tiers with pre-adjusted salary bands to ensure realistic compensation ranges across all markets:
 
+**Market Tier System:**
+- **Tier A (Premium Markets)**: San Francisco, NYC, Boston - $330K-500K
+- **Tier B (Large Metros)**: Atlanta, Austin, Seattle, DC - $260K-380K  
+- **Tier C (Mid-Size Markets)**: Charlotte, Nashville, Portland - $210K-300K
+- **Tier D (Small Cities/Rural)**: Augusta, Albany, smaller markets - $170K-240K
+
+**Executive Role Factors:**
+- Large Organization (500+ employees): 1.10x
+- Regulated Industry (Finance, Healthcare, Defense): 1.05x
+- Security Team Leadership (10+ direct reports): 1.08x
+- Default: 1.00x
+
+**Executive Certification Premiums (Reduced):**
+- CISSP/CISM: +$8K
+- Multiple Expert Certifications: +$10K
+- Cloud Specializations: +$5K
+
+### Non-Executive Position Calculation (Traditional Multiplier Approach)
+
+Non-executive positions continue using the proven multiplier-based system:
+
+**Base Salary Framework:**
 - **Entry Level (0-2 years)**: $60K-85K baseline
 - **Mid Level (3-5 years)**: $85K-130K baseline  
 - **Senior Level (6-10 years)**: $130K-180K baseline
 - **Expert Level (11+ years)**: $180K-250K baseline
-- **Executive Level**: $250K-400K+ baseline
 
-### Career Track Multipliers
+### Career Track Multipliers (Non-Executive Positions)
 
 Each cybersecurity specialization receives a market-demand multiplier applied to base ranges:
 
-**High Demand Specializations (1.3x - 1.5x):**
+**High Demand Specializations (1.3x - 1.4x):**
 - Cloud Security: 1.4x (highest demand, complex skills)
 - Red Team/Penetration Testing: 1.3x (specialized, high demand)
 - Cybersecurity Architecture: 1.3x (strategic, technical leadership)
 - Secure Software Development: 1.3x (development + security)
 - Security Automation: 1.3x (technical + scripting)
-- Executive Leadership: 1.5x (C-suite premium)
+
+**Note**: Executive Leadership positions no longer use multipliers; they use the market-tiered approach described above.
 
 **Standard Demand Specializations (1.0x - 1.2x):**
 - Digital Forensics: 1.2x (specialized skills)
@@ -76,8 +98,13 @@ Additional compensation value based on certification portfolio:
 - TS/SCI with Polygraph: +$5K-10K
 - Secret/Top Secret: +$3K-7K
 
-## Calculation Formula
+## Calculation Formulas
 
+### Executive Position Formula
+**Final Executive Range = (Market Tier Base Band × Role Factor) + Executive Certification Premium**
+*Applied caps ensure ranges never exceed tier limits*
+
+### Non-Executive Position Formula
 **Final Salary Range = (Base Range × Track Multiplier × Geographic Adjustment) + Certification Premium**
 
 ### Real Examples
@@ -91,8 +118,12 @@ Additional compensation value based on certification portfolio:
 **Mid-Level Red Team (OSCP, Remote):**
 - Base: $85K-130K × 1.3 × 1.05 + $8K = **$126K-187K**
 
-**Executive CISO (Multiple Certs, San Francisco):**
-- Base: $250K-400K × 1.5 × 1.35 + $25K = **$531K-835K**
+**Executive CISO Examples (New Market-Tiered System):**
+- **Augusta (Tier D)**: $170K-240K (realistic for smaller market)
+- **Atlanta (Tier B)**: $260K-380K (large metro appropriate)
+- **San Francisco (Tier A)**: $330K-500K (premium market)
+
+*Previous system would have shown $318K-510K for Augusta, which was unrealistic*
 
 ## Transparency Features
 
@@ -221,30 +252,33 @@ The salary analysis integrates with the transparent match score methodology:
 ### Credibility Impact on Salary Recommendations
 
 The system adjusts salary projections based on resume validation findings:
-- **High Credibility (85-100)**: Full salary range displayed
-- **Moderate Credibility (70-84)**: Conservative adjustments applied
-- **Low Credibility (50-69)**: Salary ranges reduced by 10-15%
-- **Critical Issues (<50)**: Entry-level ranges recommended regardless of claims
+- **High Credibility (85-100)**: Full salary range displayed (both executive tiers and non-executive multipliers)
+- **Moderate Credibility (70-84)**: Conservative adjustments applied (lower role factors for executives)
+- **Low Credibility (50-69)**: Salary ranges reduced by 10-15% (lower tier assignments for executives)
+- **Critical Issues (<50)**: Entry-level ranges recommended regardless of claims (executives moved to Tier D)
 
 ### Market Reality Checks
 
 Automated validation ensures realistic projections:
-- Prevents impossible combinations (Entry-level executive salaries)
-- Validates certification premiums against market data
-- Cross-references geographic adjustments with cost-of-living indices
-- Ensures track multipliers reflect current demand patterns
+- **Executive Safeguards**: Market tier caps prevent overflow (e.g., Augusta capped at $260K maximum)
+- **Geographic Validation**: City-to-tier mapping ensures appropriate market assignment
+- **Role Factor Limits**: Executive multipliers capped at 1.10x to prevent inflation
+- **Certification Premiums**: Reduced executive premiums prevent unrealistic stacking
+- **Cross-System Validation**: Non-executive multipliers remain validated against market data
 
 ## Benefits Over Traditional Salary Tools
 
 ### Personalization
-- **Individual Analysis**: Every calculation considers specific profile factors
-- **Dynamic Adjustments**: Real-time market factor integration
-- **Comprehensive Context**: Full career trajectory consideration
+- **Dual-Path Analysis**: Executive and non-executive positions calculated using appropriate methodologies
+- **Geographic Precision**: Market tiers provide realistic ranges for all locations
+- **Individual Context**: Every calculation considers specific profile factors and career level
+- **Dynamic Adjustments**: Real-time market factor integration with tier-specific caps
 
 ### Accuracy
-- **Market-Based Multipliers**: Derived from actual cybersecurity hiring data
-- **Geographic Precision**: City-specific rather than broad regional estimates
-- **Certification Value**: Precise premium calculations for specific credentials
+- **Market-Tiered Executive Bands**: Eliminate unrealistic salary inflation in smaller markets
+- **Proven Non-Executive Multipliers**: Derived from actual cybersecurity hiring data
+- **Geographic Market Tiers**: City-specific tier assignments rather than broad regional estimates  
+- **Role-Appropriate Premiums**: Executive certification premiums scaled appropriately
 
 ### Transparency
 - **Calculation Visibility**: Users see exactly how numbers are derived
@@ -253,22 +287,37 @@ Automated validation ensures realistic projections:
 
 ## Implementation Notes
 
+### Technical Architecture
+- **shared/compensation.ts**: Central compensation calculation module with market tier definitions
+- **Dual Calculation Paths**: Separate functions for executive vs non-executive salary calculations
+- **Geographic Intelligence**: City-to-tier mapping with substring matching and fallback logic
+- **TypeScript Integration**: Full type safety with detailed calculation transparency
+
 ### Data Sources
 - Bureau of Labor Statistics cybersecurity compensation data
 - Industry salary surveys from (ISC)², SANS, and Cybersecurity Professional Association
 - Geographic cost-of-living indices from major metropolitan areas
 - Certification body employment studies and salary impact reports
+- **Market Tier Validation**: Executive salary bands calibrated against actual job postings in each tier
+
+### Recent System Improvements (2025)
+- **Problem Solved**: Executive positions in smaller markets (e.g., Augusta) previously showed unrealistic $318K-510K ranges
+- **Solution Implemented**: Market-tiered system now shows realistic $170K-240K for Tier D markets
+- **Calculation Transparency**: Both calculation paths include detailed explanations
+- **Geographic Accuracy**: 60+ cities mapped to appropriate market tiers
 
 ### Update Frequency
-- Market multipliers reviewed quarterly
-- Geographic adjustments updated bi-annually
-- Certification premiums validated annually
-- Base ranges adjusted for inflation and market shifts
+- **Market Tiers**: Executive salary bands reviewed quarterly with regional market analysis
+- **Non-Executive Multipliers**: Reviewed quarterly based on hiring data
+- **Geographic Assignments**: City tier mappings updated bi-annually
+- **Certification Premiums**: Validated annually with separate executive/non-executive scales
+- **Base Ranges**: Adjusted for inflation and market shifts
 
 ### Quality Metrics
-- Salary accuracy validated against actual job postings
-- User feedback integration for range refinement
-- A/B testing of calculation methodologies
-- Continuous calibration with industry benchmarks
+- **Geographic Realism**: Executive salaries validated against local market conditions
+- **Calculation Accuracy**: Both paths tested against actual job postings
+- **User Feedback Integration**: Range refinement based on real-world hiring outcomes
+- **A/B Testing**: Comparison of tiered vs multiplier approaches for accuracy
+- **Continuous Calibration**: Industry benchmarks maintain system accuracy
 
-This enhanced salary analysis system ensures CyberPathfinder users receive the most accurate, personalized, and transparent compensation guidance available in the cybersecurity career development space.
+This enhanced market-tiered salary analysis system ensures CyberPathfinder users receive the most accurate, geographically-appropriate, and transparent compensation guidance available in the cybersecurity career development space, eliminating the unrealistic salary projections that previously occurred in smaller markets.

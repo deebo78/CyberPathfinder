@@ -12,14 +12,14 @@ CyberPathfinder is a comprehensive cybersecurity career development platform bui
 **Key Features**:
 - **Resume Upload & Analysis**: Upload TXT, DOC, DOCX files for AI-powered career assessment
 - **Manual Profile Entry**: Input experience, skills, certifications, and career goals manually
-- **AI Career Recommendations**: Get personalized career track suggestions with salary projections
+- **AI Career Recommendations**: Get personalized career track suggestions with market-tiered salary projections
 - **Gap Analysis**: Identify missing skills, certifications, and experience for target roles
 - **Transition Timelines**: Realistic progression plans with actionable next steps
 
 **User Journey**:
 1. Upload resume or enter profile manually
 2. AI analyzes background against NICE Framework work roles
-3. Receive personalized recommendations with salary ranges
+3. Receive personalized recommendations with geographically-appropriate salary ranges
 4. View career progression paths with required certifications
 5. Get actionable development recommendations
 
@@ -38,7 +38,7 @@ CyberPathfinder is a comprehensive cybersecurity career development platform bui
 - **Work Role Matching**: Primary and secondary NICE Framework role alignments
 - **Career Track Recommendations**: Best-fit career progression paths
 - **Requirements Extraction**: Skills, certifications, experience levels
-- **Compensation Analysis**: Salary alignment with market standards
+- **Compensation Analysis**: Market-tiered salary alignment with geographic standards
 - **Quality Scoring**: 0-100 point system with severity classifications
 
 ### 3. Career Track Explorer
@@ -147,7 +147,7 @@ Career Tracks (1:N) → Career Levels (M:N) → Certifications
 **Career Mapping AI (ai-career-mapper.ts)**:
 - **Input Processing**: Resume text, manual profile data, career goals
 - **Analysis Framework**: Skills extraction, experience evaluation, certification assessment
-- **Output Generation**: Career recommendations, salary projections, gap analysis
+- **Output Generation**: Career recommendations with market-tiered salary projections, gap analysis
 - **Gender-Neutral Language**: Inclusive pronouns and terminology throughout
 
 **Job Posting Analysis AI (ai-vacancy-mapper.ts)**:
@@ -160,7 +160,7 @@ Career Tracks (1:N) → Career Levels (M:N) → Certifications
 - **Document Parsing**: Text extraction from multiple file formats
 - **Content Analysis**: Skills, experience, education, certification extraction
 - **Career Assessment**: Current level evaluation and progression recommendations
-- **Market Intelligence**: Salary benchmarking with experience-based adjustments
+- **Market Intelligence**: Geographic market-tiered salary benchmarking with experience-based adjustments
 
 ### AI Prompt Engineering
 **Structured Prompts**: JSON-formatted responses for consistent parsing

@@ -35,7 +35,7 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 - **Certification Database**: 180+ certifications with issuer management, renewal tracking, and level classification.
 - **NICE Framework Integration**: Complete work role, category, specialty area, task, and KSA mappings with interactive visualization.
 - **Data Import System**: Excel/CSV processing capabilities (XLSX, DOC, DOCX) for bulk data operations with validation and duplicate detection.
-- **Dynamic Salary Calculation Engine**: Incorporates career track multipliers, geographic adjustments, and certification premiums.
+- **Market-Tiered Salary Calculation Engine**: Features separate calculation paths for executive vs non-executive positions. Executive salaries use geographic market tiers (Tier A: SF/NYC $330K-500K, Tier B: Large metros $260K-380K, Tier C: Mid-markets $210K-300K, Tier D: Small cities $170K-240K) preventing unrealistic salary ranges in smaller markets. Non-executive positions use career track multipliers, geographic adjustments, and certification premiums.
 - **Transparent Match Score System**: 100-point scoring system with definable skills and soft skills analysis, providing detailed breakdowns.
 - **Map Vacancy Analysis System**: Analyzes job postings for consistency, identifies conflicts, and provides AI-powered improvement suggestions. Includes critical issue detection and nuanced scoring for education and relevance.
 - **Resume Validation & Credibility Assessment**: Analyzes resumes for timeline consistency, credential authority, and future expertise claims, providing a credibility score with visual assessment.
