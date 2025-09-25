@@ -11,7 +11,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, User, Target, Award, BookOpen, TrendingUp, Upload, FileText, DollarSign, MapPin, Clock, AlertTriangle } from "lucide-react";
+import { Loader2, User, Target, Award, BookOpen, TrendingUp, Upload, FileText, DollarSign, MapPin, Clock, AlertTriangle, Printer, Download } from "lucide-react";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -94,6 +94,155 @@ export default function CareerMapping() {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
+
+  // Print/Save utility functions
+  const handlePrintAnalysis = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const analysisHtml = generateAnalysisHTML(analysis);
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Career Analysis Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; }
+            .section { margin-bottom: 30px; }
+            .section h2 { color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
+            .recommendation { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+            .match-score { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 16px; font-weight: bold; }
+            .badge { background: #f3f4f6; color: #374151; padding: 4px 8px; border-radius: 4px; margin: 2px; display: inline-block; }
+            .salary { color: #059669; font-weight: bold; }
+            .print-only { display: block; }
+            @media screen { .print-only { display: none; } }
+          </style>
+        </head>
+        <body>
+          ${analysisHtml}
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handleSaveAnalysis = () => {
+    const analysisHtml = generateAnalysisHTML(analysis, true);
+    const blob = new Blob([`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Career Analysis Report</title>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; color: #333; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; }
+            .section { margin-bottom: 30px; }
+            .section h2 { color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
+            .recommendation { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+            .match-score { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 16px; font-weight: bold; }
+            .badge { background: #f3f4f6; color: #374151; padding: 4px 8px; border-radius: 4px; margin: 2px; display: inline-block; }
+            .salary { color: #059669; font-weight: bold; }
+            .metadata { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          ${analysisHtml}
+        </body>
+      </html>
+    `], { type: 'text/html' });
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `career-analysis-report-${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Analysis Saved",
+      description: "Your career analysis report has been saved as an HTML file.",
+    });
+  };
+
+  const generateAnalysisHTML = (analysis: CareerAnalysis | null, includeMetadata = false) => {
+    if (!analysis) return '';
+    
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    return `
+      <div class="header">
+        <h1>CyberPathfinder Career Analysis Report</h1>
+        <p>Generated on ${currentDate}</p>
+        ${includeMetadata ? `<div class="metadata"><p><strong>Report Type:</strong> Cybersecurity Career Mapping Analysis<br><strong>Platform:</strong> CyberPathfinder - NICE Framework Career Guidance</p></div>` : ''}
+      </div>
+      
+      <div class="section">
+        <h2>Overall Assessment</h2>
+        <p>${analysis.overallAssessment}</p>
+      </div>
+      
+      <div class="section">
+        <h2>Strength Areas</h2>
+        ${analysis.strengthAreas.map(strength => `<span class="badge">${strength}</span>`).join(' ')}
+      </div>
+      
+      <div class="section">
+        <h2>Development Areas</h2>
+        ${analysis.developmentAreas.map(area => `<span class="badge">${area}</span>`).join(' ')}
+      </div>
+      
+      ${analysis.validationFindings && analysis.validationFindings.timelineConsistency?.issues.length > 0 ? `
+        <div class="section">
+          <h2>Verification Notes</h2>
+          <p><strong>Verification Score:</strong> ${analysis.validationFindings.overallCredibilityScore}/100</p>
+          ${analysis.validationFindings.timelineConsistency.issues.map(issue => `
+            <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 4px; padding: 10px; margin: 10px 0;">
+              <p><strong>${issue.severity.toUpperCase()}:</strong> ${issue.description}</p>
+              ${issue.evidence ? `<p><strong>Details:</strong> ${issue.evidence}</p>` : ''}
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
+      
+      <div class="section">
+        <h2>Recommended Career Tracks</h2>
+        ${analysis.recommendations.map(rec => `
+          <div class="recommendation">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+              <h3 style="margin: 0; color: #1f2937;">${rec.trackName}</h3>
+              <span class="match-score">${rec.matchScore}% Match</span>
+            </div>
+            <p><strong>Recommended Level:</strong> ${rec.recommendedLevel}</p>
+            ${rec.salaryRange ? `<p class="salary">Salary Range: $${rec.salaryRange.min}K - $${rec.salaryRange.max}K USD</p>` : ''}
+            <p>${rec.reasoning}</p>
+            <div style="margin-top: 15px;">
+              <h4>Next Steps:</h4>
+              <ul>
+                ${rec.nextSteps.map(step => `<li>${step}</li>`).join('')}
+              </ul>
+            </div>
+            ${rec.relevantSkills.length > 0 ? `
+              <div style="margin-top: 15px;">
+                <h4>Relevant Skills:</h4>
+                ${rec.relevantSkills.map(skill => `<span class="badge">${skill}</span>`).join(' ')}
+              </div>
+            ` : ''}
+            ${rec.timeToTransition ? `<p><strong>Estimated Transition Time:</strong> ${rec.timeToTransition}</p>` : ''}
+          </div>
+        `).join('')}
+      </div>
+    `;
+  };
 
   const form = useForm<ProfileFormData>({
     resolver: zodResolver(profileSchema),
@@ -641,10 +790,34 @@ export default function CareerMapping() {
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Recommended Career Tracks</CardTitle>
-                  <CardDescription>
-                    Based on your profile, here are the career tracks that best match your background and goals.
-                  </CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle>Recommended Career Tracks</CardTitle>
+                      <CardDescription>
+                        Based on your profile, here are the career tracks that best match your background and goals.
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handlePrintAnalysis}
+                        variant="outline"
+                        size="sm"
+                        data-testid="button-print-analysis"
+                      >
+                        <Printer className="h-4 w-4 mr-2" />
+                        Print
+                      </Button>
+                      <Button
+                        onClick={handleSaveAnalysis}
+                        variant="outline"
+                        size="sm"
+                        data-testid="button-save-analysis"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Save Report
+                      </Button>
+                    </div>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Match Score Methodology Explanation */}

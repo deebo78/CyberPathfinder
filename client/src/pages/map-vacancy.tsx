@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen, Upload, FileText, Loader2, AlertTriangle, Edit3 } from "lucide-react";
+import { Building2, Users, Target, AlertCircle, MapPin, TrendingUp, CheckCircle2, XCircle, ArrowRight, BookOpen, Upload, FileText, Loader2, AlertTriangle, Edit3, Printer, Download } from "lucide-react";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -111,6 +111,207 @@ export default function MapVacancy() {
 
   const [analysis, setAnalysis] = useState<VacancyAnalysis | null>(null);
   const { toast } = useToast();
+
+  // Print/Save utility functions
+  const handlePrintAnalysis = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) return;
+
+    const analysisHtml = generateVacancyAnalysisHTML(analysis);
+    
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Job Posting Analysis Report</title>
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; color: #333; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; }
+            .section { margin-bottom: 30px; }
+            .section h2 { color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
+            .match { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+            .match-score { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 16px; font-weight: bold; }
+            .badge { background: #f3f4f6; color: #374151; padding: 4px 8px; border-radius: 4px; margin: 2px; display: inline-block; }
+            .severity { padding: 4px 12px; border-radius: 16px; font-weight: bold; }
+            .critical { background: #fef2f2; color: #991b1b; }
+            .high { background: #fefce8; color: #a16207; }
+            .moderate { background: #f0f9ff; color: #1e40af; }
+            .low { background: #f0fdf4; color: #166534; }
+            .print-only { display: block; }
+            @media screen { .print-only { display: none; } }
+          </style>
+        </head>
+        <body>
+          ${analysisHtml}
+        </body>
+      </html>
+    `);
+    
+    printWindow.document.close();
+    printWindow.print();
+  };
+
+  const handleSaveAnalysis = () => {
+    const analysisHtml = generateVacancyAnalysisHTML(analysis, true);
+    const blob = new Blob([`
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <title>Job Posting Analysis Report</title>
+          <meta charset="UTF-8">
+          <style>
+            body { font-family: Arial, sans-serif; margin: 40px; color: #333; line-height: 1.6; }
+            .header { text-align: center; margin-bottom: 30px; border-bottom: 2px solid #e5e7eb; padding-bottom: 20px; }
+            .section { margin-bottom: 30px; }
+            .section h2 { color: #1f2937; border-bottom: 1px solid #e5e7eb; padding-bottom: 10px; }
+            .match { border: 1px solid #e5e7eb; border-radius: 8px; padding: 20px; margin-bottom: 15px; }
+            .match-score { background: #dcfce7; color: #166534; padding: 4px 12px; border-radius: 16px; font-weight: bold; }
+            .badge { background: #f3f4f6; color: #374151; padding: 4px 8px; border-radius: 4px; margin: 2px; display: inline-block; }
+            .severity { padding: 4px 12px; border-radius: 16px; font-weight: bold; }
+            .critical { background: #fef2f2; color: #991b1b; }
+            .high { background: #fefce8; color: #a16207; }
+            .moderate { background: #f0f9ff; color: #1e40af; }
+            .low { background: #f0fdf4; color: #166534; }
+            .metadata { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+          </style>
+        </head>
+        <body>
+          ${analysisHtml}
+        </body>
+      </html>
+    `], { type: 'text/html' });
+    
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `job-posting-analysis-${new Date().toISOString().split('T')[0]}.html`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    toast({
+      title: "Analysis Saved",
+      description: "Your job posting analysis report has been saved as an HTML file.",
+    });
+  };
+
+  const generateVacancyAnalysisHTML = (analysis: VacancyAnalysis | null, includeMetadata = false) => {
+    if (!analysis) return '';
+    
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    return `
+      <div class="header">
+        <h1>CyberPathfinder Job Posting Analysis Report</h1>
+        <p>Generated on ${currentDate}</p>
+        ${includeMetadata ? `<div class="metadata"><p><strong>Report Type:</strong> NICE Framework Job Posting Analysis<br><strong>Platform:</strong> CyberPathfinder - Map Vacancy Analysis</p></div>` : ''}
+      </div>
+      
+      <div class="section">
+        <h2>Analysis Summary</h2>
+        <p>${analysis.matchSummary}</p>
+      </div>
+      
+      <div class="section">
+        <h2>Primary Work Role Matches</h2>
+        ${analysis.primaryMatches.map(match => `
+          <div class="match">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <h3 style="margin: 0;">${match.workRoleName}</h3>
+              <span class="match-score">${match.matchPercentage}% Match</span>
+            </div>
+            <p><strong>Code:</strong> ${match.workRoleCode} • <strong>Specialty:</strong> ${match.specialtyArea}</p>
+            <p>${match.matchReason}</p>
+          </div>
+        `).join('')}
+      </div>
+      
+      ${analysis.bestTrackMatch ? `
+        <div class="section">
+          <h2>Best Career Track Match</h2>
+          <div class="match">
+            <h3>${analysis.bestTrackMatch.trackName}</h3>
+            <p><strong>Match Percentage:</strong> ${analysis.bestTrackMatch.matchPercentage}%</p>
+            <p><strong>Position Level:</strong> ${analysis.bestTrackMatch.jobPositionLevel}</p>
+            ${analysis.bestTrackMatch.levelAlignment && !analysis.bestTrackMatch.levelAlignment.isAligned ? `
+              <div style="background: #fef3c7; border: 1px solid #f59e0b; padding: 10px; border-radius: 4px; margin-top: 10px;">
+                <strong>Level Alignment Issues:</strong>
+                <ul>
+                  ${analysis.bestTrackMatch.levelAlignment.issues.map(issue => `<li>${issue}</li>`).join('')}
+                </ul>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      ` : ''}
+      
+      <div class="section">
+        <h2>Extracted Requirements</h2>
+        <p><strong>Experience Level:</strong> ${analysis.extractedRequirements.experienceLevel}</p>
+        <div style="margin: 15px 0;">
+          <h4>Skills:</h4>
+          ${analysis.extractedRequirements.skills.map(skill => `<span class="badge">${skill}</span>`).join(' ')}
+        </div>
+        <div style="margin: 15px 0;">
+          <h4>Certifications:</h4>
+          ${analysis.extractedRequirements.certifications.map(cert => `<span class="badge">${cert}</span>`).join(' ')}
+        </div>
+        <div style="margin: 15px 0;">
+          <h4>Education:</h4>
+          ${analysis.extractedRequirements.education.map(edu => `<span class="badge">${edu}</span>`).join(' ')}
+        </div>
+      </div>
+      
+      ${analysis.salaryAnalysis ? `
+        <div class="section">
+          <h2>Salary Analysis</h2>
+          ${analysis.salaryAnalysis.extractedSalary.min && analysis.salaryAnalysis.extractedSalary.max ? `
+            <p><strong>Extracted Range:</strong> $${analysis.salaryAnalysis.extractedSalary.min.toLocaleString()} - $${analysis.salaryAnalysis.extractedSalary.max.toLocaleString()}</p>
+          ` : ''}
+          <p><strong>Market Alignment:</strong> ${analysis.salaryAnalysis.marketAlignment.replace('_', ' ').toUpperCase()}</p>
+          <p><strong>Seniority Match:</strong> ${analysis.salaryAnalysis.seniorityMismatch}</p>
+          ${analysis.salaryAnalysis.mismatchDetails ? `<p><strong>Details:</strong> ${analysis.salaryAnalysis.mismatchDetails}</p>` : ''}
+        </div>
+      ` : ''}
+      
+      ${analysis.roleConsistencyAnalysis ? `
+        <div class="section">
+          <h2>Quality Assessment</h2>
+          <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+            <span class="severity ${analysis.roleConsistencyAnalysis.severityLevel.toLowerCase()}">
+              ${analysis.roleConsistencyAnalysis.severityLevel} Priority
+            </span>
+            ${analysis.roleConsistencyAnalysis.overallConsistencyScore ? `
+              <span><strong>Score:</strong> ${analysis.roleConsistencyAnalysis.overallConsistencyScore}/100</span>
+            ` : ''}
+          </div>
+          <p>${analysis.roleConsistencyAnalysis.summary}</p>
+          
+          ${analysis.roleConsistencyAnalysis.conflictsFound && analysis.roleConsistencyAnalysis.conflictsFound.length > 0 ? `
+            <div style="margin: 15px 0;">
+              <h4>Conflicts Found:</h4>
+              <ul>
+                ${analysis.roleConsistencyAnalysis.conflictsFound.map(conflict => `<li>${conflict}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+          
+          ${analysis.roleConsistencyAnalysis.recommendedImprovements && analysis.roleConsistencyAnalysis.recommendedImprovements.length > 0 ? `
+            <div style="margin: 15px 0;">
+              <h4>Recommended Improvements:</h4>
+              <ul>
+                ${analysis.roleConsistencyAnalysis.recommendedImprovements.map(improvement => `<li>${improvement}</li>`).join('')}
+              </ul>
+            </div>
+          ` : ''}
+        </div>
+      ` : ''}
+    `;
+  };
 
   const analyzeVacancyMutation = useMutation({
     mutationFn: async (data: any) => {
@@ -481,6 +682,40 @@ export default function MapVacancy() {
         <div className="space-y-6">
           {analysis && (
             <>
+              {/* Print/Save Actions */}
+              <Card>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-green-600">Analysis Complete</CardTitle>
+                      <CardDescription>
+                        Your job posting has been analyzed against NICE Framework standards.
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handlePrintAnalysis}
+                        variant="outline"
+                        size="sm"
+                        data-testid="button-print-vacancy-analysis"
+                      >
+                        <Printer className="h-4 w-4 mr-2" />
+                        Print
+                      </Button>
+                      <Button
+                        onClick={handleSaveAnalysis}
+                        variant="outline"
+                        size="sm"
+                        data-testid="button-save-vacancy-analysis"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Save Report
+                      </Button>
+                    </div>
+                  </div>
+                </CardHeader>
+              </Card>
+            
               {/* Primary Matches */}
               <Card>
                 <CardHeader>
