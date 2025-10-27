@@ -23,6 +23,7 @@ import Categories from "@/pages/categories";
 import Relationships from "@/pages/relationships";
 import Admin from "@/pages/admin";
 import TestPage from "@/pages/test-page";
+import ApiTest from "@/pages/api-test";
 import ExportDashboard from "@/pages/export-dashboard";
 import NotFound from "@/pages/not-found";
 
@@ -37,7 +38,8 @@ function Router() {
     "/career-tracks",
     "/certification-mapping",
     "/export",
-    "/test"
+    "/test",
+    "/api-test"
   ];
   const shouldShowSidebar = !isLandingPage && !noSidebarPages.some(page => location.startsWith(page));
   const shouldShowMainNav = noSidebarPages.some(page => location.startsWith(page));
@@ -76,6 +78,7 @@ function Router() {
             <Route path="/relationships" component={Relationships} />
             <Route path="/admin" component={Admin} />
             <Route path="/test" component={TestPage} />
+            <Route path="/api-test" component={ApiTest} />
             <Route component={NotFound} />
           </Switch>
         </div>
