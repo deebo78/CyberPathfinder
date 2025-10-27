@@ -302,6 +302,12 @@ export class AIResumeAnalyzer {
 
   async analyzeResume(resumeData: ResumeData): Promise<ResumeAnalysisResult> {
     try {
+      console.log("=== Resume Analysis Starting ===");
+      console.log("Filename:", resumeData.filename);
+      console.log("Content length:", resumeData.content.length);
+      console.log("OpenAI API Key configured:", !!process.env.OPENAI_API_KEY);
+      console.log("OpenAI API Key length:", process.env.OPENAI_API_KEY?.substring(0, 7) + "...");
+      
       // Get career tracks and work roles for context
       const careerTracks = await storage.getCareerTracks();
       const workRoles = await storage.getWorkRoles();
@@ -671,20 +677,41 @@ Your JSON response MUST include this exact "validationFindings" structure - NO E
 
 VALIDATION IS MANDATORY - Every response must include this complete structure. Adjust ALL career recommendations based on validation findings.`;
 
-      const response = await this.openai.chat.completions.create({
-        model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
-        messages: [
-          {
-            role: "system", 
-            content: "You are an expert cybersecurity career advisor specializing in NICE Framework alignment and career progression analysis."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ],
-        response_format: { type: "json_object" },
-      });
+      console.log("Calling OpenAI API for resume analysis...");
+      console.log("Model: gpt-4o");
+      console.log("Prompt length:", prompt.length);
+      
+      let response;
+      try {
+        response = await this.openai.chat.completions.create({
+          model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+          messages: [
+            {
+              role: "system", 
+              content: "You are an expert cybersecurity career advisor specializing in NICE Framework alignment and career progression analysis."
+            },
+            {
+              role: "user",
+              content: prompt
+            }
+          ],
+          response_format: { type: "json_object" },
+        });
+        console.log("OpenAI API call successful");
+      } catch (apiError: any) {
+        console.error("=== OpenAI API Error ===");
+        console.error("Error type:", apiError?.constructor?.name);
+        console.error("Error message:", apiError?.message);
+        console.error("Error status:", apiError?.status);
+        console.error("Error code:", apiError?.code);
+        console.error("Error details:", JSON.stringify({
+          message: apiError?.message,
+          status: apiError?.status,
+          code: apiError?.code,
+          type: apiError?.type
+        }, null, 2));
+        throw apiError;
+      }
 
       const responseContent = response.choices[0].message.content || '{}';
       
