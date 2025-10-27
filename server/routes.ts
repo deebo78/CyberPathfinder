@@ -19,6 +19,7 @@ import { AIResumeAnalyzer } from "./ai-resume-analyzer";
 import { getCareerTrackWithTKS, getCareerTrackTKSProgression } from "./routes/career-track-tks";
 import fs from "fs";
 import mammoth from "mammoth";
+import OpenAI from "openai";
 
 const upload = multer({ 
   dest: 'uploads/',
@@ -63,6 +64,92 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error) {
       console.error("Error searching:", error);
       res.status(500).json({ message: "Search failed" });
+    }
+  });
+
+  // OpenAI API Test Endpoint
+  app.get("/api/test-openai", async (req, res) => {
+    const diagnostics: any = {
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      apiKeyConfigured: false,
+      apiKeyPrefix: null,
+      apiKeyLength: null,
+      testCallStatus: 'not_attempted',
+      error: null,
+      details: {}
+    };
+
+    try {
+      // Check if API key is configured
+      const apiKey = process.env.OPENAI_API_KEY;
+      diagnostics.apiKeyConfigured = !!apiKey;
+      
+      if (apiKey) {
+        diagnostics.apiKeyLength = apiKey.length;
+        diagnostics.apiKeyPrefix = apiKey.substring(0, 7);
+      }
+
+      if (!apiKey) {
+        diagnostics.error = "OPENAI_API_KEY environment variable is not set";
+        diagnostics.testCallStatus = 'failed';
+        return res.status(500).json(diagnostics);
+      }
+
+      // Initialize OpenAI client
+      console.log("Initializing OpenAI client for test...");
+      const openai = new OpenAI({ apiKey });
+      
+      // Make a minimal test call
+      console.log("Making test call to OpenAI API...");
+      diagnostics.testCallStatus = 'attempting';
+      
+      const testResponse = await openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          { role: "user", content: "Say 'API test successful' in exactly those words." }
+        ],
+        max_tokens: 10
+      });
+
+      diagnostics.testCallStatus = 'success';
+      diagnostics.details = {
+        model: testResponse.model,
+        response: testResponse.choices[0].message.content,
+        usage: testResponse.usage,
+        responseId: testResponse.id
+      };
+
+      console.log("OpenAI API test successful:", diagnostics.details);
+      res.json({
+        success: true,
+        message: "OpenAI API is configured and working correctly",
+        ...diagnostics
+      });
+
+    } catch (error: any) {
+      console.error("OpenAI API test error:", error);
+      
+      diagnostics.testCallStatus = 'failed';
+      diagnostics.error = {
+        message: error?.message || 'Unknown error',
+        type: error?.type || error?.constructor?.name,
+        status: error?.status,
+        code: error?.code,
+        stack: error?.stack?.split('\n').slice(0, 3).join('\n')
+      };
+
+      // Extract specific error details
+      if (error?.response) {
+        diagnostics.error.responseStatus = error.response.status;
+        diagnostics.error.responseData = error.response.data;
+      }
+
+      res.status(500).json({
+        success: false,
+        message: "OpenAI API test failed",
+        ...diagnostics
+      });
     }
   });
 
