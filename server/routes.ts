@@ -876,6 +876,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
+      console.error("=== RESUME UPLOAD ERROR ===");
+      console.error("Error type:", error instanceof Error ? error.constructor.name : typeof error);
+      console.error("Error message:", error instanceof Error ? error.message : String(error));
+      console.error("Full error object:", JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+      console.error("Stack trace:", error instanceof Error ? error.stack : 'No stack trace');
+      
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       res.status(500).json({ 
         message: "Failed to analyze resume: " + errorMessage,
