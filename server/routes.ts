@@ -153,6 +153,76 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Database Test Endpoint
+  app.get("/api/test-database", async (req, res) => {
+    const diagnostics: any = {
+      timestamp: new Date().toISOString(),
+      environment: process.env.NODE_ENV,
+      databaseUrlConfigured: false,
+      testQueryStatus: 'not_attempted',
+      error: null,
+      details: {}
+    };
+
+    try {
+      // Check if DATABASE_URL is configured
+      const dbUrl = process.env.DATABASE_URL;
+      diagnostics.databaseUrlConfigured = !!dbUrl;
+      
+      if (dbUrl) {
+        diagnostics.details.urlPrefix = dbUrl.substring(0, 20) + "...";
+      }
+
+      if (!dbUrl) {
+        diagnostics.error = "DATABASE_URL environment variable is not set";
+        diagnostics.testQueryStatus = 'failed';
+        return res.status(500).json(diagnostics);
+      }
+
+      // Try to fetch a small number of career tracks
+      console.log("Testing database connection by fetching career tracks...");
+      diagnostics.testQueryStatus = 'attempting';
+      
+      const careerTracks = await storage.getCareerTracks();
+      
+      diagnostics.testQueryStatus = 'success';
+      diagnostics.details = {
+        careerTracksCount: careerTracks.length,
+        sampleTrack: careerTracks[0] ? {
+          id: careerTracks[0].id,
+          name: careerTracks[0].name
+        } : null
+      };
+
+      console.log("Database test successful:", diagnostics.details);
+      res.json({
+        success: true,
+        message: "Database is configured and working correctly",
+        ...diagnostics
+      });
+
+    } catch (error: any) {
+      console.error("Database test error:", error);
+      
+      diagnostics.testQueryStatus = 'failed';
+      diagnostics.error = {
+        message: error?.message || 'Unknown error',
+        type: error?.constructor?.name,
+        code: error?.code,
+        severity: error?.severity,
+        detail: error?.detail,
+        hint: error?.hint,
+        stack: error?.stack?.split('\n').slice(0, 5).join('\n')
+      };
+
+      res.status(500).json({
+        success: false,
+        message: "Database test failed",
+        ...diagnostics
+      });
+    }
+  });
+
   // Categories routes
   app.get("/api/categories", async (req, res) => {
     try {
