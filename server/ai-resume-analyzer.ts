@@ -309,8 +309,29 @@ export class AIResumeAnalyzer {
       console.log("OpenAI API Key length:", process.env.OPENAI_API_KEY?.substring(0, 7) + "...");
       
       // Get career tracks and work roles for context
-      const careerTracks = await storage.getCareerTracks();
-      const workRoles = await storage.getWorkRoles();
+      console.log("Fetching career tracks from database...");
+      let careerTracks;
+      try {
+        careerTracks = await storage.getCareerTracks();
+        console.log("Career tracks fetched successfully:", careerTracks.length);
+      } catch (dbError: any) {
+        console.error("Database error fetching career tracks:", dbError);
+        console.error("Database error message:", dbError?.message);
+        console.error("Database error code:", dbError?.code);
+        throw dbError;
+      }
+      
+      console.log("Fetching work roles from database...");
+      let workRoles;
+      try {
+        workRoles = await storage.getWorkRoles();
+        console.log("Work roles fetched successfully:", workRoles.length);
+      } catch (dbError: any) {
+        console.error("Database error fetching work roles:", dbError);
+        console.error("Database error message:", dbError?.message);
+        console.error("Database error code:", dbError?.code);
+        throw dbError;
+      }
 
       const careerTracksSummary = careerTracks.map(track => ({
         id: track.id,
