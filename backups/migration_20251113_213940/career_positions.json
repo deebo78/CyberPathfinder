@@ -1,0 +1,992 @@
+[
+  {
+    "id": 1,
+    "career_level_id": 1,
+    "job_title": "Cyber Defense Analyst",
+    "nice_work_role_id": 114,
+    "description": "Monitors, analyzes, and responds to cyber threats in real-time.",
+    "notes": "Maps to NICE work role: Defensive Cybersecurity",
+    "sort_order": 0,
+    "created_at": "2025-05-29T16:58:03.327Z"
+  },
+  {
+    "id": 2,
+    "career_level_id": 2,
+    "job_title": "Threat Intelligence Analyst",
+    "nice_work_role_id": 117,
+    "description": "Develops threat intelligence to inform defensive actions.",
+    "notes": "Maps to NICE work role: Infrastructure Support",
+    "sort_order": 0,
+    "created_at": "2025-05-29T16:58:03.427Z"
+  },
+  {
+    "id": 3,
+    "career_level_id": 3,
+    "job_title": "SOC Manager",
+    "nice_work_role_id": null,
+    "description": "Oversees SOC team operations, escalations, and KPIs.",
+    "notes": "Custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T16:58:03.515Z"
+  },
+  {
+    "id": 4,
+    "career_level_id": 4,
+    "job_title": "Director of Security Operations",
+    "nice_work_role_id": null,
+    "description": "Leads organizational security operations strategy.",
+    "notes": "Custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T16:58:03.607Z"
+  },
+  {
+    "id": 5,
+    "career_level_id": 5,
+    "job_title": "Chief Information Security Officer (CISO)",
+    "nice_work_role_id": null,
+    "description": "Executive leadership role with overall security oversight.",
+    "notes": "Custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T16:58:03.694Z"
+  },
+  {
+    "id": 6,
+    "career_level_id": 6,
+    "job_title": "Red Team Operator (Associate) / Penetration Tester / Exp",
+    "nice_work_role_id": null,
+    "description": "Conducts penetration tests and participates in red team engagements under supervision. Focuses on executing defined tactics, techniques, and procedures (TTPs) and documenting findings.",
+    "notes": "Offensive security specialization - custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:00:10.106Z"
+  },
+  {
+    "id": 7,
+    "career_level_id": 7,
+    "job_title": "Red Team Operator / Exploitation Analyst",
+    "nice_work_role_id": null,
+    "description": "Leads complex penetration tests and red team engagements. Develops custom exploits, advanced TTPs, and innovative attack methodologies. Mentors junior operators.",
+    "notes": "Offensive security specialization - custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:00:10.106Z"
+  },
+  {
+    "id": 8,
+    "career_level_id": 8,
+    "job_title": "Red Team Lead / Offensive Cyber Operations Lead",
+    "nice_work_role_id": null,
+    "description": "Plans, scopes, and directs full-scope red team engagements and advanced adversary simulations. Manages the red team capabilities, methodologies, and reporting. Provides technical leadership.",
+    "notes": "Offensive security specialization - custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:00:10.106Z"
+  },
+  {
+    "id": 9,
+    "career_level_id": 9,
+    "job_title": "Director of Offensive Security / Head of Red Team Operations",
+    "nice_work_role_id": null,
+    "description": "Establishes the vision, strategy, and budget for the organization offensive security program. Ensures alignment with enterprise risk and communicates program value to executive leadership.",
+    "notes": "Offensive security specialization - custom position title",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:00:10.106Z"
+  },
+  {
+    "id": 10,
+    "career_level_id": 10,
+    "job_title": "Vulnerability Analyst (Junior)",
+    "nice_work_role_id": null,
+    "description": "Supports vulnerability scanning and assessment tasks. Assists with documentation and tracking of vulnerabilities.",
+    "notes": "Entry-level vulnerability management role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:01:13.331Z"
+  },
+  {
+    "id": 11,
+    "career_level_id": 11,
+    "job_title": "Vulnerability Analyst",
+    "nice_work_role_id": null,
+    "description": "Performs vulnerability scans and analysis. Coordinates with system owners and engineers to remediate findings.",
+    "notes": "Core vulnerability analyst position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:01:13.331Z"
+  },
+  {
+    "id": 12,
+    "career_level_id": 12,
+    "job_title": "Vulnerability Management Lead",
+    "nice_work_role_id": null,
+    "description": "Oversees enterprise vulnerability management program. Prioritizes findings based on risk and ensures timely remediation.",
+    "notes": "Leadership role in vulnerability management",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:01:13.331Z"
+  },
+  {
+    "id": 13,
+    "career_level_id": 13,
+    "job_title": "Principal Vulnerability Engineer",
+    "nice_work_role_id": null,
+    "description": "Designs and optimizes enterprise vulnerability assessment architecture. Advises on advanced mitigation techniques.",
+    "notes": "Senior technical specialist role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:01:13.331Z"
+  },
+  {
+    "id": 14,
+    "career_level_id": 14,
+    "job_title": "Director of Vulnerability Management / CISO",
+    "nice_work_role_id": null,
+    "description": "Sets strategic direction for vulnerability risk reduction. Communicates program metrics and business impact to executive stakeholders.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:01:13.331Z"
+  },
+  {
+    "id": 15,
+    "career_level_id": 15,
+    "job_title": "Forensic Technician",
+    "nice_work_role_id": null,
+    "description": "Supports collection and preservation of digital evidence. Assists in basic forensic tasks under guidance.",
+    "notes": "Entry-level digital forensics support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:03:24.849Z"
+  },
+  {
+    "id": 16,
+    "career_level_id": 16,
+    "job_title": "Digital Forensics Analyst",
+    "nice_work_role_id": null,
+    "description": "Performs forensic imaging, evidence analysis, and reports findings to incident response or legal teams.",
+    "notes": "Core forensic analyst position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:03:24.849Z"
+  },
+  {
+    "id": 17,
+    "career_level_id": 17,
+    "job_title": "Senior Digital Forensics Specialist / Malware Analyst",
+    "nice_work_role_id": null,
+    "description": "Leads forensic investigations, reverse engineers malware, and provides deep analysis for advanced incidents.",
+    "notes": "Senior technical specialist with malware analysis expertise",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:03:24.849Z"
+  },
+  {
+    "id": 18,
+    "career_level_id": 18,
+    "job_title": "Forensics Lead / Incident Response Lead",
+    "nice_work_role_id": null,
+    "description": "Oversees all forensic engagements, mentors junior analysts, and ensures process quality and integrity.",
+    "notes": "Leadership role in forensic investigations",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:03:24.849Z"
+  },
+  {
+    "id": 19,
+    "career_level_id": 19,
+    "job_title": "Director of Digital Forensics / Head of Incident Response",
+    "nice_work_role_id": null,
+    "description": "Leads the organizational strategy for forensic readiness, compliance, and high-profile investigations.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:03:24.849Z"
+  },
+  {
+    "id": 20,
+    "career_level_id": 20,
+    "job_title": "IT Auditor / Compliance Analyst",
+    "nice_work_role_id": null,
+    "description": "Performs basic compliance assessments and supports audits. Familiar with industry standards (e.g., NIST, ISO).",
+    "notes": "Entry-level compliance and audit support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:08:07.903Z"
+  },
+  {
+    "id": 21,
+    "career_level_id": 21,
+    "job_title": "Governance, Risk, and Compliance (GRC) Analyst",
+    "nice_work_role_id": null,
+    "description": "Assesses risk, develops controls, and supports compliance initiatives. Conducts internal reviews and documentation.",
+    "notes": "Core GRC analyst position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:08:07.903Z"
+  },
+  {
+    "id": 22,
+    "career_level_id": 22,
+    "job_title": "GRC Manager / Risk Program Manager",
+    "nice_work_role_id": null,
+    "description": "Oversees organizational compliance and risk programs. Coordinates with departments and ensures adherence to policies.",
+    "notes": "Management role overseeing compliance programs",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:08:07.903Z"
+  },
+  {
+    "id": 23,
+    "career_level_id": 23,
+    "job_title": "Chief Risk Advisor / Senior Compliance Strategist",
+    "nice_work_role_id": null,
+    "description": "Leads enterprise risk assessment and mitigation strategies. Consults executive leadership and external stakeholders.",
+    "notes": "Strategic advisory role for enterprise risk",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:08:07.903Z"
+  },
+  {
+    "id": 24,
+    "career_level_id": 24,
+    "job_title": "Chief Risk Officer / VP of Governance & Compliance",
+    "nice_work_role_id": null,
+    "description": "Sets strategic direction for risk and compliance functions. Represents organization in regulatory and board-level matters.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:08:07.903Z"
+  },
+  {
+    "id": 25,
+    "career_level_id": 25,
+    "job_title": "Security Control Assessor (Junior)",
+    "nice_work_role_id": null,
+    "description": "Assists with assessing security controls and documenting compliance posture under supervision.",
+    "notes": "Entry-level compliance assessment role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 26,
+    "career_level_id": 25,
+    "job_title": "Security Engineer (Associate)",
+    "nice_work_role_id": null,
+    "description": "Supports system security engineering tasks and helps implement technical security measures.",
+    "notes": "Entry-level technical implementation role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 27,
+    "career_level_id": 26,
+    "job_title": "Security Engineer",
+    "nice_work_role_id": null,
+    "description": "Designs and implements secure systems, evaluates tools, and develops security solutions.",
+    "notes": "Core security engineering position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 28,
+    "career_level_id": 26,
+    "job_title": "Systems Security Analyst",
+    "nice_work_role_id": null,
+    "description": "Performs detailed security analysis and provides recommendations for enhancing system defenses.",
+    "notes": "Security analysis and recommendations role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 29,
+    "career_level_id": 27,
+    "job_title": "Cybersecurity Architect",
+    "nice_work_role_id": null,
+    "description": "Develops high-level security architectures across systems and environments.",
+    "notes": "Senior architectural design role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 30,
+    "career_level_id": 28,
+    "job_title": "Lead Security Architect",
+    "nice_work_role_id": null,
+    "description": "Leads enterprise-level architecture projects, integrates security into system designs.",
+    "notes": "Expert-level architectural leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 31,
+    "career_level_id": 29,
+    "job_title": "Chief Security Architect / Director of Enterprise Security",
+    "nice_work_role_id": null,
+    "description": "Oversees all architectural and engineering functions, aligns with enterprise security strategy.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:09:57.011Z"
+  },
+  {
+    "id": 32,
+    "career_level_id": 30,
+    "job_title": "Software Developer (Secure Coding Focus)",
+    "nice_work_role_id": null,
+    "description": "Focuses on developing applications with security in mind, understanding secure coding practices.",
+    "notes": "Entry-level secure development with NICE work role DD-WRL-003",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:11:34.625Z"
+  },
+  {
+    "id": 33,
+    "career_level_id": 31,
+    "job_title": "Secure Software Engineer",
+    "nice_work_role_id": null,
+    "description": "Implements secure software designs and performs code reviews; collaborates with security teams.",
+    "notes": "Mid-level secure engineering with NICE work role DD-WRL-003",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:11:34.625Z"
+  },
+  {
+    "id": 34,
+    "career_level_id": 32,
+    "job_title": "Senior Secure Application Developer",
+    "nice_work_role_id": null,
+    "description": "Leads software development projects, ensures security is embedded across SDLC.",
+    "notes": "Senior development leadership with NICE work role DD-WRL-003",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:11:34.625Z"
+  },
+  {
+    "id": 35,
+    "career_level_id": 33,
+    "job_title": "Lead Application Security Architect",
+    "nice_work_role_id": null,
+    "description": "Designs enterprise-wide secure architecture strategies for applications; leads security reviews.",
+    "notes": "Expert-level architecture with NICE work role DD-WRL-005",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:11:34.625Z"
+  },
+  {
+    "id": 36,
+    "career_level_id": 34,
+    "job_title": "Director of Application Security",
+    "nice_work_role_id": null,
+    "description": "Oversees secure software initiatives and policy integration; manages teams and budget.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:11:34.625Z"
+  },
+  {
+    "id": 37,
+    "career_level_id": 35,
+    "job_title": "Cloud Security Support Technician / IT Support Specialist",
+    "nice_work_role_id": null,
+    "description": "Supports basic configuration and security monitoring in cloud or hybrid environments. Gains familiarity with IAM, network security, and cloud tools.",
+    "notes": "Entry-level cloud support with NICE work role IO-WRL-002",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:12:57.827Z"
+  },
+  {
+    "id": 38,
+    "career_level_id": 36,
+    "job_title": "Cloud Security Analyst / Infrastructure Security Analyst",
+    "nice_work_role_id": null,
+    "description": "Performs security monitoring, assessments, and configuration validation across cloud and infrastructure platforms. Implements cloud policies.",
+    "notes": "Mid-level security analysis with NICE work role PD-WRL-004",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:12:57.827Z"
+  },
+  {
+    "id": 39,
+    "career_level_id": 37,
+    "job_title": "Cloud Security Engineer / Infrastructure Security Engineer",
+    "nice_work_role_id": null,
+    "description": "Leads implementation of security controls in complex multi-cloud and hybrid environments. Handles automation, policy enforcement, and coordination.",
+    "notes": "Senior engineering with NICE work role PD-WRL-007",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:12:57.827Z"
+  },
+  {
+    "id": 40,
+    "career_level_id": 38,
+    "job_title": "Cloud Security Architect / Senior Cloud Security Engineer",
+    "nice_work_role_id": null,
+    "description": "Designs secure cloud architecture aligned to business goals. Defines infrastructure standards and mentors engineers.",
+    "notes": "Expert-level architecture with NICE work role DD-WRL-007",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:12:57.827Z"
+  },
+  {
+    "id": 41,
+    "career_level_id": 39,
+    "job_title": "Chief Cloud Security Officer / Director of Infrastructure Security",
+    "nice_work_role_id": null,
+    "description": "Owns enterprise-wide cloud and infrastructure security strategy. Oversees security posture across all cloud platforms and critical infrastructure.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:12:57.827Z"
+  },
+  {
+    "id": 42,
+    "career_level_id": 40,
+    "job_title": "IAM Analyst / Access Control Technician",
+    "nice_work_role_id": null,
+    "description": "Supports basic access control processes, user provisioning, and credential management under supervision.",
+    "notes": "Entry-level access control support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:17:37.799Z"
+  },
+  {
+    "id": 43,
+    "career_level_id": 41,
+    "job_title": "Identity & Access Management Specialist",
+    "nice_work_role_id": null,
+    "description": "Implements IAM systems and enforces identity governance policies. Manages lifecycle of user accounts and access rights.",
+    "notes": "Core IAM specialist position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:17:37.799Z"
+  },
+  {
+    "id": 44,
+    "career_level_id": 42,
+    "job_title": "IAM Engineer / Lead Identity Architect",
+    "nice_work_role_id": null,
+    "description": "Designs and manages scalable IAM infrastructure. Leads major IAM initiatives and ensures integration across systems.",
+    "notes": "Senior engineering and architecture role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:17:37.799Z"
+  },
+  {
+    "id": 45,
+    "career_level_id": 43,
+    "job_title": "Identity Services Architect / IAM Program Lead",
+    "nice_work_role_id": null,
+    "description": "Oversees architectural design of identity services. Manages enterprise-wide IAM policies and leads strategic IAM efforts.",
+    "notes": "Expert-level program leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:17:37.799Z"
+  },
+  {
+    "id": 46,
+    "career_level_id": 44,
+    "job_title": "Director of Identity & Access Management / Chief Identity Officer",
+    "nice_work_role_id": null,
+    "description": "Sets vision and direction for IAM across the organization. Aligns identity strategy with enterprise risk and compliance goals.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:17:37.799Z"
+  },
+  {
+    "id": 47,
+    "career_level_id": 45,
+    "job_title": "Cybersecurity Support Technician (OT Focus)",
+    "nice_work_role_id": null,
+    "description": "Provides technical support and assists in monitoring and maintaining OT systems under supervision. Builds foundational knowledge of ICS/SCADA environments.",
+    "notes": "Entry-level OT support with ICS/SCADA focus",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:22:05.571Z"
+  },
+  {
+    "id": 48,
+    "career_level_id": 46,
+    "job_title": "OT Security Analyst",
+    "nice_work_role_id": null,
+    "description": "Analyzes data and system configurations to detect vulnerabilities and threats in operational technology environments. Supports incident response efforts specific to OT.",
+    "notes": "Core OT security analysis position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:22:05.571Z"
+  },
+  {
+    "id": 49,
+    "career_level_id": 47,
+    "job_title": "Industrial Control Systems (ICS) Security Engineer",
+    "nice_work_role_id": null,
+    "description": "Designs, configures, and maintains security controls for industrial control systems. Collaborates with engineering teams to ensure secure operations.",
+    "notes": "Senior ICS security engineering role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:22:05.571Z"
+  },
+  {
+    "id": 50,
+    "career_level_id": 48,
+    "job_title": "OT Security Architect",
+    "nice_work_role_id": null,
+    "description": "Develops architecture for secure ICS/SCADA systems and ensures alignment with organizational security standards and regulatory requirements.",
+    "notes": "Expert-level OT architecture",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:22:05.571Z"
+  },
+  {
+    "id": 51,
+    "career_level_id": 49,
+    "job_title": "Director of OT Cybersecurity / VP of Operational Security",
+    "nice_work_role_id": null,
+    "description": "Oversees the cybersecurity strategy for OT environments across the enterprise. Manages policy development, budgeting, compliance, and cross-departmental coordination.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:22:05.571Z"
+  },
+  {
+    "id": 52,
+    "career_level_id": 50,
+    "job_title": "Digital Evidence Technician",
+    "nice_work_role_id": null,
+    "description": "Assists with collecting, preserving, and processing digital evidence. Entry-level support role.",
+    "notes": "Entry-level evidence support with NICE work role PD-WRL-002",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:24:23.321Z"
+  },
+  {
+    "id": 53,
+    "career_level_id": 51,
+    "job_title": "Cybercrime Investigator",
+    "nice_work_role_id": null,
+    "description": "Conducts detailed investigations of cybercrimes, including fraud, hacking, and digital theft.",
+    "notes": "Core investigative role with NICE work role IN-WRL-001",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:24:23.321Z"
+  },
+  {
+    "id": 54,
+    "career_level_id": 52,
+    "job_title": "Forensic Analyst Lead",
+    "nice_work_role_id": null,
+    "description": "Leads investigative efforts and complex digital forensic cases, providing oversight and mentoring.",
+    "notes": "Senior forensic leadership role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:24:23.321Z"
+  },
+  {
+    "id": 55,
+    "career_level_id": 53,
+    "job_title": "Cybercrime Operations Manager",
+    "nice_work_role_id": null,
+    "description": "Manages teams and processes for investigating high-level cybercrimes and coordinating with law enforcement.",
+    "notes": "Expert-level operations management",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:24:23.321Z"
+  },
+  {
+    "id": 56,
+    "career_level_id": 54,
+    "job_title": "Director of Cybercrime & Digital Investigations",
+    "nice_work_role_id": null,
+    "description": "Oversees enterprise-wide cybercrime investigation and forensic response strategy; liaises with executive stakeholders and external partners.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:24:23.321Z"
+  },
+  {
+    "id": 57,
+    "career_level_id": 55,
+    "job_title": "Cybersecurity Instructor (Associate)",
+    "nice_work_role_id": null,
+    "description": "Supports basic cyber education and instruction efforts. Delivers prepared content to learners under supervision or as part of a team.",
+    "notes": "Entry-level instructional support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:27:26.691Z"
+  },
+  {
+    "id": 58,
+    "career_level_id": 56,
+    "job_title": "Cybersecurity Instructor / Curriculum Developer",
+    "nice_work_role_id": null,
+    "description": "Develops and delivers technical cybersecurity training. Creates curriculum and adapts materials for diverse audiences and delivery methods.",
+    "notes": "Core instructor and curriculum development position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:27:26.691Z"
+  },
+  {
+    "id": 59,
+    "career_level_id": 57,
+    "job_title": "Lead Cybersecurity Instructor / Program Manager",
+    "nice_work_role_id": null,
+    "description": "Oversees course quality, leads teams of instructors, and ensures alignment with industry needs. May manage instructional contracts or partner programs.",
+    "notes": "Senior instructional leadership role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:27:26.691Z"
+  },
+  {
+    "id": 60,
+    "career_level_id": 58,
+    "job_title": "Director of Cybersecurity Education",
+    "nice_work_role_id": null,
+    "description": "Sets strategy for cybersecurity education programs. Collaborates with stakeholders to expand training pipelines and manage major initiatives.",
+    "notes": "Expert-level education strategy",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:27:26.691Z"
+  },
+  {
+    "id": 61,
+    "career_level_id": 59,
+    "job_title": "VP of Cybersecurity Education & Workforce Development",
+    "nice_work_role_id": null,
+    "description": "Leads enterprise-wide cyber workforce development strategy, partnerships, and funding. Represents the organization in national education and workforce forums.",
+    "notes": "Executive leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:27:26.691Z"
+  },
+  {
+    "id": 62,
+    "career_level_id": 60,
+    "job_title": "Cybersecurity Program Manager / Senior Information Security Officer",
+    "nice_work_role_id": null,
+    "description": "Oversees major components of the cybersecurity program, aligning it with enterprise risk. Coordinates with departments, manages projects, and ensures compliance with cybersecurity standards.",
+    "notes": "Senior-level program management role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:29:04.777Z"
+  },
+  {
+    "id": 63,
+    "career_level_id": 61,
+    "job_title": "Deputy Chief Information Security Officer (Deputy CISO)",
+    "nice_work_role_id": null,
+    "description": "Serves as the CISO's senior technical and operational advisor. Helps execute the vision and strategy of the cybersecurity program and may lead internal committees or working groups.",
+    "notes": "Expert-level deputy leadership position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:29:04.777Z"
+  },
+  {
+    "id": 64,
+    "career_level_id": 62,
+    "job_title": "Chief Information Security Officer (CISO)",
+    "nice_work_role_id": null,
+    "description": "Leads the entire cybersecurity program, defining vision, strategy, policies, and objectives. Communicates cybersecurity posture to executives and board members and ensures organization-wide alignment.",
+    "notes": "Executive-level cybersecurity leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:29:04.777Z"
+  },
+  {
+    "id": 65,
+    "career_level_id": 63,
+    "job_title": "Cybersecurity Project Coordinator",
+    "nice_work_role_id": null,
+    "description": "Supports project planning, status tracking, and documentation. Assists project leads with schedules and deliverables.",
+    "notes": "Entry-level project support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:30:38.758Z"
+  },
+  {
+    "id": 66,
+    "career_level_id": 64,
+    "job_title": "Cybersecurity Project Manager",
+    "nice_work_role_id": null,
+    "description": "Manages individual cybersecurity projects with responsibility for scope, schedule, and cost. Coordinates technical teams.",
+    "notes": "Mid-level project management position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:30:38.758Z"
+  },
+  {
+    "id": 67,
+    "career_level_id": 65,
+    "job_title": "Cybersecurity Program Manager",
+    "nice_work_role_id": null,
+    "description": "Leads large or complex programs composed of multiple projects. Aligns program objectives with organizational goals.",
+    "notes": "Senior-level program leadership role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:30:38.758Z"
+  },
+  {
+    "id": 68,
+    "career_level_id": 66,
+    "job_title": "Cybersecurity Portfolio Manager",
+    "nice_work_role_id": null,
+    "description": "Oversees multiple programs and ensures alignment with enterprise-wide cybersecurity strategy and resources.",
+    "notes": "Expert-level portfolio oversight",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:30:38.758Z"
+  },
+  {
+    "id": 69,
+    "career_level_id": 67,
+    "job_title": "Chief Program Officer / Executive Director of Cyber Programs",
+    "nice_work_role_id": null,
+    "description": "Sets strategic direction for major cybersecurity portfolios. Provides executive leadership, stakeholder engagement, and resource oversight.",
+    "notes": "Executive-level strategic program leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:30:38.758Z"
+  },
+  {
+    "id": 70,
+    "career_level_id": 68,
+    "job_title": "Junior Security Tool Developer / Research Assistant",
+    "nice_work_role_id": null,
+    "description": "Assists in basic security tool coding, documentation, and lab work under supervision.",
+    "notes": "Entry-level development and research support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:31:49.925Z"
+  },
+  {
+    "id": 71,
+    "career_level_id": 69,
+    "job_title": "Security Tool Developer / Security Researcher",
+    "nice_work_role_id": null,
+    "description": "Develops cybersecurity tools, scripts, and utilities to improve threat detection or system security.",
+    "notes": "Mid-level tool development position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:31:49.925Z"
+  },
+  {
+    "id": 72,
+    "career_level_id": 70,
+    "job_title": "Senior Security Researcher / Security Engineer - Tooling",
+    "nice_work_role_id": null,
+    "description": "Designs and leads development of internal tools and automation for enterprise-scale security use cases.",
+    "notes": "Senior-level research and engineering leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:31:49.925Z"
+  },
+  {
+    "id": 73,
+    "career_level_id": 71,
+    "job_title": "Principal Cybersecurity Researcher / R&D Lead",
+    "nice_work_role_id": null,
+    "description": "Leads innovation efforts in tooling and new cybersecurity technologies. Engages with external research bodies.",
+    "notes": "Expert-level research leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:31:49.925Z"
+  },
+  {
+    "id": 74,
+    "career_level_id": 72,
+    "job_title": "Director of Cybersecurity Research & Innovation",
+    "nice_work_role_id": null,
+    "description": "Establishes vision and strategy for cyber R&D and internal tool development. Leads external partnerships and funding acquisition.",
+    "notes": "Executive-level innovation strategy",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:31:49.925Z"
+  },
+  {
+    "id": 75,
+    "career_level_id": 73,
+    "job_title": "Security Automation Analyst",
+    "nice_work_role_id": null,
+    "description": "Supports development of automated detection and response workflows under supervision. Learns scripting and automation tools such as SOAR platforms.",
+    "notes": "Entry-level automation support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:34:16.531Z"
+  },
+  {
+    "id": 76,
+    "career_level_id": 74,
+    "job_title": "Security Automation Engineer",
+    "nice_work_role_id": null,
+    "description": "Develops and maintains scripts and tools for automating security tasks. Works on SOAR integration and playbook implementation.",
+    "notes": "Mid-level automation engineering position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:34:16.531Z"
+  },
+  {
+    "id": 77,
+    "career_level_id": 75,
+    "job_title": "Security Orchestration Engineer",
+    "nice_work_role_id": null,
+    "description": "Leads orchestration of complex security processes across multiple systems. Focuses on performance, efficiency, and scalability.",
+    "notes": "Senior-level orchestration leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:34:16.531Z"
+  },
+  {
+    "id": 78,
+    "career_level_id": 76,
+    "job_title": "Automation & Orchestration Architect",
+    "nice_work_role_id": null,
+    "description": "Designs organization-wide automation strategies. Evaluates, architects, and integrates orchestration solutions at scale.",
+    "notes": "Expert-level architecture role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:34:16.531Z"
+  },
+  {
+    "id": 79,
+    "career_level_id": 77,
+    "job_title": "Director of Security Automation",
+    "nice_work_role_id": null,
+    "description": "Establishes enterprise strategy for security automation and orchestration. Aligns efforts with business goals and risk posture.",
+    "notes": "Executive-level automation strategy",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:34:16.531Z"
+  },
+  {
+    "id": 80,
+    "career_level_id": 78,
+    "job_title": "Cybersecurity Support Specialist",
+    "nice_work_role_id": null,
+    "description": "Handles initial customer inquiries and support tickets related to cybersecurity products and services. Explains basic security practices to non-technical audiences.",
+    "notes": "Entry-level customer support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:44:10.159Z"
+  },
+  {
+    "id": 81,
+    "career_level_id": 79,
+    "job_title": "Cybersecurity Account Manager / Sales Engineer",
+    "nice_work_role_id": null,
+    "description": "Serves as the liaison between security solution providers and clients. Translates client needs into technical specifications and supports pre-sales discussions.",
+    "notes": "Mid-level client engagement position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:44:10.159Z"
+  },
+  {
+    "id": 82,
+    "career_level_id": 80,
+    "job_title": "Solutions Architect (Security)",
+    "nice_work_role_id": null,
+    "description": "Designs and implements security solutions based on customer needs. Collaborates with engineering teams to tailor offerings.",
+    "notes": "Senior-level solution design role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:44:10.159Z"
+  },
+  {
+    "id": 83,
+    "career_level_id": 81,
+    "job_title": "Principal Security Advisor / Technical Account Manager",
+    "nice_work_role_id": null,
+    "description": "Leads strategic customer engagements and provides expert-level technical guidance on product implementations and integrations.",
+    "notes": "Expert-level strategic customer role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:44:10.159Z"
+  },
+  {
+    "id": 84,
+    "career_level_id": 82,
+    "job_title": "Chief Customer Security Officer / VP of Customer Security",
+    "nice_work_role_id": null,
+    "description": "Leads the customer security strategy across large accounts or client portfolios. Represents the organization's security vision to external stakeholders.",
+    "notes": "Executive-level customer strategy leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:44:10.159Z"
+  },
+  {
+    "id": 85,
+    "career_level_id": 83,
+    "job_title": "Cyber Threat Analyst (Junior)",
+    "nice_work_role_id": null,
+    "description": "Assists in collecting and analyzing cyber threat information. Learns to interpret basic threat indicators and tools.",
+    "notes": "Entry-level threat analysis support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:50:21.651Z"
+  },
+  {
+    "id": 86,
+    "career_level_id": 84,
+    "job_title": "Cyber Threat Analyst",
+    "nice_work_role_id": null,
+    "description": "Performs cyber threat intelligence analysis to identify threats, TTPs, and adversary behavior using intelligence sources.",
+    "notes": "Mid-level threat intelligence analysis position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:50:21.651Z"
+  },
+  {
+    "id": 87,
+    "career_level_id": 85,
+    "job_title": "Threat Intelligence Specialist",
+    "nice_work_role_id": null,
+    "description": "Develops threat profiles, strategic analysis, and attribution assessments. Interfaces with SOC, IR, and Red/Blue Teams.",
+    "notes": "Senior-level threat intelligence specialization",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:50:21.651Z"
+  },
+  {
+    "id": 88,
+    "career_level_id": 86,
+    "job_title": "Threat Intelligence Lead / Threat Hunter Lead",
+    "nice_work_role_id": null,
+    "description": "Oversees advanced threat modeling, hunting programs, and coordination with law enforcement or industry groups.",
+    "notes": "Expert-level threat intelligence leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:50:21.651Z"
+  },
+  {
+    "id": 89,
+    "career_level_id": 87,
+    "job_title": "Director of Threat Intelligence",
+    "nice_work_role_id": null,
+    "description": "Leads the enterprise-wide threat intelligence strategy, manages teams, defines investment areas, and informs senior leadership.",
+    "notes": "Executive-level threat intelligence strategy",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:50:21.651Z"
+  },
+  {
+    "id": 90,
+    "career_level_id": 88,
+    "job_title": "Privacy Analyst / Legal & Policy Support Assistant",
+    "nice_work_role_id": null,
+    "description": "Supports legal and privacy teams with research, documentation, and compliance tasks. Entry into privacy and legal domain, often through internships or compliance support roles.",
+    "notes": "Entry-level privacy and legal support role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:52:41.938Z"
+  },
+  {
+    "id": 91,
+    "career_level_id": 89,
+    "job_title": "Privacy Specialist / Cyber Legal Advisor",
+    "nice_work_role_id": null,
+    "description": "Performs legal and policy analysis related to cybersecurity, privacy, and compliance. Drafts documentation and provides legal insights under supervision.",
+    "notes": "Mid-level privacy and legal analysis position",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:52:41.938Z"
+  },
+  {
+    "id": 92,
+    "career_level_id": 90,
+    "job_title": "Privacy Officer / Policy Advisor",
+    "nice_work_role_id": null,
+    "description": "Oversees compliance with privacy regulations and internal policies. Advises on policy changes and regulatory impacts. Works cross-functionally.",
+    "notes": "Senior-level privacy oversight role",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:52:41.938Z"
+  },
+  {
+    "id": 93,
+    "career_level_id": 91,
+    "job_title": "Chief Privacy Officer / Lead Policy Strategist",
+    "nice_work_role_id": null,
+    "description": "Leads enterprise-wide privacy programs and provides expert guidance on legal and regulatory issues. Shapes organizational privacy posture and strategic policy direction.",
+    "notes": "Expert-level privacy leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:52:41.938Z"
+  },
+  {
+    "id": 94,
+    "career_level_id": 92,
+    "job_title": "VP of Privacy & Legal Affairs / Chief Legal Counsel",
+    "nice_work_role_id": null,
+    "description": "Directs the privacy, legal, and compliance functions. Advises executive leadership on legal risks, policy formation, and regulatory alignment. Represents organization externally.",
+    "notes": "Executive-level legal strategy leadership",
+    "sort_order": 0,
+    "created_at": "2025-05-29T17:52:41.938Z"
+  },
+  {
+    "id": 100,
+    "career_level_id": 10,
+    "job_title": "Vulnerability Management Analyst",
+    "nice_work_role_id": null,
+    "description": null,
+    "notes": null,
+    "sort_order": 1,
+    "created_at": "2025-05-31T23:18:47.769Z"
+  },
+  {
+    "id": 101,
+    "career_level_id": 11,
+    "job_title": "Vulnerability Management Specialist",
+    "nice_work_role_id": null,
+    "description": null,
+    "notes": null,
+    "sort_order": 2,
+    "created_at": "2025-05-31T23:18:48.317Z"
+  },
+  {
+    "id": 102,
+    "career_level_id": 12,
+    "job_title": "Vulnerability Program Manager",
+    "nice_work_role_id": null,
+    "description": null,
+    "notes": null,
+    "sort_order": 3,
+    "created_at": "2025-05-31T23:18:48.851Z"
+  },
+  {
+    "id": 103,
+    "career_level_id": 13,
+    "job_title": "Vulnerability Assessment Lead / Engineer",
+    "nice_work_role_id": null,
+    "description": null,
+    "notes": null,
+    "sort_order": 4,
+    "created_at": "2025-05-31T23:18:49.174Z"
+  },
+  {
+    "id": 104,
+    "career_level_id": 14,
+    "job_title": "Director of Vulnerability Management",
+    "nice_work_role_id": null,
+    "description": null,
+    "notes": null,
+    "sort_order": 5,
+    "created_at": "2025-05-31T23:18:49.560Z"
+  }
+]

@@ -1,0 +1,830 @@
+[
+  {
+    "id": 83,
+    "career_track_id": 2,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Threat Intelligence",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:50:10.927Z"
+  },
+  {
+    "id": 84,
+    "career_track_id": 2,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Threat Intelligence",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:50:10.927Z"
+  },
+  {
+    "id": 85,
+    "career_track_id": 2,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Threat Intelligence",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:50:10.927Z"
+  },
+  {
+    "id": 86,
+    "career_track_id": 2,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Threat Intelligence",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:50:10.927Z"
+  },
+  {
+    "id": 87,
+    "career_track_id": 2,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Threat Intelligence",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:50:10.927Z"
+  },
+  {
+    "id": 6,
+    "career_track_id": 4,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Red Team Operations",
+    "sort_order": 2,
+    "created_at": "2025-05-29T16:59:58.596Z"
+  },
+  {
+    "id": 7,
+    "career_track_id": 4,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Red Team Operations",
+    "sort_order": 3,
+    "created_at": "2025-05-29T16:59:58.596Z"
+  },
+  {
+    "id": 8,
+    "career_track_id": 4,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Red Team Operations",
+    "sort_order": 4,
+    "created_at": "2025-05-29T16:59:58.596Z"
+  },
+  {
+    "id": 9,
+    "career_track_id": 4,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Red Team Operations",
+    "sort_order": 5,
+    "created_at": "2025-05-29T16:59:58.596Z"
+  },
+  {
+    "id": 10,
+    "career_track_id": 5,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Vulnerability Management",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:01:08.731Z"
+  },
+  {
+    "id": 11,
+    "career_track_id": 5,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Vulnerability Management",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:01:08.731Z"
+  },
+  {
+    "id": 12,
+    "career_track_id": 5,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Vulnerability Management",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:01:08.731Z"
+  },
+  {
+    "id": 13,
+    "career_track_id": 5,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Vulnerability Management",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:01:08.731Z"
+  },
+  {
+    "id": 14,
+    "career_track_id": 5,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Vulnerability Management",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:01:08.731Z"
+  },
+  {
+    "id": 15,
+    "career_track_id": 6,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Digital Forensics",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:03:10.730Z"
+  },
+  {
+    "id": 16,
+    "career_track_id": 6,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Digital Forensics",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:03:10.730Z"
+  },
+  {
+    "id": 17,
+    "career_track_id": 6,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Digital Forensics",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:03:10.730Z"
+  },
+  {
+    "id": 18,
+    "career_track_id": 6,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Digital Forensics",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:03:10.730Z"
+  },
+  {
+    "id": 19,
+    "career_track_id": 6,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Digital Forensics",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:03:10.730Z"
+  },
+  {
+    "id": 20,
+    "career_track_id": 8,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in GRC",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:07:57.194Z"
+  },
+  {
+    "id": 21,
+    "career_track_id": 8,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in GRC",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:07:57.194Z"
+  },
+  {
+    "id": 22,
+    "career_track_id": 8,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in GRC",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:07:57.194Z"
+  },
+  {
+    "id": 23,
+    "career_track_id": 8,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in GRC",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:07:57.194Z"
+  },
+  {
+    "id": 24,
+    "career_track_id": 8,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in GRC",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:07:57.194Z"
+  },
+  {
+    "id": 30,
+    "career_track_id": 14,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Secure Software Development",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:11:20.942Z"
+  },
+  {
+    "id": 31,
+    "career_track_id": 14,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Secure Software Development",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:11:20.942Z"
+  },
+  {
+    "id": 32,
+    "career_track_id": 14,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Secure Software Development",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:11:20.942Z"
+  },
+  {
+    "id": 33,
+    "career_track_id": 14,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Secure Software Development",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:11:20.942Z"
+  },
+  {
+    "id": 34,
+    "career_track_id": 14,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Secure Software Development",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:11:20.942Z"
+  },
+  {
+    "id": 50,
+    "career_track_id": 22,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Cybercrime Investigation",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:24:09.202Z"
+  },
+  {
+    "id": 51,
+    "career_track_id": 22,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Cybercrime Investigation",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:24:09.202Z"
+  },
+  {
+    "id": 52,
+    "career_track_id": 22,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Cybercrime Investigation",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:24:09.202Z"
+  },
+  {
+    "id": 53,
+    "career_track_id": 22,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Cybercrime Investigation",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:24:09.202Z"
+  },
+  {
+    "id": 54,
+    "career_track_id": 22,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Cybercrime Investigation",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:24:09.202Z"
+  },
+  {
+    "id": 1,
+    "career_track_id": 31,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in SOC Operations",
+    "sort_order": 1,
+    "created_at": "2025-05-29T16:58:03.278Z"
+  },
+  {
+    "id": 2,
+    "career_track_id": 31,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in SOC Operations",
+    "sort_order": 2,
+    "created_at": "2025-05-29T16:58:03.381Z"
+  },
+  {
+    "id": 3,
+    "career_track_id": 31,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in SOC Operations",
+    "sort_order": 3,
+    "created_at": "2025-05-29T16:58:03.471Z"
+  },
+  {
+    "id": 4,
+    "career_track_id": 31,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in SOC Operations",
+    "sort_order": 4,
+    "created_at": "2025-05-29T16:58:03.563Z"
+  },
+  {
+    "id": 5,
+    "career_track_id": 31,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in SOC Operations",
+    "sort_order": 5,
+    "created_at": "2025-05-29T16:58:03.650Z"
+  },
+  {
+    "id": 25,
+    "career_track_id": 35,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Cybersecurity Architecture & Engineering",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:09:45.118Z"
+  },
+  {
+    "id": 26,
+    "career_track_id": 35,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Cybersecurity Architecture & Engineering",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:09:45.118Z"
+  },
+  {
+    "id": 27,
+    "career_track_id": 35,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Cybersecurity Architecture & Engineering",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:09:45.118Z"
+  },
+  {
+    "id": 28,
+    "career_track_id": 35,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Cybersecurity Architecture & Engineering",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:09:45.118Z"
+  },
+  {
+    "id": 29,
+    "career_track_id": 35,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Cybersecurity Architecture & Engineering",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:09:45.118Z"
+  },
+  {
+    "id": 35,
+    "career_track_id": 37,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Cloud and Infrastructure Security",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:12:43.530Z"
+  },
+  {
+    "id": 36,
+    "career_track_id": 37,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Cloud and Infrastructure Security",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:12:43.530Z"
+  },
+  {
+    "id": 37,
+    "career_track_id": 37,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Cloud and Infrastructure Security",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:12:43.530Z"
+  },
+  {
+    "id": 38,
+    "career_track_id": 37,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Cloud and Infrastructure Security",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:12:43.530Z"
+  },
+  {
+    "id": 39,
+    "career_track_id": 37,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Cloud and Infrastructure Security",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:12:43.530Z"
+  },
+  {
+    "id": 40,
+    "career_track_id": 38,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Identity and Access Management",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:17:26.791Z"
+  },
+  {
+    "id": 41,
+    "career_track_id": 38,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Identity and Access Management",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:17:26.791Z"
+  },
+  {
+    "id": 42,
+    "career_track_id": 38,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Identity and Access Management",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:17:26.791Z"
+  },
+  {
+    "id": 43,
+    "career_track_id": 38,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Identity and Access Management",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:17:26.791Z"
+  },
+  {
+    "id": 44,
+    "career_track_id": 38,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Identity and Access Management",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:17:26.791Z"
+  },
+  {
+    "id": 45,
+    "career_track_id": 39,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in OT Security",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:21:53.538Z"
+  },
+  {
+    "id": 46,
+    "career_track_id": 39,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in OT Security",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:21:53.538Z"
+  },
+  {
+    "id": 47,
+    "career_track_id": 39,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in OT Security",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:21:53.538Z"
+  },
+  {
+    "id": 48,
+    "career_track_id": 39,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in OT Security",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:21:53.538Z"
+  },
+  {
+    "id": 49,
+    "career_track_id": 39,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in OT Security",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:21:53.538Z"
+  },
+  {
+    "id": 55,
+    "career_track_id": 41,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Cybersecurity Education & Training",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:27:12.027Z"
+  },
+  {
+    "id": 56,
+    "career_track_id": 41,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Cybersecurity Education & Training",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:27:12.027Z"
+  },
+  {
+    "id": 57,
+    "career_track_id": 41,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Cybersecurity Education & Training",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:27:12.027Z"
+  },
+  {
+    "id": 58,
+    "career_track_id": 41,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Cybersecurity Education & Training",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:27:12.027Z"
+  },
+  {
+    "id": 59,
+    "career_track_id": 41,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Cybersecurity Education & Training",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:27:12.027Z"
+  },
+  {
+    "id": 60,
+    "career_track_id": 42,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Executive Leadership CISO Track",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:28:28.494Z"
+  },
+  {
+    "id": 61,
+    "career_track_id": 42,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Executive Leadership CISO Track",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:28:28.494Z"
+  },
+  {
+    "id": 62,
+    "career_track_id": 42,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Executive Leadership CISO Track",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:28:28.494Z"
+  },
+  {
+    "id": 63,
+    "career_track_id": 43,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Program and Project Management",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:30:27.051Z"
+  },
+  {
+    "id": 64,
+    "career_track_id": 43,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Program and Project Management",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:30:27.051Z"
+  },
+  {
+    "id": 65,
+    "career_track_id": 43,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Program and Project Management",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:30:27.051Z"
+  },
+  {
+    "id": 66,
+    "career_track_id": 43,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Program and Project Management",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:30:27.051Z"
+  },
+  {
+    "id": 67,
+    "career_track_id": 43,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Program and Project Management",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:30:27.051Z"
+  },
+  {
+    "id": 68,
+    "career_track_id": 44,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Technology Research and Tool Development",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:31:35.652Z"
+  },
+  {
+    "id": 69,
+    "career_track_id": 44,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Technology Research and Tool Development",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:31:35.652Z"
+  },
+  {
+    "id": 70,
+    "career_track_id": 44,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Technology Research and Tool Development",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:31:35.652Z"
+  },
+  {
+    "id": 71,
+    "career_track_id": 44,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Technology Research and Tool Development",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:31:35.652Z"
+  },
+  {
+    "id": 72,
+    "career_track_id": 44,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Technology Research and Tool Development",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:31:35.652Z"
+  },
+  {
+    "id": 73,
+    "career_track_id": 45,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Security Automation and Orchestration",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:34:01.107Z"
+  },
+  {
+    "id": 74,
+    "career_track_id": 45,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Security Automation and Orchestration",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:34:01.107Z"
+  },
+  {
+    "id": 75,
+    "career_track_id": 45,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Security Automation and Orchestration",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:34:01.107Z"
+  },
+  {
+    "id": 76,
+    "career_track_id": 45,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Security Automation and Orchestration",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:34:01.107Z"
+  },
+  {
+    "id": 77,
+    "career_track_id": 45,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Security Automation and Orchestration",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:34:01.107Z"
+  },
+  {
+    "id": 78,
+    "career_track_id": 46,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Customer Facing Security Roles",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:43:58.357Z"
+  },
+  {
+    "id": 79,
+    "career_track_id": 46,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Customer Facing Security Roles",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:43:58.357Z"
+  },
+  {
+    "id": 80,
+    "career_track_id": 46,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Customer Facing Security Roles",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:43:58.357Z"
+  },
+  {
+    "id": 81,
+    "career_track_id": 46,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Customer Facing Security Roles",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:43:58.357Z"
+  },
+  {
+    "id": 82,
+    "career_track_id": 46,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Customer Facing Security Roles",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:43:58.357Z"
+  },
+  {
+    "id": 88,
+    "career_track_id": 48,
+    "name": "Entry-Level",
+    "experience_range": null,
+    "description": "Entry-Level positions in Privacy Policy Legal Affairs",
+    "sort_order": 1,
+    "created_at": "2025-05-29T17:52:27.814Z"
+  },
+  {
+    "id": 89,
+    "career_track_id": 48,
+    "name": "Mid-Level",
+    "experience_range": null,
+    "description": "Mid-Level positions in Privacy Policy Legal Affairs",
+    "sort_order": 2,
+    "created_at": "2025-05-29T17:52:27.814Z"
+  },
+  {
+    "id": 90,
+    "career_track_id": 48,
+    "name": "Senior-Level",
+    "experience_range": null,
+    "description": "Senior-Level positions in Privacy Policy Legal Affairs",
+    "sort_order": 3,
+    "created_at": "2025-05-29T17:52:27.814Z"
+  },
+  {
+    "id": 91,
+    "career_track_id": 48,
+    "name": "Expert-Level",
+    "experience_range": null,
+    "description": "Expert-Level positions in Privacy Policy Legal Affairs",
+    "sort_order": 4,
+    "created_at": "2025-05-29T17:52:27.814Z"
+  },
+  {
+    "id": 92,
+    "career_track_id": 48,
+    "name": "Executive-Level",
+    "experience_range": null,
+    "description": "Executive-Level positions in Privacy Policy Legal Affairs",
+    "sort_order": 5,
+    "created_at": "2025-05-29T17:52:27.814Z"
+  }
+]

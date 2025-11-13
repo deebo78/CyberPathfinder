@@ -1,0 +1,135 @@
+[
+  {
+    "id": 2,
+    "name": "Threat Intelligence",
+    "description": "Career pathway for Threat Intelligence professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:35.763Z"
+  },
+  {
+    "id": 4,
+    "name": "Red Team Operations",
+    "description": "Career pathway for Red Team Operations professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:35.951Z"
+  },
+  {
+    "id": 5,
+    "name": "Vulnerability Management",
+    "description": "Career pathway for Vulnerability Management professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:36.029Z"
+  },
+  {
+    "id": 6,
+    "name": "Digital Forensics",
+    "description": "Career pathway for Digital Forensics professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:36.104Z"
+  },
+  {
+    "id": 8,
+    "name": "GRC (Governance, Risk, Compliance)",
+    "description": "Career pathway for GRC (Governance, Risk, Compliance) professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:36.253Z"
+  },
+  {
+    "id": 14,
+    "name": "Secure Software Development",
+    "description": "Career pathway for Secure Software Development professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:36.739Z"
+  },
+  {
+    "id": 22,
+    "name": "Cybercrime Investigation",
+    "description": "Career pathway for Cybercrime Investigation professionals",
+    "overview": null,
+    "created_at": "2025-05-28T22:55:37.350Z"
+  },
+  {
+    "id": 31,
+    "name": "SOC Operations",
+    "description": "Security Operations Center career pathway focusing on real-time threat monitoring, analysis, and response",
+    "overview": "Comprehensive career progression from entry-level analyst to executive security leadership roles",
+    "created_at": "2025-05-29T16:58:03.076Z"
+  },
+  {
+    "id": 35,
+    "name": "Cybersecurity Architecture & Engineering",
+    "description": "Career pathway focusing on security system design, implementation, and architectural solutions",
+    "overview": "Complete progression from technical security implementation to enterprise-level security architecture and strategic system design",
+    "created_at": "2025-05-29T17:09:40.482Z"
+  },
+  {
+    "id": 37,
+    "name": "Cloud and Infrastructure Security",
+    "description": "Career pathway focusing on cloud security, infrastructure protection, and hybrid environment security management",
+    "overview": "Complete progression from cloud support roles to executive infrastructure security leadership with authentic NICE Framework work role alignments across multiple categories",
+    "created_at": "2025-05-29T17:12:37.723Z"
+  },
+  {
+    "id": 38,
+    "name": "Identity and Access Management",
+    "description": "Career pathway focusing on access control, identity governance, and user lifecycle management",
+    "overview": "Complete progression from basic access control support to executive identity strategy leadership",
+    "created_at": "2025-05-29T17:17:22.066Z"
+  },
+  {
+    "id": 39,
+    "name": "OT (Operational Technology) Security",
+    "description": "Career pathway focusing on industrial control systems, SCADA security, and operational technology protection",
+    "overview": "Complete progression from OT support roles to executive operational security leadership with focus on ICS/SCADA environments",
+    "created_at": "2025-05-29T17:21:48.784Z"
+  },
+  {
+    "id": 41,
+    "name": "Cybersecurity Education & Training",
+    "description": "Career pathway focusing on cybersecurity education, workforce development, and instructional design",
+    "overview": "Complete progression from associate instructor roles to executive workforce development leadership",
+    "created_at": "2025-05-29T17:27:05.380Z"
+  },
+  {
+    "id": 42,
+    "name": "Executive Leadership CISO Track",
+    "description": "Specialized career pathway focused on preparation for Chief Information Security Officer roles and executive cybersecurity leadership",
+    "overview": "Strategic progression from senior program management to executive CISO leadership, starting at senior level due to experience requirements",
+    "created_at": "2025-05-29T17:28:23.847Z"
+  },
+  {
+    "id": 43,
+    "name": "Program and Project Management",
+    "description": "Career pathway for cybersecurity professionals focused on project coordination, program management, and strategic portfolio oversight",
+    "overview": "Progression from project coordination to executive program leadership with responsibility for cybersecurity initiatives and strategic alignment",
+    "created_at": "2025-05-29T17:30:21.575Z"
+  },
+  {
+    "id": 44,
+    "name": "Technology Research and Tool Development",
+    "description": "Career pathway for cybersecurity professionals focused on research, innovation, and development of security tools and technologies",
+    "overview": "Progression from junior tool development to executive research leadership with responsibility for cybersecurity innovation and R&D strategy",
+    "created_at": "2025-05-29T17:31:30.004Z"
+  },
+  {
+    "id": 45,
+    "name": "Security Automation and Orchestration",
+    "description": "Career pathway for cybersecurity professionals focused on automating security processes, developing SOAR platforms, and orchestrating complex security workflows",
+    "overview": "Progression from automation analysis to executive strategy with responsibility for enterprise-wide security automation and orchestration initiatives",
+    "created_at": "2025-05-29T17:33:53.098Z"
+  },
+  {
+    "id": 46,
+    "name": "Customer Facing Security Roles",
+    "description": "Career pathway for cybersecurity professionals focused on client engagement, technical sales, and customer success in security solutions",
+    "overview": "Progression from customer support to executive customer security leadership with responsibility for client relationships and security solution delivery",
+    "created_at": "2025-05-29T17:43:53.423Z"
+  },
+  {
+    "id": 48,
+    "name": "Privacy Policy Legal Affairs",
+    "description": "Career pathway for cybersecurity professionals focused on privacy law, policy development, regulatory compliance, and legal aspects of cybersecurity",
+    "overview": "Progression from privacy analysis to executive legal leadership with responsibility for enterprise privacy strategy and regulatory compliance",
+    "created_at": "2025-05-29T17:52:22.450Z"
+  }
+]

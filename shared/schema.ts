@@ -76,18 +76,21 @@ export const workRoleTasks = pgTable("work_role_tasks", {
   id: serial("id").primaryKey(),
   workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
   taskId: integer("task_id").references(() => tasks.id).notNull(),
+  proficiencyLevel: text("proficiency_level"), // Entry-Level, Mid-Level, Senior-Level, Expert/Lead (null for All Levels)
 });
 
 export const workRoleKnowledge = pgTable("work_role_knowledge", {
   id: serial("id").primaryKey(),
   workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
   knowledgeItemId: integer("knowledge_item_id").references(() => knowledgeItems.id).notNull(),
+  proficiencyLevel: text("proficiency_level"), // Entry-Level, Mid-Level, Senior-Level, Expert/Lead (null for All Levels)
 });
 
 export const workRoleSkills = pgTable("work_role_skills", {
   id: serial("id").primaryKey(),
   workRoleId: integer("work_role_id").references(() => workRoles.id).notNull(),
   skillId: integer("skill_id").references(() => skills.id).notNull(),
+  proficiencyLevel: text("proficiency_level"), // Entry-Level, Mid-Level, Senior-Level, Expert/Lead (null for All Levels)
 });
 
 export const workRoleCertifications = pgTable("work_role_certifications", {
