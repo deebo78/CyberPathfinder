@@ -115,6 +115,17 @@ interface ResumeAnalysisResult {
   };
 }
 
+// Track metadata for runtime logic
+interface TrackMetadata {
+  id: number;
+  name: string;
+  allowsEntryLevel?: boolean | null;
+  requiresExecutiveExperience?: boolean | null;
+  fallbackTrackCode?: string | null;
+  salaryWeighting?: number | null;
+  niceCode?: string | null;
+}
+
 export class AIResumeAnalyzer {
   private openai: OpenAI;
 
@@ -127,27 +138,25 @@ export class AIResumeAnalyzer {
 
   /**
    * Calculates salary range using separate logic for executive vs non-executive positions
-   * @param trackId - Career track ID
+   * @param track - Career track metadata
    * @param recommendedLevel - Experience level (Entry, Mid-Level, Senior-Level, Expert-Level, Executive)
    * @param location - Geographic location string
    * @param certifications - Array of certification names
-   * @param trackName - Career track name for context
    * @returns Salary range object with calculation details
    */
   private calculateSalaryRange(
-    trackId: number,
+    track: TrackMetadata,
     recommendedLevel: string,
     location?: string,
-    certifications: string[] = [],
-    trackName?: string
+    certifications: string[] = []
   ): { min: number; max: number; calculationDetails: string } {
-    // Check if this is an executive position
-    const isExecutive = trackId === 42 || recommendedLevel === "Executive";
+    // Check if this is an executive position using metadata
+    const isExecutive = (track.requiresExecutiveExperience ?? false) || recommendedLevel === "Executive";
     
     if (isExecutive) {
-      return this.calculateExecutiveSalary(location, certifications, trackName);
+      return this.calculateExecutiveSalary(location, certifications, track.name);
     } else {
-      return this.calculateNonExecutiveSalary(recommendedLevel, trackId, location, certifications, trackName);
+      return this.calculateNonExecutiveSalary(recommendedLevel, track, location, certifications);
     }
   }
 
@@ -202,14 +211,13 @@ export class AIResumeAnalyzer {
   }
 
   /**
-   * Calculates salary for non-executive positions using existing multiplier approach
+   * Calculates salary for non-executive positions using metadata-driven multipliers
    */
   private calculateNonExecutiveSalary(
     recommendedLevel: string,
-    trackId: number,
+    track: TrackMetadata,
     location?: string,
-    certifications: string[] = [],
-    trackName?: string
+    certifications: string[] = []
   ): { min: number; max: number; calculationDetails: string } {
     // Base salary ranges by experience level
     const baseSalaryRanges = {
@@ -219,22 +227,22 @@ export class AIResumeAnalyzer {
       'Expert-Level': { min: 180, max: 250 }
     };
     
-    // Career track multipliers (excluding executive 1.5x)
-    const trackMultipliers: Record<number, { multiplier: number; name: string }> = {
-      31: { multiplier: 0.9, name: 'SOC Operations' },
-      4: { multiplier: 1.3, name: 'Red Team/Penetration Testing' },
-      5: { multiplier: 1.2, name: 'Digital Forensics' },
-      6: { multiplier: 1.1, name: 'GRC (Governance, Risk, Compliance)' },
-      8: { multiplier: 1.4, name: 'Cloud Security' },
-      2: { multiplier: 1.3, name: 'Cybersecurity Architecture' },
-      35: { multiplier: 1.2, name: 'Identity and Access Management' },
-      37: { multiplier: 1.0, name: 'Vulnerability Management' },
-      30: { multiplier: 1.2, name: 'Threat Intelligence' },
-      41: { multiplier: 1.3, name: 'Secure Software Development' },
-      48: { multiplier: 1.1, name: 'Incident Response' },
-      38: { multiplier: 1.3, name: 'Security Automation' },
-      43: { multiplier: 0.8, name: 'Cybersecurity Education' }
-    };
+    // Use track metadata for salary multiplier with safe default
+    // Parse salaryWeighting to number (Drizzle returns numeric columns as strings)
+    const trackMultiplier = track.salaryWeighting ? Number(track.salaryWeighting) : 1.0;
+    
+    // Log if metadata is missing for data quality monitoring
+    if (track.salaryWeighting === null || track.salaryWeighting === undefined) {
+      console.warn(`Track ${track.id} (${track.name}) missing salaryWeighting, using default 1.0`);
+    }
+    
+    // Validate the parsed number
+    if (isNaN(trackMultiplier)) {
+      console.error(`Track ${track.id} (${track.name}) has invalid salaryWeighting: ${track.salaryWeighting}, using default 1.0`);
+      const fallbackMultiplier = 1.0;
+      const baseRange = baseSalaryRanges[recommendedLevel as keyof typeof baseSalaryRanges] || baseSalaryRanges['Entry'];
+      return this.calculateNonExecutiveSalary(recommendedLevel, { ...track, salaryWeighting: fallbackMultiplier }, location, certifications);
+    }
     
     // Geographic adjustments
     const getGeoAdjustment = (location?: string): { multiplier: number; description: string } => {
@@ -270,7 +278,6 @@ export class AIResumeAnalyzer {
     };
     
     const baseRange = baseSalaryRanges[recommendedLevel as keyof typeof baseSalaryRanges] || baseSalaryRanges['Entry'];
-    const trackInfo = trackMultipliers[trackId] || { multiplier: 1.0, name: trackName || 'Standard' };
     const geoInfo = getGeoAdjustment(location);
     
     // Certification premiums
@@ -288,10 +295,10 @@ export class AIResumeAnalyzer {
       certPremium += 8; // $8K for multiple certs
     }
     
-    const minSalary = Math.round((baseRange.min * trackInfo.multiplier * geoInfo.multiplier) + certPremium);
-    const maxSalary = Math.round((baseRange.max * trackInfo.multiplier * geoInfo.multiplier) + certPremium);
+    const minSalary = Math.round((baseRange.min * trackMultiplier * geoInfo.multiplier) + certPremium);
+    const maxSalary = Math.round((baseRange.max * trackMultiplier * geoInfo.multiplier) + certPremium);
     
-    const calculationDetails = `${recommendedLevel}: $${baseRange.min}K-$${baseRange.max}K × ${trackInfo.multiplier} (${trackInfo.name}) × ${geoInfo.multiplier} (${geoInfo.description}) + $${certPremium}K certs = $${minSalary}K-$${maxSalary}K`;
+    const calculationDetails = `${recommendedLevel}: $${baseRange.min}K-$${baseRange.max}K × ${trackMultiplier.toFixed(2)} (${track.name}) × ${geoInfo.multiplier} (${geoInfo.description}) + $${certPremium}K certs = $${minSalary}K-$${maxSalary}K`;
     
     return {
       min: minSalary,
@@ -333,10 +340,14 @@ export class AIResumeAnalyzer {
         throw dbError;
       }
 
+      // Include metadata for AI to understand track constraints
       const careerTracksSummary = careerTracks.map(track => ({
         id: track.id,
         name: track.name,
-        description: track.description
+        description: track.description,
+        allowsEntryLevel: track.allowsEntryLevel ?? true,
+        requiresExecutiveExperience: track.requiresExecutiveExperience ?? false,
+        niceCode: track.niceCode
       }));
 
       const workRolesSummary = workRoles.map(role => ({
@@ -345,6 +356,34 @@ export class AIResumeAnalyzer {
         code: role.code,
         description: role.description
       }));
+
+      // Build dynamic track constraints based on metadata
+      const tracksWithoutEntryLevel = careerTracks.filter(t => t.allowsEntryLevel === false);
+      const executiveTracks = careerTracks.filter(t => t.requiresExecutiveExperience === true);
+      
+      let trackConstraintsSection = '';
+      if (tracksWithoutEntryLevel.length > 0 || executiveTracks.length > 0) {
+        trackConstraintsSection = `
+CRITICAL TRACK-LEVEL CONSTRAINTS:
+Some career tracks have specific experience requirements. You MUST respect these constraints:
+
+TRACKS WITHOUT ENTRY-LEVEL POSITIONS:
+${tracksWithoutEntryLevel.map(t => `- ${t.name} (ID: ${t.id}${t.niceCode ? `, NICE Code: ${t.niceCode}` : ''}): Requires prior experience (minimum Mid-Level)`).join('\n')}
+
+TRACKS REQUIRING EXECUTIVE EXPERIENCE:
+${executiveTracks.map(t => `- ${t.name} (ID: ${t.id}${t.niceCode ? `, NICE Code: ${t.niceCode}` : ''}): Requires significant leadership experience (minimum Senior-Level)`).join('\n')}
+
+ENTRY-LEVEL RECOMMENDATION RULES:
+- If candidate has 0-2 years experience, NEVER recommend tracks that don't allow entry-level positions
+- For entry-level candidates, recommend tracks with strong foundational learning paths
+- Entry-level candidates should build core skills before advancing to specialized tracks
+
+TRACK PROGRESSION LOGIC:
+- Entry candidates should start with foundational tracks that support career growth
+- Mid-level candidates (3+ years) can access specialized tracks
+- Senior candidates (6+ years) with leadership experience can access executive tracks
+`;
+      }
 
       const prompt = `
 You are an expert Cybersecurity Career Advisor and Resume Analyst with deep knowledge of the NICE Framework. Analyze this resume thoroughly and provide comprehensive, gender-neutral career guidance.
@@ -474,22 +513,7 @@ CAREER LEVEL DEFINITIONS:
 - Expert (11+ years): Deep specialization, industry recognition
 - Executive: C-level, strategic leadership, business impact
 
-CRITICAL TRACK-LEVEL CONSTRAINTS:
-Some cybersecurity tracks do not have entry-level positions due to their specialized nature. You MUST respect these constraints:
-
-TRACKS WITHOUT ENTRY-LEVEL POSITIONS:
-- Red Team Operations (ID: 4): Minimum level is Mid-Level (requires 3+ years experience)
-- Executive Leadership CISO Track (ID: 42): Minimum level is Senior-Level (requires 6+ years experience)
-
-ENTRY-LEVEL RECOMMENDATION RULES:
-- If candidate has 0-2 years experience, NEVER recommend Red Team Operations or Executive Leadership
-- For entry-level candidates interested in offensive security, recommend SOC Operations, Digital Forensics, or Vulnerability Management instead
-- Entry-level candidates should build foundational skills before advancing to specialized tracks like Red Team
-
-TRACK PROGRESSION LOGIC:
-- Entry candidates interested in penetration testing → SOC Operations first (build monitoring skills)
-- Mid-level candidates with pen testing experience → Red Team Operations (if 3+ years experience)
-- Senior candidates with leadership experience → Executive tracks (if 6+ years experience)
+${trackConstraintsSection}
 
 SCORING CRITERIA:
 - Technical skills alignment (30%)
@@ -748,61 +772,65 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
         throw new Error(`Failed to parse OpenAI response as JSON: ${parseError instanceof Error ? parseError.message : 'Parse error'}. Response: ${responseContent.substring(0, 300)}`);
       }
 
-      // CRITICAL: Filter out invalid track-level recommendations
+      // CRITICAL: Filter out invalid track-level recommendations using metadata
       if (analysis.recommendations) {
         analysis.recommendations = analysis.recommendations.filter((rec: any) => {
-          // Red Team Operations (ID: 4) - no entry-level positions
-          if (rec.trackId === 4 && rec.recommendedLevel === "Entry") {
+          const track = careerTracks.find(t => t.id === rec.trackId);
+          if (!track) {
+            console.warn(`Unknown track ID ${rec.trackId} in recommendation, keeping for review`);
+            return true;
+          }
+          
+          // Check if track doesn't allow entry-level and recommendation is Entry
+          if ((track.allowsEntryLevel === false) && rec.recommendedLevel === "Entry") {
+            console.log(`Filtered out ${track.name} (ID: ${track.id}) for Entry level - track doesn't allow entry-level positions`);
             return false;
           }
           
-          // Executive Leadership CISO Track (ID: 42) - no entry or mid-level positions  
-          if (rec.trackId === 42 && (rec.recommendedLevel === "Entry" || rec.recommendedLevel === "Mid-Level")) {
+          // Check if track requires executive experience but recommendation is Entry or Mid
+          if ((track.requiresExecutiveExperience === true) && 
+              (rec.recommendedLevel === "Entry" || rec.recommendedLevel === "Mid-Level")) {
+            console.log(`Filtered out ${track.name} (ID: ${track.id}) for ${rec.recommendedLevel} - track requires executive experience`);
             return false;
           }
           
           return true;
         });
 
-        // If entry-level user had Red Team recommendation filtered out, add SOC Operations as alternative
+        // Check if we should add a fallback recommendation for entry-level users
         const hasEntryLevelUser = analysis.extractedData?.experienceLevel === "Entry" || 
                                  (analysis.extractedData?.experience?.totalYears && analysis.extractedData.experience.totalYears <= 2);
         
-        if (hasEntryLevelUser && !analysis.recommendations.some((rec: any) => rec.trackId === 31)) {
-          // Add SOC Operations as entry-friendly alternative for offensive security interests
-          const socRecommendation = {
-            trackId: 31,
-            trackName: "SOC Operations",
-            matchScore: 75,
-            reasoning: "SOC Operations provides essential foundational skills for cybersecurity careers. Entry-level professionals should master defensive operations and monitoring before advancing to specialized offensive tracks like Red Team Operations.",
-            recommendedLevel: "Entry",
-            nextSteps: [
-              "Gain hands-on experience with SIEM tools and security monitoring",
-              "Pursue SOC Analyst certifications (CSA, GCIH)",
-              "Build foundational incident response skills"
-            ],
-            relevantSkills: ["Security Monitoring", "Incident Response", "Network Security"],
-            gapAnalysis: {
-              strengths: ["Interest in cybersecurity", "Foundational technical skills"],
-              gaps: ["Limited hands-on security monitoring experience", "Need SOC-specific training"],
-              recommendations: ["Start with entry-level SOC analyst role", "Focus on defensive skills before offensive specialization"]
-            },
-            salaryRange: {
-              min: 54,
-              max: 77,
-              currency: "USD",
-              calculationDetails: {
-                baseRange: "Entry baseline $60K-85K",
-                trackMultiplier: "0.9x (entry-friendly)",
-                geographicAdjustment: "National average",
-                certificationPremium: "Foundation certifications",
-                marketFactors: "High availability in entry market"
-              }
-            },
-            timeToTransition: "3-6 months"
-          };
+        if (hasEntryLevelUser && analysis.recommendations.length === 0) {
+          console.log("Entry-level user with no recommendations - looking for entry-friendly fallback track");
           
-          analysis.recommendations.unshift(socRecommendation);
+          // Find an entry-friendly track to recommend (first one that allows entry-level)
+          const fallbackTrack = careerTracks.find(t => (t.allowsEntryLevel ?? true) === true);
+          
+          if (fallbackTrack) {
+            console.log(`Adding fallback recommendation: ${fallbackTrack.name} (ID: ${fallbackTrack.id})`);
+            const fallbackRecommendation = {
+              trackId: fallbackTrack.id,
+              trackName: fallbackTrack.name,
+              matchScore: 70,
+              reasoning: `${fallbackTrack.name} provides essential foundational skills for cybersecurity careers. Entry-level professionals should build core competencies before advancing to specialized tracks.`,
+              recommendedLevel: "Entry",
+              nextSteps: [
+                `Gain hands-on experience in ${fallbackTrack.name}`,
+                "Pursue relevant entry-level certifications",
+                "Build foundational technical skills"
+              ],
+              relevantSkills: ["Technical Fundamentals", "Security Basics", "Problem Solving"],
+              gapAnalysis: {
+                strengths: ["Interest in cybersecurity", "Foundational technical skills"],
+                gaps: ["Limited hands-on experience", "Need domain-specific training"],
+                recommendations: [`Start with entry-level ${fallbackTrack.name} role`, "Focus on building core skills"]
+              },
+              timeToTransition: "3-6 months"
+            };
+            
+            analysis.recommendations.unshift(fallbackRecommendation);
+          }
         }
       }
 
@@ -935,19 +963,27 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
         };
       }
 
+      // Build track lookup map for efficient salary calculations
+      const trackLookup = new Map(careerTracks.map(t => [t.id, t]));
+      
       // Apply salary calculations to career recommendations
       if (analysis.careerRecommendations && Array.isArray(analysis.careerRecommendations)) {
         const location = analysis.extractedData?.personalInfo?.location;
         const certifications = analysis.extractedData?.certifications?.map((cert: any) => cert.name) || [];
         
         analysis.careerRecommendations = analysis.careerRecommendations.map((rec: any) => {
-          // Calculate salary using our new system
+          const track = trackLookup.get(rec.trackId);
+          if (!track) {
+            console.error(`Track ID ${rec.trackId} not found in career tracks`);
+            return rec; // Return unchanged if track not found
+          }
+          
+          // Calculate salary using metadata-driven system
           const salaryCalc = this.calculateSalaryRange(
-            rec.trackId,
+            track,
             rec.recommendedLevel,
             location,
-            certifications,
-            rec.trackName
+            certifications
           );
           
           // Update salary range with calculated values
@@ -968,13 +1004,18 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
         const certifications = analysis.extractedData?.certifications?.map((cert: any) => cert.name) || [];
         
         analysis.recommendations = analysis.recommendations.map((rec: any) => {
-          // Calculate salary using our new system
+          const track = trackLookup.get(rec.trackId);
+          if (!track) {
+            console.error(`Track ID ${rec.trackId} not found in career tracks`);
+            return rec; // Return unchanged if track not found
+          }
+          
+          // Calculate salary using metadata-driven system
           const salaryCalc = this.calculateSalaryRange(
-            rec.trackId,
+            track,
             rec.recommendedLevel,
             location,
-            certifications,
-            rec.trackName
+            certifications
           );
           
           // Update salary range with calculated values
