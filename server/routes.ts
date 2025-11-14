@@ -795,10 +795,23 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.get("/api/career-tracks", async (req, res) => {
     try {
-      // Return only the authentic 19 career tracks
-      const authenticTrackIds = [31, 4, 5, 6, 8, 2, 35, 37, 30, 41, 48, 42, 38, 43, 39, 44, 45, 14, 22, 46];
-      const allTracks = await storage.getCareerTracks();
-      const tracks = allTracks.filter(track => authenticTrackIds.includes(track.id));
+      // Support scope query parameter: nice-v2 (default), all, legacy-authentic
+      const scope = req.query.scope as string || 'nice-v2';
+      
+      let tracks;
+      if (scope === 'legacy-authentic') {
+        // Return curated 20-track set for backward compatibility
+        const authenticTrackIds = [31, 4, 5, 6, 8, 2, 35, 37, 30, 41, 48, 42, 38, 43, 39, 44, 45, 14, 22, 46];
+        const allTracks = await storage.getCareerTracks();
+        tracks = allTracks.filter(track => authenticTrackIds.includes(track.id));
+      } else if (scope === 'all') {
+        // Return all tracks (NICE v2.0 + legacy)
+        tracks = await storage.getCareerTracks();
+      } else {
+        // Default: Return NICE Framework v2.0 tracks only
+        tracks = await storage.getCareerTracks({ isNiceV2: true });
+      }
+      
       res.json(tracks);
     } catch (error) {
       console.error("Error fetching career tracks:", error);
