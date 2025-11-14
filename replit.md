@@ -45,6 +45,16 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 ### Recent Changes
 
 #### November 14, 2025
+- **Full UI Migration to NICE Framework v2.0 Statistics**: All public-facing statistics now display NICE Framework v2.0 data exclusively
+  - Created `/api/framework-stats` endpoint providing centralized statistics (41 career tracks, 4 experience levels, 41 work roles, 158+ certifications)
+  - Updated homepage to show "41 Career Tracks" from NICE Framework v2.0
+  - Modified Career Tracks Explorer to fetch dynamic counts from API (replacing hardcoded "19 Career Tracks")
+  - Updated Certification Mapping page to display dynamic career tracks count
+  - **Experience Levels Display**: Fixed to show exactly 4 levels (Entry-Level, Mid-Level, Senior-Level, Expert/Lead) - the NICE Framework v2.0 standard
+  - Legacy level variations (Executive-Level, Expert-Level) excluded from public display
+  - All statistics fully data-driven from database with proper fallbacks
+  - E2E testing confirmed: Career Tracks Explorer shows 41 tracks, 4 levels, 41 work roles, 158 certifications
+
 - **Metadata-Driven Refactoring Completed**: Removed all hardcoded track ID references from resume analyzer
   - Added TrackMetadata interface with salaryWeighting, allowsEntryLevel, requiresExecutiveExperience fields
   - Updated salary calculations to use track metadata instead of hardcoded multipliers (ID 4, 31, 42)
