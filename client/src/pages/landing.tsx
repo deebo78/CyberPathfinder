@@ -36,7 +36,7 @@ export default function Landing() {
     {
       icon: BookOpen,
       title: "Career Tracks Explorer",
-      description: "Browse all 19 cybersecurity career tracks with detailed progression pathways and requirements.",
+      description: "Browse all 41 NICE Framework career tracks with detailed progression pathways and requirements.",
       link: "/career-tracks",
       color: "bg-purple-500",
       users: "Everyone"
@@ -44,7 +44,7 @@ export default function Landing() {
   ];
 
   const stats = [
-    { label: "Career Tracks", value: "19", description: "Authentic cybersecurity pathways" },
+    { label: "Career Tracks", value: "41", description: "NICE Framework pathways" },
     { label: "Work Roles", value: "41", description: "NICE Framework positions" },
     { label: "Knowledge Items", value: "631", description: "Professional competencies" },
     { label: "Skills", value: "538", description: "Technical abilities" },
