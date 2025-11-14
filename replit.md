@@ -45,6 +45,19 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 ### Recent Changes
 
 #### November 14, 2025
+- **Career Tracks Explorer NICE Framework v2.0 Category Integration**: Replaced hardcoded legacy category mappings with dynamic NICE Framework categories
+  - Updated `/api/career-tracks` backend to JOIN with work_roles and categories tables, returning category metadata for each track
+  - Removed hardcoded 19-track category mappings (trackCategoryMap) from frontend
+  - Implemented dynamic category organization using NICE Framework v2.0's 5 official categories:
+    - OG (Oversight and Governance) - 16 work roles - Purple, Briefcase icon
+    - DD (Design and Development) - 9 work roles - Blue, Code icon
+    - IO (Implementation and Operation) - 7 work roles - Green, Server icon
+    - PD (Protection and Defense) - 7 work roles - Red, Shield icon
+    - IN (Investigation) - 2 work roles - Orange, Eye icon
+  - Created category-based icon and color mapping system for consistent visual grouping
+  - E2E testing confirmed: All 41 NICE work roles display correctly organized by 5 categories (previously only 2 tracks showed due to name mismatch)
+  - API defaults to NICE v2.0 tracks only, preventing NULL category issues
+
 - **Full UI Migration to NICE Framework v2.0 Statistics**: All public-facing statistics now display NICE Framework v2.0 data exclusively
   - Created `/api/framework-stats` endpoint providing centralized statistics (41 career tracks, 4 experience levels, 41 work roles, 158+ certifications)
   - Updated homepage to show "41 Career Tracks" from NICE Framework v2.0
