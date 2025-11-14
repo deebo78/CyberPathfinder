@@ -309,11 +309,11 @@ export class AIResumeAnalyzer {
       console.log("OpenAI API Key length:", process.env.OPENAI_API_KEY?.substring(0, 7) + "...");
       
       // Get career tracks and work roles for context
-      console.log("Fetching career tracks from database...");
+      console.log("Fetching NICE Framework v2.0 career tracks from database...");
       let careerTracks;
       try {
-        careerTracks = await storage.getCareerTracks();
-        console.log("Career tracks fetched successfully:", careerTracks.length);
+        careerTracks = await storage.getCareerTracks({ isNiceV2: true });
+        console.log("NICE v2.0 career tracks fetched successfully:", careerTracks.length);
       } catch (dbError: any) {
         console.error("Database error fetching career tracks:", dbError);
         console.error("Database error message:", dbError?.message);

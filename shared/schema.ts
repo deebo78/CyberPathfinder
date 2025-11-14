@@ -1,4 +1,4 @@
-import { pgTable, text, serial, integer, boolean, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, jsonb, numeric } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
@@ -128,6 +128,13 @@ export const careerTracks = pgTable("career_tracks", {
   name: text("name").notNull().unique(),
   description: text("description"),
   overview: text("overview"),
+  // NICE Framework v2.0 metadata fields
+  isNiceV2: boolean("is_nice_v2").default(false), // True for NICE Framework v2.0 tracks
+  niceCode: text("nice_code"), // NICE work role code (e.g., "OG-WRL-001")
+  allowsEntryLevel: boolean("allows_entry_level").default(true), // False for tracks requiring experience
+  requiresExecutiveExperience: boolean("requires_executive_experience").default(false), // True for CISO/executive tracks
+  fallbackTrackCode: text("fallback_track_code"), // Alternative track recommendation code
+  salaryWeighting: numeric("salary_weighting").default("1.0"), // Multiplier for salary calculations (0.9-1.3)
   createdAt: timestamp("created_at").defaultNow(),
 });
 

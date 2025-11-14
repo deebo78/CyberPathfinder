@@ -85,7 +85,7 @@ export interface IStorage {
   bulkCreateSkills(skills: InsertSkill[]): Promise<Skill[]>;
 
   // Career Tracks
-  getCareerTracks(): Promise<CareerTrack[]>;
+  getCareerTracks(options?: { isNiceV2?: boolean }): Promise<CareerTrack[]>;
   getCareerTrackById(id: number): Promise<CareerTrack | undefined>;
   getCareerTrackWithPositions(id: number): Promise<any>;
   getWorkRolesByCategory(categoryIds: number[]): Promise<WorkRole[]>;
@@ -402,7 +402,11 @@ export class DatabaseStorage implements IStorage {
     return await db.insert(skills).values(skillsList).returning();
   }
 
-  async getCareerTracks(): Promise<CareerTrack[]> {
+  async getCareerTracks(options?: { isNiceV2?: boolean }): Promise<CareerTrack[]> {
+    if (options?.isNiceV2 !== undefined) {
+      return await db.select().from(careerTracks).where(eq(careerTracks.isNiceV2, options.isNiceV2));
+    }
+    
     return await db.select().from(careerTracks);
   }
 
