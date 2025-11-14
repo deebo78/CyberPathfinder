@@ -42,7 +42,21 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 - **Resume Validation & Credibility Assessment**: Analyzes resumes for timeline consistency, credential authority, and future expertise claims, providing a credibility score with visual assessment.
 - **Admin Access Control**: Environment-based security (VITE_ENABLE_ADMIN) for hiding admin features and securing endpoints.
 
-### Recent Changes (November 13, 2025)
+### Recent Changes
+
+#### November 14, 2025
+- **Metadata-Driven Refactoring Completed**: Removed all hardcoded track ID references from resume analyzer
+  - Added TrackMetadata interface with salaryWeighting, allowsEntryLevel, requiresExecutiveExperience fields
+  - Updated salary calculations to use track metadata instead of hardcoded multipliers (ID 4, 31, 42)
+  - Built dynamic AI prompt constraints from track metadata, replacing hardcoded track restrictions
+  - Fixed `/api/career-tracks` endpoint to default to NICE v2.0 (41 tracks) with scope parameter for backward compatibility
+    - Default: Returns 41 NICE Framework v2.0 tracks
+    - `scope=all`: Returns all 58 tracks (41 NICE + 17 legacy)
+    - `scope=legacy-authentic`: Returns 20 curated legacy tracks
+  - Validated end-to-end resume analysis: successfully returns NICE-only recommendations with correct salary ranges
+  - Synced database schema with `npm run db:push` to ensure resume_analyses table availability
+
+#### November 13, 2025
 - **NICE Framework v2.0 Migration Completed**: Successfully migrated from 19 custom career tracks to 41 official NICE Framework v2.0 work roles
   - Imported 2,111 TKS statements (942 tasks, 631 knowledge items, 538 skills)
   - Created 5,459 work role → TKS mappings with proficiency levels
