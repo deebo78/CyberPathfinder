@@ -431,12 +431,35 @@ export class DatabaseStorage implements IStorage {
     return await db.insert(skills).values(skillsList).returning();
   }
 
-  async getCareerTracks(options?: { isNiceV2?: boolean }): Promise<CareerTrack[]> {
+  async getCareerTracks(options?: { isNiceV2?: boolean }): Promise<any[]> {
+    const query = db
+      .select({
+        id: careerTracks.id,
+        name: careerTracks.name,
+        description: careerTracks.description,
+        overview: careerTracks.overview,
+        isNiceV2: careerTracks.isNiceV2,
+        niceCode: careerTracks.niceCode,
+        allowsEntryLevel: careerTracks.allowsEntryLevel,
+        requiresExecutiveExperience: careerTracks.requiresExecutiveExperience,
+        fallbackTrackCode: careerTracks.fallbackTrackCode,
+        salaryWeighting: careerTracks.salaryWeighting,
+        createdAt: careerTracks.createdAt,
+        category: {
+          id: categories.id,
+          code: categories.code,
+          name: categories.name,
+        },
+      })
+      .from(careerTracks)
+      .leftJoin(workRoles, eq(careerTracks.niceCode, workRoles.code))
+      .leftJoin(categories, eq(workRoles.categoryId, categories.id));
+
     if (options?.isNiceV2 !== undefined) {
-      return await db.select().from(careerTracks).where(eq(careerTracks.isNiceV2, options.isNiceV2));
+      return await query.where(eq(careerTracks.isNiceV2, options.isNiceV2));
     }
     
-    return await db.select().from(careerTracks);
+    return await query;
   }
 
   async getCareerTrackById(id: number): Promise<CareerTrack | undefined> {

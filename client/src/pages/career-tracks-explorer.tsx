@@ -36,6 +36,11 @@ interface CareerTrack {
   name: string;
   description: string;
   overview: string;
+  category?: {
+    id: number;
+    code: string;
+    name: string;
+  };
 }
 
 interface Certification {
@@ -50,26 +55,22 @@ interface Certification {
   prerequisites: string;
 }
 
-const trackIcons: { [key: string]: any } = {
-  "SOC Operations": Shield,
-  "Red Team Operations": Target,
-  "Vulnerability Management": SearchIcon,
-  "Digital Forensics": Eye,
-  "GRC Risk Compliance": Scale,
-  "Cybersecurity Architecture Engineering": Cpu,
-  "Secure Software Development": Code,
-  "Cloud and Infrastructure Security": Cloud,
-  "Identity and Access Management": UserCheck,
-  "OT Security": Settings,
-  "Cybercrime Investigation": Search,
-  "Cybersecurity Education Training": GraduationCap,
-  "Executive Leadership CISO Track": Briefcase,
-  "Program and Project Management": FileText,
-  "Technology Research and Tool Development": Server,
-  "Security Automation and Orchestration": Settings,
-  "Customer Facing Security Roles": Users,
-  "Threat Intelligence": TrendingUp,
-  "Privacy Policy Legal Affairs": Scale
+// NICE Framework v2.0 Category Icons
+const categoryIcons: { [key: string]: any } = {
+  "OG": Briefcase,    // Oversight and Governance
+  "DD": Code,         // Design and Development
+  "IO": Server,       // Implementation and Operation
+  "PD": Shield,       // Protection and Defense
+  "IN": Eye,          // Investigation
+};
+
+// NICE Framework v2.0 Category Colors
+const categoryColors: { [key: string]: string } = {
+  "OG": "bg-purple-500",   // Oversight and Governance
+  "DD": "bg-blue-500",     // Design and Development
+  "IO": "bg-green-500",    // Implementation and Operation
+  "PD": "bg-red-500",      // Protection and Defense
+  "IN": "bg-orange-500",   // Investigation
 };
 
 export default function CareerTracksExplorer() {
@@ -77,6 +78,7 @@ export default function CareerTracksExplorer() {
 
   const { data: careerTracks, isLoading } = useQuery({
     queryKey: ["/api/career-tracks"],
+    // Explicitly fetch NICE Framework v2.0 tracks only (default behavior)
   });
 
   const { data: certifications, isLoading: certificationsLoading } = useQuery({
@@ -120,51 +122,14 @@ export default function CareerTracksExplorer() {
   };
 
   const organizeTracksByCategory = (tracks: CareerTrack[]) => {
-    const trackCategoryMap: { [key: string]: string } = {
-      "SOC Operations": "Defensive Operations",
-      "Threat Intelligence": "Defensive Operations", 
-      "Digital Forensics": "Defensive Operations",
-      "Cybercrime Investigation": "Defensive Operations",
-      "Vulnerability Management": "Defensive Operations",
-      "Red Team Operations": "Offensive Security",
-      "Cybersecurity Architecture & Engineering": "Architecture & Engineering",
-      "Secure Software Development": "Architecture & Engineering",
-      "Cloud and Infrastructure Security": "Architecture & Engineering",
-      "OT (Operational Technology) Security": "Architecture & Engineering",
-      "Security Automation and Orchestration": "Architecture & Engineering",
-      "Identity and Access Management": "Identity & Access",
-      "GRC (Governance, Risk, Compliance)": "Governance & Risk",
-      "Privacy Policy Legal Affairs": "Governance & Risk",
-      "Executive Leadership CISO Track": "Leadership & Management",
-      "Program and Project Management": "Leadership & Management",
-      "Cybersecurity Education & Training": "Education & Innovation",
-      "Technology Research and Tool Development": "Education & Innovation",
-      "Customer Facing Security Roles": "Education & Innovation"
-    };
-
     const organized: { [key: string]: CareerTrack[] } = {};
     
-    // Initialize categories
-    const categories = [
-      "Defensive Operations",
-      "Offensive Security", 
-      "Architecture & Engineering",
-      "Identity & Access",
-      "Governance & Risk",
-      "Leadership & Management",
-      "Education & Innovation"
-    ];
-    
-    categories.forEach(category => {
-      organized[category] = [];
-    });
-    
-    // Organize tracks by exact name matching
     tracks.forEach(track => {
-      const category = trackCategoryMap[track.name];
-      if (category && organized[category]) {
-        organized[category].push(track);
+      const categoryName = track.category?.name || "Uncategorized";
+      if (!organized[categoryName]) {
+        organized[categoryName] = [];
       }
+      organized[categoryName].push(track);
     });
 
     return organized;
@@ -183,9 +148,15 @@ export default function CareerTracksExplorer() {
   const workRolesCount = frameworkStats?.workRoles ?? 41;
   const certificationCount = frameworkStats?.certifications ?? (certifications ? (certifications as Certification[]).length : 0);
 
-  const getTrackIcon = (trackName: string) => {
-    const IconComponent = trackIcons[trackName] || Shield;
+  const getCategoryIcon = (categoryCode?: string) => {
+    if (!categoryCode) return Shield;
+    const IconComponent = categoryIcons[categoryCode] || Shield;
     return IconComponent;
+  };
+
+  const getCategoryColor = (categoryCode?: string) => {
+    if (!categoryCode) return "bg-gray-500";
+    return categoryColors[categoryCode] || "bg-gray-500";
   };
 
   const getTrackColor = (trackName: string) => {
@@ -384,17 +355,17 @@ export default function CareerTracksExplorer() {
                     
                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
                       {tracks.map((track: CareerTrack) => {
-                        const Icon = getTrackIcon(track.name);
-                        const colorClass = getTrackColor(track.name);
+                        const Icon = getCategoryIcon(track.category?.code);
+                        const colorClass = getCategoryColor(track.category?.code);
                         
                         return (
-                          <Link key={track.id} href={`/career-tracks/${track.id}`}>
-                            <Card className="hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden">
+                          <Link key={track.id} href={`/career-tracks/${track.id}`} data-testid={`link-track-${track.id}`}>
+                            <Card className="hover:shadow-lg transition-all cursor-pointer group relative overflow-hidden" data-testid={`card-track-${track.id}`}>
                               <CardContent className="p-3 text-center">
                                 <div className={`w-10 h-10 ${colorClass} rounded-lg flex items-center justify-center mx-auto mb-2 group-hover:scale-110 transition-transform`}>
                                   <Icon className="h-5 w-5 text-white" />
                                 </div>
-                                <h3 className="font-semibold text-xs text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight">
+                                <h3 className="font-semibold text-xs text-gray-900 group-hover:text-blue-600 transition-colors line-clamp-2 leading-tight" data-testid={`text-track-name-${track.id}`}>
                                   {track.name}
                                 </h3>
                                 
@@ -514,14 +485,14 @@ export default function CareerTracksExplorer() {
                 <CardContent>
                   <div className="space-y-6">
                     {filteredTracks.slice(0, 6).map((track: CareerTrack) => {
-                      const Icon = getTrackIcon(track.name);
+                      const Icon = getCategoryIcon(track.category?.code);
                       const levels = ["Foundation", "Associate", "Professional", "Expert"];
                       
                       return (
-                        <div key={track.id} className="border rounded-lg p-4">
+                        <div key={track.id} className="border rounded-lg p-4" data-testid={`cert-pathway-${track.id}`}>
                           <div className="flex items-center space-x-3 mb-4">
                             <Icon className="h-5 w-5 text-blue-600" />
-                            <h4 className="font-medium text-gray-900">{track.name}</h4>
+                            <h4 className="font-medium text-gray-900" data-testid={`text-cert-track-name-${track.id}`}>{track.name}</h4>
                           </div>
                           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                             {levels.map((level) => {
