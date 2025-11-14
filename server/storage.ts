@@ -371,7 +371,7 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
-  // Framework statistics for public display
+  // Framework statistics for public display (NICE Framework v2.0 only)
   async getFrameworkStats(): Promise<{
     careerTracks: number;
     experienceLevels: number;
@@ -380,19 +380,21 @@ export class DatabaseStorage implements IStorage {
   }> {
     const [
       trackCount,
-      levelNames,
       workRoleCount,
       certificationCount,
     ] = await Promise.all([
       db.select({ count: count() }).from(careerTracks).where(eq(careerTracks.isNiceV2, true)),
-      db.selectDistinct({ name: careerLevels.name }).from(careerLevels),
       db.select({ count: count() }).from(workRoles),
       db.select({ count: count() }).from(certifications),
     ]);
 
+    // NICE Framework v2.0 standard: 4 experience levels
+    // (Entry-Level, Mid-Level, Senior-Level, Expert/Lead)
+    const experienceLevels = 4;
+
     return {
       careerTracks: Number(trackCount[0].count) || 0,
-      experienceLevels: levelNames.length || 0,
+      experienceLevels,
       workRoles: Number(workRoleCount[0].count) || 0,
       certifications: Number(certificationCount[0].count) || 0,
     };
