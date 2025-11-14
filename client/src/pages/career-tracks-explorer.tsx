@@ -83,6 +83,15 @@ export default function CareerTracksExplorer() {
     queryKey: ["/api/certifications"],
   });
 
+  const { data: frameworkStats } = useQuery<{
+    careerTracks: number;
+    experienceLevels: number;
+    workRoles: number;
+    certifications: number;
+  }>({
+    queryKey: ["/api/framework-stats"],
+  });
+
   // Fetch job titles for each track
   const getJobTitlesForTrack = (trackId: number) => {
     const jobTitlesMap: { [key: number]: string[] } = {
@@ -167,6 +176,12 @@ export default function CareerTracksExplorer() {
   ) || [];
 
   const organizedTracks = organizeTracksByCategory(filteredTracks);
+
+  // Dynamic counts from framework stats API
+  const trackCount = frameworkStats?.careerTracks ?? (careerTracks as CareerTrack[])?.length ?? 0;
+  const experienceLevels = frameworkStats?.experienceLevels ?? 4;
+  const workRolesCount = frameworkStats?.workRoles ?? 41;
+  const certificationCount = frameworkStats?.certifications ?? (certifications ? (certifications as Certification[]).length : 0);
 
   const getTrackIcon = (trackName: string) => {
     const IconComponent = trackIcons[trackName] || Shield;
@@ -270,7 +285,7 @@ export default function CareerTracksExplorer() {
             <h1 className="text-4xl font-bold text-gray-900">Career Tracks Explorer</h1>
           </div>
           <p className="text-xl text-gray-600 mb-6">
-            Discover all 19 cybersecurity career pathways in the NICE Framework
+            Discover all {trackCount} cybersecurity career pathways in the NICE Framework
           </p>
           <p className="text-gray-500 max-w-3xl mx-auto">
             Each track represents a distinct career progression path with specific roles, 
@@ -295,25 +310,25 @@ export default function CareerTracksExplorer() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-blue-600">19</div>
+              <div className="text-2xl font-bold text-blue-600">{trackCount}</div>
               <div className="text-sm text-gray-600">Career Tracks</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-green-600">5</div>
+              <div className="text-2xl font-bold text-green-600">{experienceLevels}</div>
               <div className="text-sm text-gray-600">Experience Levels</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600">41</div>
+              <div className="text-2xl font-bold text-purple-600">{workRolesCount}</div>
               <div className="text-sm text-gray-600">Work Roles</div>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-orange-600">{certifications ? (certifications as Certification[]).length : 0}</div>
+              <div className="text-2xl font-bold text-orange-600">{certificationCount}</div>
               <div className="text-sm text-gray-600">Certifications</div>
             </CardContent>
           </Card>

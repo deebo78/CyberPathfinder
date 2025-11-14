@@ -36,7 +36,18 @@ export default function CertificationMapping() {
     queryKey: ["/api/certifications-with-mappings"],
   });
 
+  // Fetch framework stats for dynamic counts
+  const { data: frameworkStats } = useQuery<{
+    careerTracks: number;
+    experienceLevels: number;
+    workRoles: number;
+    certifications: number;
+  }>({
+    queryKey: ["/api/framework-stats"],
+  });
+
   const certifications = (certificationsWithMappings as any[]) || [];
+  const trackCount = frameworkStats?.careerTracks ?? 0;
   
   const filteredCertifications = certifications.filter((cert: any) => {
     const matchesSearch = cert.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -116,7 +127,7 @@ export default function CertificationMapping() {
           </Card>
           <Card>
             <CardContent className="p-3 text-center">
-              <div className="text-xl font-bold text-green-600">19</div>
+              <div className="text-xl font-bold text-green-600">{trackCount}</div>
               <div className="text-xs text-gray-600">Career Tracks</div>
             </CardContent>
           </Card>

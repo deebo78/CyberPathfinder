@@ -1062,6 +1062,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Framework statistics endpoint
+  app.get("/api/framework-stats", async (req, res) => {
+    try {
+      const stats = await storage.getFrameworkStats();
+      res.json(stats);
+    } catch (error) {
+      console.error("Error fetching framework stats:", error);
+      res.status(500).json({ message: "Failed to fetch framework stats" });
+    }
+  });
+
   // Certifications routes
   app.get("/api/certifications", async (req, res) => {
     try {

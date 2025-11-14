@@ -371,6 +371,33 @@ export class DatabaseStorage implements IStorage {
     };
   }
 
+  // Framework statistics for public display
+  async getFrameworkStats(): Promise<{
+    careerTracks: number;
+    experienceLevels: number;
+    workRoles: number;
+    certifications: number;
+  }> {
+    const [
+      trackCount,
+      levelNames,
+      workRoleCount,
+      certificationCount,
+    ] = await Promise.all([
+      db.select({ count: count() }).from(careerTracks).where(eq(careerTracks.isNiceV2, true)),
+      db.selectDistinct({ name: careerLevels.name }).from(careerLevels),
+      db.select({ count: count() }).from(workRoles),
+      db.select({ count: count() }).from(certifications),
+    ]);
+
+    return {
+      careerTracks: Number(trackCount[0].count) || 0,
+      experienceLevels: levelNames.length || 0,
+      workRoles: Number(workRoleCount[0].count) || 0,
+      certifications: Number(certificationCount[0].count) || 0,
+    };
+  }
+
   // Import History
   async getImportHistory(): Promise<ImportHistory[]> {
     return await db.select().from(importHistory).orderBy(desc(importHistory.createdAt));
