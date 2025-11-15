@@ -45,7 +45,6 @@ export default function Landing() {
 
   const stats = [
     { label: "Career Tracks", value: "41", description: "NICE Framework pathways" },
-    { label: "Work Roles", value: "41", description: "NICE Framework positions" },
     { label: "Knowledge Items", value: "631", description: "Professional competencies" },
     { label: "Skills", value: "538", description: "Technical abilities" },
     { label: "Tasks", value: "942", description: "Job responsibilities" }
