@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Briefcase, ListTodo, Brain, ServerCog, FolderTree, Building2 } from "lucide-react";
+import { ListTodo, Brain, ServerCog, FolderTree, Building2 } from "lucide-react";
 
 interface StatsCardsProps {
   statistics?: {
@@ -28,12 +28,6 @@ export function StatsCards({ statistics, isLoading }: StatsCardsProps) {
       value: statistics?.specialtyAreas || 0,
       icon: Building2,
       color: "text-green-600 bg-green-100",
-    },
-    {
-      name: "Work Roles",
-      value: statistics?.workRoles || 0,
-      icon: Briefcase,
-      color: "text-orange-600 bg-orange-100",
     },
     {
       name: "Tasks",
