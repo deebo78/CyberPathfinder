@@ -31,11 +31,13 @@ Executive positions (Executive Cybersecurity Leadership work role and Expert/Lea
 
 Non-executive positions continue using the proven multiplier-based system:
 
-**Base Salary Framework:**
+**Base Salary Framework (NICE Framework v2.0 Standard Levels):**
 - **Entry-Level (0-2 years)**: $60K-85K baseline
 - **Mid-Level (3-5 years)**: $85K-130K baseline  
 - **Senior-Level (6-10 years)**: $130K-180K baseline
 - **Expert/Lead (11+ years)**: $180K-250K baseline
+
+*Note: NICE Framework v2.0 uses four standardized experience levels for all 41 work roles, ensuring consistent career progression expectations across the cybersecurity workforce.*
 
 ### NICE Framework v2.0 Career Track Multipliers (Non-Executive Positions)
 
