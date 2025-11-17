@@ -273,7 +273,7 @@ Automated validation ensures realistic projections:
 
 ### Accuracy
 - **Market-Tiered Executive Bands**: Eliminate unrealistic salary inflation in smaller markets
-- **Proven Non-Executive Multipliers**: Derived from actual cybersecurity hiring data
+- **NICE Framework v2.0 Standardization**: 41 work roles with consistent 1.0x baseline multipliers
 - **Geographic Market Tiers**: City-specific tier assignments rather than broad regional estimates  
 - **Role-Appropriate Premiums**: Executive certification premiums scaled appropriately
 
@@ -297,11 +297,12 @@ Automated validation ensures realistic projections:
 - Certification body employment studies and salary impact reports
 - **Market Tier Validation**: Executive salary bands calibrated against actual job postings in each tier
 
-### Recent System Improvements (2025)
-- **Problem Solved**: Executive positions in smaller markets (e.g., Augusta) previously showed unrealistic $318K-510K ranges
-- **Solution Implemented**: Market-tiered system now shows realistic $170K-240K for Tier D markets
-- **Calculation Transparency**: Both calculation paths include detailed explanations
-- **Geographic Accuracy**: 60+ cities mapped to appropriate market tiers
+### Recent System Improvements (November 2025)
+- **NICE Framework v2.0 Integration**: Migrated from 19 custom career tracks to 41 official NICE work roles with standardized competency requirements
+- **Standardized Multiplier System**: Simplified from complex 0.8x-1.4x tiers to fair 1.0x baseline (40 roles) and 0.9x for Network Operations
+- **Executive Market Tiers**: Eliminated unrealistic salary inflation in smaller markets (Augusta now shows realistic $170K-240K vs previous $318K-510K)
+- **Calculation Transparency**: Both executive and non-executive calculation paths include detailed explanations
+- **Geographic Accuracy**: 60+ cities mapped to appropriate market tiers with fallback logic
 
 ### Update Frequency
 - **Market Tiers**: Executive salary bands reviewed quarterly with regional market analysis
