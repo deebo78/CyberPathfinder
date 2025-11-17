@@ -43,13 +43,7 @@ interface CareerRecommendation {
     min: number;
     max: number;
     currency: string;
-    calculationDetails?: {
-      baseRange: string;
-      trackMultiplier: string;
-      geographicAdjustment: string;
-      certificationPremium: string;
-      marketFactors: string;
-    };
+    calculationDetails?: string;
   };
   timeToTransition?: string;
 }
