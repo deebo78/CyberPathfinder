@@ -37,30 +37,24 @@ Non-executive positions continue using the proven multiplier-based system:
 - **Senior-Level (6-10 years)**: $130K-180K baseline
 - **Expert/Lead (11+ years)**: $180K-250K baseline
 
-### Career Track Multipliers (Non-Executive Positions)
+### NICE Framework v2.0 Career Track Multipliers (Non-Executive Positions)
 
-Each cybersecurity specialization receives a market-demand multiplier applied to base ranges:
+The NICE Framework v2.0 standardizes salary multipliers across all 41 work roles to ensure fairness and consistency. Unlike legacy systems with varied multipliers (0.8x-1.4x), the NICE system uses two standardized tiers:
 
-**High Demand Specializations (1.3x - 1.4x):**
-- Cloud Security: 1.4x (highest demand, complex skills)
-- Red Team/Penetration Testing: 1.3x (specialized, high demand)
-- Cybersecurity Architecture: 1.3x (strategic, technical leadership)
-- Secure Software Development: 1.3x (development + security)
-- Security Automation: 1.3x (technical + scripting)
+**Standard Work Roles (1.0x multiplier):**
+- 40 of 41 NICE Framework work roles use the standard 1.0x multiplier
+- Examples: Defensive Cybersecurity, Incident Response, Digital Forensics, Cybersecurity Architecture, Secure Software Development, Threat Analysis, Vulnerability Analysis, Systems Security Analysis, Security Control Assessment, and all other NICE work roles
 
-**Note**: Executive Leadership positions no longer use multipliers; they use the market-tiered approach described above.
+**Network Operations Work Role (0.9x multiplier):**
+- Network Operations: 0.9x (high entry-level supply, infrastructure focus)
 
-**Standard Demand Specializations (1.0x - 1.2x):**
-- Digital Forensics: 1.2x (specialized skills)
-- Identity and Access Management: 1.2x (critical infrastructure)
-- Threat Intelligence: 1.2x (analytical expertise)
-- GRC (Governance, Risk, Compliance): 1.1x (business critical)
-- Incident Response: 1.1x (operational critical)
-- Vulnerability Management: 1.0x (standard demand)
+**Note**: Executive Cybersecurity Leadership uses the market-tiered approach described above, not multipliers.
 
-**Entry-Friendly Specializations (0.8x - 0.9x):**
-- SOC Operations: 0.9x (high supply, entry-friendly)
-- Cybersecurity Education: 0.8x (academic/training focus)
+**NICE Framework v2.0 Standardization Benefits:**
+- **Fairness**: Equal compensation baselines across cybersecurity disciplines
+- **Consistency**: Simplified salary calculations without complex tier systems
+- **Transparency**: Clear expectations for all work roles
+- **Official Framework Alignment**: Multipliers reflect NICE Framework's standardized competency model
 
 ### Geographic Adjustments
 
