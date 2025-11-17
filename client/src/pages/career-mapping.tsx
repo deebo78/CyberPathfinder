@@ -11,7 +11,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, User, Target, Award, BookOpen, TrendingUp, Upload, FileText, DollarSign, MapPin, Clock, AlertTriangle, Printer, Download } from "lucide-react";
+import { Loader2, User, Target, Award, BookOpen, TrendingUp, Upload, FileText, DollarSign, MapPin, Clock, AlertTriangle, Printer, Download, Info } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { useToast } from "@/hooks/use-toast";
 
@@ -925,9 +926,28 @@ export default function CareerMapping() {
                               <p className="text-sm font-medium text-green-600">
                                 ${recommendation.salaryRange.min}K - ${recommendation.salaryRange.max}K
                               </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                Based on national averages
-                              </p>
+                              {recommendation.salaryRange.calculationDetails ? (
+                                <TooltipProvider>
+                                  <Tooltip>
+                                    <TooltipTrigger asChild>
+                                      <div className="flex items-center gap-1 mt-1 text-xs text-blue-600 cursor-help hover:text-blue-700">
+                                        <Info className="h-3 w-3" />
+                                        <span className="underline">View calculation breakdown</span>
+                                      </div>
+                                    </TooltipTrigger>
+                                    <TooltipContent className="max-w-md p-3 bg-white border border-gray-200 shadow-lg" data-testid={`tooltip-salary-calc-${recommendation.trackId}`}>
+                                      <p className="text-sm font-semibold mb-1 text-gray-900">Salary Calculation:</p>
+                                      <p className="text-xs text-gray-700 font-mono leading-relaxed whitespace-pre-wrap">
+                                        {recommendation.salaryRange.calculationDetails}
+                                      </p>
+                                    </TooltipContent>
+                                  </Tooltip>
+                                </TooltipProvider>
+                              ) : (
+                                <p className="text-xs text-gray-500 mt-1">
+                                  Based on national averages
+                                </p>
+                              )}
                             </div>
                           )}
 
