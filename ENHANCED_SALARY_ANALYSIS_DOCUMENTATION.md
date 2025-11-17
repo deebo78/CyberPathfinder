@@ -101,18 +101,21 @@ Additional compensation value based on certification portfolio:
 ### Non-Executive Position Formula
 **Final Salary Range = (Base Range × Track Multiplier × Geographic Adjustment) + Certification Premium**
 
-### Real Examples
+### Real Examples (NICE Framework v2.0 Work Roles)
 
-**Entry SOC Analyst (Security+, Austin):**
+**Entry-Level Network Operations (Security+, Austin):**
 - Base: $60K-85K × 0.9 × 1.1 + $5K = **$64K-89K**
 
-**Senior Cloud Security Engineer (CISSP, AWS, Seattle):**
-- Base: $130K-180K × 1.4 × 1.2 + $20K = **$238K-322K**
+**Senior-Level Defensive Cybersecurity (CISSP, Seattle):**
+- Base: $130K-180K × 1.0 × 1.2 + $15K = **$171K-231K**
 
-**Mid-Level Red Team (OSCP, Remote):**
-- Base: $85K-130K × 1.3 × 1.05 + $8K = **$126K-187K**
+**Mid-Level Incident Response (GCIH, Remote):**
+- Base: $85K-130K × 1.0 × 1.05 + $8K = **$97K-145K**
 
-**Executive CISO Examples (New Market-Tiered System):**
+**Expert/Lead Digital Forensics (Multiple Certs, NYC):**
+- Base: $180K-250K × 1.0 × 1.25 + $20K = **$245K-333K**
+
+**Executive Cybersecurity Leadership Examples (Market-Tiered System):**
 - **Augusta (Tier D)**: $170K-240K (realistic for smaller market)
 - **Atlanta (Tier B)**: $260K-380K (large metro appropriate)
 - **San Francisco (Tier A)**: $330K-500K (premium market)
@@ -133,9 +136,9 @@ Each salary recommendation includes detailed breakdown showing:
 ### Dynamic Disclaimer Text
 
 Instead of generic "based on national averages," the system shows:
-- "Based on Senior-level Cloud Security analysis"
-- "Entry-level SOC Operations with Security+ certification"
-- "Mid-level analysis with geographic adjustment for Austin market"
+- "Based on Senior-Level Cybersecurity Architecture analysis"
+- "Entry-Level Network Operations with Security+ certification"
+- "Mid-Level Incident Response with geographic adjustment for Austin market"
 
 ## Career Level Recommendations Explained
 
@@ -161,9 +164,9 @@ The platform provides career transition guidance by distinguishing between a use
 - Skills: OSCP certified, Python scripting, penetration testing experience
 
 **Track Recommendations:**
-- **Red Team Operations**: Mid-Level (82% match, 3-6 months transition)
+- **Defensive Cybersecurity**: Mid-Level (82% match, 3-6 months transition)
 - **Secure Software Development**: Mid-Level (78% match, 6-12 months transition)
-- **Vulnerability Management**: Mid-Level (74% match, 3-6 months transition)
+- **Vulnerability Analysis**: Mid-Level (74% match, 3-6 months transition)
 
 **Rationale for Mid-Level Recommendations:**
 - Strong technical foundation supports specialist roles
@@ -173,7 +176,7 @@ The platform provides career transition guidance by distinguishing between a use
 
 ### Level Determination Factors
 
-**Entry Level Recommendations (0-2 years experience):**
+**Entry-Level Recommendations (0-2 years experience):**
 - Recent graduates or career changers
 - Basic certifications (Security+, Network+)
 - Limited hands-on cybersecurity experience
@@ -185,13 +188,13 @@ The platform provides career transition guidance by distinguishing between a use
 - Proven ability in current role but transitioning to specialization
 - Salary range: $85K-130K baseline
 
-**Senior Level Recommendations (8-15 years experience):**
+**Senior-Level Recommendations (8-15 years experience):**
 - Deep expertise in cybersecurity fundamentals
 - Advanced certifications (CISSP, CISM)
 - Leadership experience and strategic thinking
 - Salary range: $130K-180K baseline
 
-**Expert/Executive Recommendations (15+ years experience):**
+**Expert/Lead Recommendations (15+ years experience):**
 - Industry recognition and thought leadership
 - Multiple advanced certifications and clearances
 - Extensive management and architectural experience
