@@ -8,7 +8,7 @@ The CyberPathfinder platform features a sophisticated salary calculation engine 
 
 ### Executive Position Calculation (Market-Tiered Approach)
 
-Executive positions (CISO Leadership Track and Executive-level roles) use geographic market tiers with pre-adjusted salary bands to ensure realistic compensation ranges across all markets:
+Executive positions (Executive Cybersecurity Leadership work role and Expert/Lead-level roles) use geographic market tiers with pre-adjusted salary bands to ensure realistic compensation ranges across all markets:
 
 **Market Tier System:**
 - **Tier A (Premium Markets)**: San Francisco, NYC, Boston - $330K-500K
@@ -32,10 +32,10 @@ Executive positions (CISO Leadership Track and Executive-level roles) use geogra
 Non-executive positions continue using the proven multiplier-based system:
 
 **Base Salary Framework:**
-- **Entry Level (0-2 years)**: $60K-85K baseline
-- **Mid Level (3-5 years)**: $85K-130K baseline  
-- **Senior Level (6-10 years)**: $130K-180K baseline
-- **Expert Level (11+ years)**: $180K-250K baseline
+- **Entry-Level (0-2 years)**: $60K-85K baseline
+- **Mid-Level (3-5 years)**: $85K-130K baseline  
+- **Senior-Level (6-10 years)**: $130K-180K baseline
+- **Expert/Lead (11+ years)**: $180K-250K baseline
 
 ### Career Track Multipliers (Non-Executive Positions)
 
