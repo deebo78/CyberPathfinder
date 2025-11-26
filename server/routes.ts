@@ -1,9 +1,17 @@
-import type { Express, Request } from "express";
+import type { Express, Request, Response, NextFunction } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { z } from "zod";
 import multer from "multer";
-// PDF parsing will be added later - for now handle text files
+import path from "path";
+import { 
+  requireAdminApiKey, 
+  checkAdminEnabled,
+  restrictDiagnosticAccess, 
+  validateNumericParam,
+  validateFileType,
+  SECURITY_CONFIG 
+} from "./security";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -21,27 +29,53 @@ import fs from "fs";
 import mammoth from "mammoth";
 import OpenAI from "openai";
 
+// Configure multer with security constraints
+// SECURITY: Limit file size and use secure temp directory
 const upload = multer({ 
   dest: 'uploads/',
   limits: {
-    fileSize: 10 * 1024 * 1024 // 10MB limit
+    fileSize: SECURITY_CONFIG.MAX_FILE_SIZE_MB * 1024 * 1024,
+    files: 1 // Only allow single file uploads
+  },
+  fileFilter: (req, file, cb) => {
+    // Validate file extension
+    const ext = path.extname(file.originalname).toLowerCase();
+    if (!SECURITY_CONFIG.ALLOWED_FILE_EXTENSIONS.includes(ext)) {
+      cb(new Error(`File type ${ext} not allowed`));
+      return;
+    }
+    cb(null, true);
   }
 });
 
 const resumeAnalyzer = new AIResumeAnalyzer();
 
-// Middleware to check admin access
-function requireAdminAccess(req: Request, res: any, next: any) {
+// Legacy middleware for UI visibility checks (uses VITE_ENABLE_ADMIN flag)
+// SECURITY NOTE: This only controls UI visibility, NOT actual security
+// Use requireAdminApiKey for actual protected operations
+function requireAdminAccess(req: Request, res: Response, next: NextFunction): void {
   const isAdminEnabled = process.env.VITE_ENABLE_ADMIN === 'true';
   if (!isAdminEnabled) {
-    return res.status(403).json({ message: "Admin access is disabled" });
+    res.status(403).json({ message: "Admin access is disabled" });
+    return;
   }
   next();
 }
 
+// Helper to safely parse and validate numeric IDs
+// SECURITY: Prevents NaN and injection issues with parseInt
+function safeParseId(value: string): number | null {
+  const parsed = parseInt(value, 10);
+  if (isNaN(parsed) || parsed < 0 || !Number.isInteger(parsed)) {
+    return null;
+  }
+  return parsed;
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
   // Statistics endpoint (admin only)
-  app.get("/api/statistics", requireAdminAccess, async (req, res) => {
+  // SECURITY: Requires API key authentication in production, UI flag check in development
+  app.get("/api/statistics", requireAdminApiKey, async (req, res) => {
     try {
       const stats = await storage.getStatistics();
       res.json(stats);
@@ -52,7 +86,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Search endpoint (admin only)
-  app.get("/api/search", requireAdminAccess, async (req, res) => {
+  // SECURITY: Requires API key authentication
+  app.get("/api/search", requireAdminApiKey, async (req, res) => {
     try {
       const { q } = req.query;
       if (!q || typeof q !== 'string') {
@@ -68,13 +103,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // OpenAI API Test Endpoint
-  app.get("/api/test-openai", async (req, res) => {
-    const diagnostics: any = {
+  // SECURITY: Protected by restrictDiagnosticAccess - requires admin auth in production
+  app.get("/api/test-openai", restrictDiagnosticAccess, async (req, res) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    const diagnostics: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       apiKeyConfigured: false,
-      apiKeyPrefix: null,
-      apiKeyLength: null,
       testCallStatus: 'not_attempted',
       error: null,
       details: {}
@@ -85,7 +121,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const apiKey = process.env.OPENAI_API_KEY;
       diagnostics.apiKeyConfigured = !!apiKey;
       
-      if (apiKey) {
+      // SECURITY: Don't expose API key details in production
+      if (apiKey && !isProduction) {
         diagnostics.apiKeyLength = apiKey.length;
         diagnostics.apiKeyPrefix = apiKey.substring(0, 7);
       }
@@ -116,33 +153,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       diagnostics.details = {
         model: testResponse.model,
         response: testResponse.choices[0].message.content,
-        usage: testResponse.usage,
-        responseId: testResponse.id
+        usage: testResponse.usage
       };
 
-      console.log("OpenAI API test successful:", diagnostics.details);
+      console.log("OpenAI API test successful");
       res.json({
         success: true,
         message: "OpenAI API is configured and working correctly",
         ...diagnostics
       });
 
-    } catch (error: any) {
-      console.error("OpenAI API test error:", error);
+    } catch (error: unknown) {
+      const err = error as Error & { type?: string; status?: number; code?: string; response?: { status: number; data: unknown } };
+      console.error("OpenAI API test error:", err.message);
       
       diagnostics.testCallStatus = 'failed';
-      diagnostics.error = {
-        message: error?.message || 'Unknown error',
-        type: error?.type || error?.constructor?.name,
-        status: error?.status,
-        code: error?.code,
-        stack: error?.stack?.split('\n').slice(0, 3).join('\n')
-      };
-
-      // Extract specific error details
-      if (error?.response) {
-        diagnostics.error.responseStatus = error.response.status;
-        diagnostics.error.responseData = error.response.data;
+      
+      // SECURITY: Sanitize error details in production
+      if (isProduction) {
+        diagnostics.error = {
+          message: 'API test failed. Check server logs for details.',
+          code: err.code
+        };
+      } else {
+        diagnostics.error = {
+          message: err.message || 'Unknown error',
+          type: err.type || err.constructor?.name,
+          status: err.status,
+          code: err.code
+        };
       }
 
       res.status(500).json({
@@ -154,8 +193,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Database Test Endpoint
-  app.get("/api/test-database", async (req, res) => {
-    const diagnostics: any = {
+  // SECURITY: Protected by restrictDiagnosticAccess - requires admin auth in production
+  app.get("/api/test-database", restrictDiagnosticAccess, async (req, res) => {
+    const isProduction = process.env.NODE_ENV === 'production';
+    
+    const diagnostics: Record<string, unknown> = {
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
       databaseUrlConfigured: false,
@@ -169,12 +211,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const dbUrl = process.env.DATABASE_URL;
       diagnostics.databaseUrlConfigured = !!dbUrl;
       
-      if (dbUrl) {
-        diagnostics.details.urlPrefix = dbUrl.substring(0, 20) + "...";
-      }
+      // SECURITY: Never expose database URL, even partially
+      // Previous code exposed urlPrefix which could leak connection details
 
       if (!dbUrl) {
-        diagnostics.error = "DATABASE_URL environment variable is not set";
+        diagnostics.error = "Database connection is not configured";
         diagnostics.testQueryStatus = 'failed';
         return res.status(500).json(diagnostics);
       }
@@ -194,26 +235,32 @@ export async function registerRoutes(app: Express): Promise<Server> {
         } : null
       };
 
-      console.log("Database test successful:", diagnostics.details);
+      console.log("Database test successful");
       res.json({
         success: true,
         message: "Database is configured and working correctly",
         ...diagnostics
       });
 
-    } catch (error: any) {
-      console.error("Database test error:", error);
+    } catch (error: unknown) {
+      const err = error as Error & { code?: string; severity?: string; detail?: string; hint?: string };
+      console.error("Database test error:", err.message);
       
       diagnostics.testQueryStatus = 'failed';
-      diagnostics.error = {
-        message: error?.message || 'Unknown error',
-        type: error?.constructor?.name,
-        code: error?.code,
-        severity: error?.severity,
-        detail: error?.detail,
-        hint: error?.hint,
-        stack: error?.stack?.split('\n').slice(0, 5).join('\n')
-      };
+      
+      // SECURITY: Sanitize error details in production
+      if (isProduction) {
+        diagnostics.error = {
+          message: 'Database test failed. Check server logs for details.',
+          code: err.code
+        };
+      } else {
+        diagnostics.error = {
+          message: err.message || 'Unknown error',
+          type: err.constructor?.name,
+          code: err.code
+        };
+      }
 
       res.status(500).json({
         success: false,
@@ -221,6 +268,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
         ...diagnostics
       });
     }
+  });
+  
+  // Health check endpoint - minimal, no sensitive data
+  app.get("/api/health", (req, res) => {
+    res.json({ status: "ok", timestamp: Date.now() });
   });
 
   // Categories routes
@@ -386,7 +438,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
 
   // Import History routes (admin only)
-  app.get("/api/import-history", requireAdminAccess, async (req, res) => {
+  // SECURITY: Requires API key authentication
+  app.get("/api/import-history", requireAdminApiKey, async (req, res) => {
     try {
       const history = await storage.getImportHistory();
       res.json(history);
@@ -397,7 +450,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // NICE Framework automated import endpoint (admin only)
-  app.post("/api/import/nice-framework", requireAdminAccess, async (req, res) => {
+  // SECURITY: Requires API key authentication
+  app.post("/api/import/nice-framework", requireAdminApiKey, async (req, res) => {
     try {
       const { NiceFrameworkImporter } = await import("./nice-importer");
       const importer = new NiceFrameworkImporter();
@@ -415,7 +469,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload and import endpoint (admin only)
-  app.post("/api/import", requireAdminAccess, upload.single('file'), async (req: any, res) => {
+  // SECURITY: Requires API key authentication
+  app.post("/api/import", requireAdminApiKey, upload.single('file'), async (req: any, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No file uploaded" });
@@ -531,16 +586,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Export endpoint - restricted to admin users
-  app.get("/api/export/:type", async (req, res) => {
+  // SECURITY: Requires API key authentication
+  app.get("/api/export/:type", requireAdminApiKey, async (req, res) => {
     try {
-      // Check for admin access
-      const isAdminEnabled = process.env.VITE_ENABLE_ADMIN === 'true';
-      if (!isAdminEnabled) {
-        return res.status(403).json({ 
-          message: "Access denied. Export functionality requires administrative privileges." 
-        });
-      }
-
       const { type } = req.params;
       
       let data;
@@ -630,7 +678,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Test endpoint to verify routing
-  app.get("/api/test", (req, res) => {
+  // SECURITY: Protected in production to avoid exposing API info
+  app.get("/api/test", restrictDiagnosticAccess, (req, res) => {
     res.json({ message: "API routing is working", timestamp: Date.now() });
   });
 

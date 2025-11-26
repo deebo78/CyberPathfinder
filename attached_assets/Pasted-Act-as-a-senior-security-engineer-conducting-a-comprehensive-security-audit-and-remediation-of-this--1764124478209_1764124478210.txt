@@ -1,0 +1,116 @@
+Act as a senior security engineer conducting a comprehensive security audit and remediation of this CyberPathfinder application. This is a Node.js/Express/TypeScript application with a React frontend that handles career mapping, resume analysis, and job vacancy analysis using the NICE Cybersecurity Framework.
+
+## Your Mission
+
+Perform a complete security review of this codebase and implement fixes for all vulnerabilities found. Do not just identify issues - actually fix them in the code.
+
+## Audit Scope
+
+Review and secure the following areas:
+
+### 1. Authentication & Authorization
+- The current admin access control uses only an environment variable flag (VITE_ENABLE_ADMIN) - this is NOT authentication
+- Implement proper authentication for admin routes (API key, JWT, or session-based)
+- Ensure all admin endpoints consistently use the auth middleware
+- Review the /api/export/:type endpoint which has inline auth checking instead of middleware
+
+### 2. Rate Limiting
+- Rate limiting is currently commented out in server/index.ts
+- Re-enable and configure appropriate limits for:
+  - General API routes
+  - AI-powered endpoints (these cost money and are abuse targets)
+  - File upload endpoints
+  - Authentication attempts (when implemented)
+
+### 3. Input Validation & Sanitization
+- Audit all route parameters (especially parseInt calls without validation)
+- Review all req.body parsing for injection risks
+- Check file upload handling for:
+  - Path traversal vulnerabilities
+  - File type validation (MIME types can be spoofed)
+  - Filename sanitization
+  - File size limits (already present but verify)
+
+### 4. API Security
+- Remove or protect diagnostic endpoints (/api/test-openai, /api/test-database) in production
+- These endpoints leak sensitive information like API key prefixes and stack traces
+- Review all error responses to ensure they don't leak sensitive details in production
+
+### 5. Database Security
+- Review all database queries in server/storage.ts for SQL injection risks
+- Verify parameterized queries are used everywhere
+- Check for any raw SQL concatenation
+
+### 6. File Upload Security
+- Review multer configuration in server/routes.ts
+- Implement proper file type validation beyond MIME type checking
+- Ensure uploaded files are stored securely
+- Verify cleanup of temporary files in all code paths (including errors)
+
+### 7. Environment & Configuration Security
+- Audit all environment variable usage
+- The VITE_ prefix exposes variables to the client - ensure no secrets use this prefix
+- Review .env.example for any sensitive defaults
+
+### 8. HTTP Security Headers
+- Review helmet configuration in server/index.ts
+- The CSP currently allows 'unsafe-inline' and 'unsafe-eval' - tighten if possible
+- Verify HSTS, X-Frame-Options, and other headers are properly configured
+
+### 9. Error Handling
+- Fix the error handler in server/index.ts that throws after sending response
+- Ensure errors don't leak stack traces or sensitive info in production
+- Implement consistent error response format
+
+### 10. Logging & Monitoring
+- Review what gets logged (currently logs full JSON responses which may contain sensitive data)
+- Implement audit logging for admin actions
+- Ensure no PII or secrets are logged
+
+### 11. Dependencies
+- Check package.json for known vulnerable dependencies
+- Recommend any security-related packages that should be added
+
+### 12. CORS Configuration
+- Review the CORS setup - verify origins are properly restricted
+- Check for any overly permissive configurations
+
+### 13. Session Management (if applicable)
+- If sessions are implemented, verify secure cookie settings
+- Check for session fixation vulnerabilities
+- Implement CSRF protection for state-changing operations
+
+## Implementation Requirements
+
+1. Create all fixes directly in the codebase
+2. Add comments explaining security-critical code sections
+3. Create a SECURITY.md file documenting:
+   - Security architecture decisions
+   - How to configure security features
+   - Incident response procedures
+   - Security contact information
+
+4. Update .env.example with any new security-related environment variables
+
+5. If you find issues you cannot fully fix, create a SECURITY_TODO.md documenting:
+   - The vulnerability
+   - Risk level (Critical/High/Medium/Low)
+   - Recommended fix
+   - Why it couldn't be implemented automatically
+
+## Code Quality Standards
+
+- Use TypeScript properly (no 'any' types for security-critical code)
+- Follow existing code patterns and style
+- Add appropriate error handling
+- Test that the application still runs after changes
+
+## Priority Order
+
+Fix issues in this order:
+1. Critical: Authentication bypass, injection vulnerabilities, data exposure
+2. High: Rate limiting, input validation, error handling
+3. Medium: Header configuration, logging improvements
+4. Low: Code quality, documentation
+
+Begin the audit now. Start by reviewing server/index.ts and server/routes.ts, then expand to other files as needed.
