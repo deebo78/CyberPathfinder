@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import crypto from "crypto";
+import rateLimit from "express-rate-limit";
+import fs from "fs";
 
 // Security configuration
 export const SECURITY_CONFIG = {
@@ -8,24 +10,167 @@ export const SECURITY_CONFIG = {
   
   // Rate limits per window
   GENERAL_API_LIMIT: 100,
-  AI_ENDPOINT_LIMIT: 20, // AI endpoints are expensive - stricter limit
+  API_ENDPOINT_LIMIT: 50, // Standard API endpoints
+  ADMIN_API_LIMIT: 20, // Admin endpoints
+  AI_ENDPOINT_LIMIT: 10, // AI endpoints are expensive - strictest limit
   FILE_UPLOAD_LIMIT: 10, // File uploads
   AUTH_ATTEMPT_LIMIT: 5, // Auth attempts
   
   // File upload constraints
   MAX_FILE_SIZE_MB: 10,
-  ALLOWED_FILE_EXTENSIONS: ['.txt', '.doc', '.docx', '.json', '.xlsx'],
+  ALLOWED_FILE_EXTENSIONS: ['.txt', '.doc', '.docx', '.json', '.xlsx', '.csv', '.pdf'],
   ALLOWED_MIME_TYPES: [
     'text/plain',
+    'text/csv',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
     'application/json',
-    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'application/pdf'
   ],
   
   // Admin API key header name
   ADMIN_API_KEY_HEADER: 'x-admin-api-key',
+  
+  // Input length limits for AI endpoints (prompt injection protection)
+  MAX_TEXT_INPUT_LENGTH: 50000, // 50KB max for text inputs
+  MAX_RESUME_CONTENT_LENGTH: 100000, // 100KB max for resume content
+  MAX_JOB_DESCRIPTION_LENGTH: 30000, // 30KB max for job descriptions
 };
+
+// File magic bytes for content validation
+// SECURITY: Validates actual file content, not just extension which can be spoofed
+const FILE_SIGNATURES: { [key: string]: number[][] } = {
+  // PDF: %PDF
+  '.pdf': [[0x25, 0x50, 0x44, 0x46]],
+  // DOCX/XLSX: PK (ZIP format)
+  '.docx': [[0x50, 0x4B, 0x03, 0x04], [0x50, 0x4B, 0x05, 0x06], [0x50, 0x4B, 0x07, 0x08]],
+  '.xlsx': [[0x50, 0x4B, 0x03, 0x04], [0x50, 0x4B, 0x05, 0x06], [0x50, 0x4B, 0x07, 0x08]],
+  // DOC: Microsoft Compound File
+  '.doc': [[0xD0, 0xCF, 0x11, 0xE0, 0xA1, 0xB1, 0x1A, 0xE1]],
+  // JSON/TXT/CSV: Allow any text-based content (validated by MIME type)
+  '.json': [], // Text-based, no magic bytes
+  '.txt': [],  // Text-based, no magic bytes
+  '.csv': [],  // Text-based, no magic bytes
+};
+
+/**
+ * Validates file content against expected magic bytes.
+ * SECURITY: Prevents malicious files disguised with fake extensions.
+ */
+export function validateFileMagicBytes(filePath: string, extension: string): boolean {
+  const signatures = FILE_SIGNATURES[extension.toLowerCase()];
+  
+  // Text-based files don't have magic bytes
+  if (!signatures || signatures.length === 0) {
+    return true;
+  }
+  
+  try {
+    const buffer = Buffer.alloc(8);
+    const fd = fs.openSync(filePath, 'r');
+    fs.readSync(fd, buffer, 0, 8, 0);
+    fs.closeSync(fd);
+    
+    // Check if file matches any valid signature
+    return signatures.some(sig => {
+      for (let i = 0; i < sig.length; i++) {
+        if (buffer[i] !== sig[i]) return false;
+      }
+      return true;
+    });
+  } catch (error) {
+    console.error('[SECURITY] Error reading file for magic byte validation:', error);
+    return false;
+  }
+}
+
+/**
+ * Rate limiter specifically for AI endpoints.
+ * SECURITY: AI endpoints cost money per request and are resource-intensive.
+ * Limit: 10 requests per 15 minutes per IP.
+ */
+export const aiEndpointRateLimiter = rateLimit({
+  windowMs: SECURITY_CONFIG.RATE_LIMIT_WINDOW_MS,
+  max: SECURITY_CONFIG.AI_ENDPOINT_LIMIT,
+  message: {
+    message: 'Too many AI requests. Please wait before trying again.',
+    retryAfter: Math.ceil(SECURITY_CONFIG.RATE_LIMIT_WINDOW_MS / 60000)
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req: Request) => getClientIp(req),
+  skip: (req: Request) => {
+    // Skip rate limiting for admin users (they have separate limits)
+    return !!req.headers[SECURITY_CONFIG.ADMIN_API_KEY_HEADER];
+  }
+});
+
+/**
+ * Sanitizes user input for AI prompts to prevent prompt injection attacks.
+ * SECURITY: Removes or escapes content that could manipulate AI behavior.
+ */
+export function sanitizeAIInput(input: string, maxLength: number = SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH): string {
+  if (!input || typeof input !== 'string') {
+    return '';
+  }
+  
+  // Truncate to max length
+  let sanitized = input.slice(0, maxLength);
+  
+  // Remove potential prompt injection patterns
+  const dangerousPatterns = [
+    /ignore\s+(previous|all|above)\s+instructions?/gi,
+    /disregard\s+(previous|all|above)/gi,
+    /forget\s+(everything|all|previous)/gi,
+    /you\s+are\s+now\s+/gi,
+    /new\s+instructions?:/gi,
+    /system\s*:\s*/gi,
+    /\[INST\]/gi,
+    /<<SYS>>/gi,
+    /<\|im_start\|>/gi,
+    /```system/gi,
+  ];
+  
+  for (const pattern of dangerousPatterns) {
+    sanitized = sanitized.replace(pattern, '[FILTERED]');
+  }
+  
+  // Remove excessive whitespace
+  sanitized = sanitized.replace(/\s{10,}/g, ' ');
+  
+  // Remove null bytes and other control characters (except newlines and tabs)
+  sanitized = sanitized.replace(/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/g, '');
+  
+  return sanitized.trim();
+}
+
+/**
+ * Validates input length for AI endpoints.
+ * SECURITY: Prevents denial-of-service via extremely large inputs.
+ */
+export function validateInputLength(
+  input: string | undefined,
+  fieldName: string,
+  maxLength: number
+): { valid: boolean; error?: string } {
+  if (!input) {
+    return { valid: true };
+  }
+  
+  if (typeof input !== 'string') {
+    return { valid: false, error: `${fieldName} must be a string` };
+  }
+  
+  if (input.length > maxLength) {
+    return { 
+      valid: false, 
+      error: `${fieldName} exceeds maximum length of ${maxLength} characters` 
+    };
+  }
+  
+  return { valid: true };
+}
 
 /**
  * Validates admin API key for protected routes.

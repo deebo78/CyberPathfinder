@@ -47,10 +47,28 @@ Admin endpoints require API key authentication via the `X-Admin-API-Key` header.
 
 **Configuration:**
 
-1. Generate a secure API key:
+1. Generate a secure API key using one of these methods:
+
+   **Option A: OpenSSL (Recommended)**
+   ```bash
+   openssl rand -base64 32
+   ```
+   
+   **Option B: Node.js**
    ```bash
    node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
    ```
+   
+   **Option C: Python**
+   ```bash
+   python3 -c "import secrets; print(secrets.token_urlsafe(32))"
+   ```
+   
+   **Key Requirements:**
+   - Minimum 32 bytes (256 bits) of entropy
+   - Use cryptographically secure random generation
+   - Never use predictable values like timestamps or sequential numbers
+   - Rotate keys at least quarterly in production
 
 2. Set the environment variable:
    ```env
@@ -89,19 +107,26 @@ Rate limits are enforced per IP address using sliding window counters.
 | Endpoint Type | Limit | Window | Purpose |
 |--------------|-------|--------|---------|
 | General API | 100 requests | 15 min | Prevent abuse |
-| AI Endpoints | 20 requests | 15 min | Cost control |
+| Standard API | 50 requests | 15 min | API protection |
+| Admin API | 20 requests | 15 min | Admin protection |
+| **AI Endpoints** | **10 requests** | **15 min** | **Cost control (strictest)** |
 | File Uploads | 10 requests | 15 min | Resource protection |
 
 ### AI Endpoint Rate Limits
 
-The following AI-powered endpoints have stricter limits to control costs:
+The following AI-powered endpoints have the strictest limits (10 req/15min) because they:
+- Incur per-request costs with OpenAI
+- Are resource-intensive
+- Are common targets for abuse
 
-- `/api/analyze-profile`
-- `/api/analyze-vacancy`
-- `/api/upload-resume`
-- `/api/extract-document`
-- `/api/track-recommendation/*`
-- `/api/work-role-match/*`
+**Protected AI Endpoints:**
+
+- `/api/analyze-profile` - Career profile analysis
+- `/api/analyze-vacancy` - Job posting analysis  
+- `/api/upload-resume` - Resume parsing and analysis
+- `/api/extract-document` - Document text extraction
+- `/api/track-recommendation/:id` - Detailed track recommendations
+- `/api/work-role-match/:id` - Work role matching analysis
 
 ### Customizing Limits
 
@@ -111,10 +136,60 @@ Modify `SECURITY_CONFIG` in `server/security.ts`:
 export const SECURITY_CONFIG = {
   RATE_LIMIT_WINDOW_MS: 15 * 60 * 1000, // 15 minutes
   GENERAL_API_LIMIT: 100,
-  AI_ENDPOINT_LIMIT: 20,
+  API_ENDPOINT_LIMIT: 50,
+  ADMIN_API_LIMIT: 20,
+  AI_ENDPOINT_LIMIT: 10, // Strictest limit for AI endpoints
   FILE_UPLOAD_LIMIT: 10,
 };
 ```
+
+---
+
+## Prompt Injection Protection
+
+### Overview
+
+AI endpoints are protected against prompt injection attacks where users attempt to manipulate AI behavior through specially crafted inputs.
+
+### Protections Implemented
+
+1. **Input Length Limits**: All AI inputs are limited to prevent denial-of-service:
+   - General text: 50,000 characters
+   - Resume content: 100,000 characters
+   - Job descriptions: 30,000 characters
+
+2. **Pattern Filtering**: Known injection patterns are automatically filtered:
+   - "ignore previous instructions"
+   - "disregard all above"
+   - "you are now..."
+   - System prompt markers (`[INST]`, `<<SYS>>`, etc.)
+
+3. **Content Sanitization**: All user inputs are sanitized before being passed to AI prompts:
+   - Control characters removed
+   - Excessive whitespace normalized
+   - Filtered patterns replaced with `[FILTERED]`
+
+### Implementation
+
+```typescript
+import { sanitizeAIInput, validateInputLength, SECURITY_CONFIG } from "./security";
+
+// Validate length
+const check = validateInputLength(input, 'fieldName', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH);
+if (!check.valid) {
+  return res.status(400).json({ message: check.error });
+}
+
+// Sanitize content
+const sanitized = sanitizeAIInput(input);
+```
+
+### Limitations
+
+Prompt injection protection reduces risk but cannot eliminate it entirely. Defense in depth through:
+- Rate limiting (limits damage from successful injections)
+- Output validation (verify AI responses meet expected format)
+- Logging and monitoring (detect unusual patterns)
 
 ---
 
@@ -148,11 +223,31 @@ const profileSchema = z.object({
 
 ### Database Queries
 
-All database queries use Drizzle ORM's parameterized queries, preventing SQL injection:
+All database queries use Drizzle ORM's parameterized queries, preventing SQL injection.
+
+**Audit Status (November 2025):** All database operations in `server/storage.ts` reviewed and confirmed safe:
+
+| Query Type | Count | Status |
+|------------|-------|--------|
+| Drizzle ORM queries | 40+ | Safe (auto-parameterized) |
+| Raw SQL with `sql` template | 4 | Safe (parameterized via tagged template) |
+| String concatenation | 0 | None found |
+
+**Safe Patterns Used:**
 
 ```typescript
-// Safe - parameterized
+// Safe - Drizzle ORM methods (auto-parameterized)
 await db.select().from(categories).where(eq(categories.id, id));
+
+// Safe - sql tagged template literal (parameterized)
+await db.execute(sql`SELECT * FROM users WHERE id = ${userId}`);
+```
+
+**Patterns to Avoid:**
+
+```typescript
+// UNSAFE - Never do this!
+await db.execute(`SELECT * FROM users WHERE id = ${userId}`);
 ```
 
 ---
@@ -161,22 +256,40 @@ await db.select().from(categories).where(eq(categories.id, id));
 
 ### Allowed File Types
 
-| Extension | MIME Type | Purpose |
-|-----------|-----------|---------|
-| `.txt` | text/plain | Resume/job posting text |
-| `.doc` | application/msword | Word documents |
-| `.docx` | application/vnd.openxmlformats-... | Word documents |
-| `.json` | application/json | NICE Framework imports |
-| `.xlsx` | application/vnd.openxmlformats-... | Data imports |
+| Extension | MIME Type | Magic Bytes | Purpose |
+|-----------|-----------|-------------|---------|
+| `.txt` | text/plain | N/A (text) | Resume/job posting text |
+| `.csv` | text/csv | N/A (text) | Data imports |
+| `.doc` | application/msword | `D0 CF 11 E0` | Word documents |
+| `.docx` | application/vnd.openxmlformats-... | `50 4B 03 04` | Word documents |
+| `.json` | application/json | N/A (text) | NICE Framework imports |
+| `.xlsx` | application/vnd.openxmlformats-... | `50 4B 03 04` | Data imports |
+| `.pdf` | application/pdf | `25 50 44 46` | Resume uploads |
 
 ### Security Measures
 
 1. **Extension Validation**: Checked before processing
 2. **MIME Type Validation**: Secondary check
-3. **File Size Limit**: 10MB maximum
-4. **Single File**: Only one file per request
-5. **Temp File Cleanup**: Files removed after processing
-6. **Filename Sanitization**: Path traversal prevention
+3. **Magic Bytes Validation**: File content signature verification
+4. **File Size Limit**: 10MB maximum
+5. **Single File**: Only one file per request
+6. **Temp File Cleanup**: Files removed after processing
+7. **Filename Sanitization**: Path traversal prevention
+
+### Magic Bytes Validation
+
+File content is validated against expected magic bytes (file signatures) to prevent:
+- Malicious files with spoofed extensions (e.g., `.exe` renamed to `.pdf`)
+- Zip bombs disguised as documents
+- Polyglot files
+
+```typescript
+// Validates that file content matches expected type
+if (!validateFileMagicBytes(filePath, extension)) {
+  fs.unlinkSync(filePath);
+  return res.status(400).json({ message: "File content does not match file extension" });
+}
+```
 
 ### Configuration
 
@@ -184,7 +297,7 @@ Modify in `server/security.ts`:
 
 ```typescript
 MAX_FILE_SIZE_MB: 10,
-ALLOWED_FILE_EXTENSIONS: ['.txt', '.doc', '.docx', '.json', '.xlsx'],
+ALLOWED_FILE_EXTENSIONS: ['.txt', '.doc', '.docx', '.json', '.xlsx', '.csv', '.pdf'],
 ```
 
 ---

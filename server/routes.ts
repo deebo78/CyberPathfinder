@@ -10,6 +10,10 @@ import {
   restrictDiagnosticAccess, 
   validateNumericParam,
   validateFileType,
+  validateFileMagicBytes,
+  aiEndpointRateLimiter,
+  sanitizeAIInput,
+  validateInputLength,
   SECURITY_CONFIG 
 } from "./security";
 
@@ -684,7 +688,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // File upload endpoint for job posting analysis
-  app.post("/api/extract-document", upload.single('file'), async (req: MulterRequest, res) => {
+  // SECURITY: AI endpoint with rate limiting and file content validation
+  app.post("/api/extract-document", aiEndpointRateLimiter, upload.single('file'), async (req: MulterRequest, res) => {
     try {
       console.log("File upload request received");
       
@@ -696,16 +701,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("File details:", {
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
-        size: req.file.size,
-        path: req.file.path
+        size: req.file.size
       });
 
-      const fs = await import('fs');
-      const path = await import('path');
+      const fsModule = await import('fs');
+      const pathModule = await import('path');
+      
+      const filePath = req.file.path;
+      const fileExtension = pathModule.extname(req.file.originalname).toLowerCase();
+      
+      // SECURITY: Validate file content matches extension (magic bytes check)
+      if (!validateFileMagicBytes(filePath, fileExtension)) {
+        fsModule.unlinkSync(filePath);
+        return res.status(400).json({ message: "File content does not match file extension" });
+      }
       
       let extractedText = '';
-      const filePath = req.file.path;
-      const fileExtension = path.extname(req.file.originalname).toLowerCase();
       
       try {
         console.log("Attempting to read file:", filePath);
@@ -812,9 +823,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Career Mapping API endpoints
-  app.post("/api/analyze-profile", async (req, res) => {
+  // SECURITY: AI endpoints have strict rate limiting (10 req/15min) and input sanitization
+  app.post("/api/analyze-profile", aiEndpointRateLimiter, async (req, res) => {
     try {
-      console.log("Received profile analysis request:", req.body);
+      console.log("Received profile analysis request");
+      
+      // SECURITY: Validate input lengths before processing
+      const lengthChecks = [
+        validateInputLength(req.body.experience, 'experience', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.education, 'education', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.certifications, 'certifications', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.interests, 'interests', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.careerGoals, 'careerGoals', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+      ];
+      
+      const invalidCheck = lengthChecks.find(c => !c.valid);
+      if (invalidCheck) {
+        return res.status(400).json({ message: invalidCheck.error });
+      }
       
       const profileSchema = z.object({
         experience: z.string().optional(),
@@ -825,8 +851,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentLevel: z.string().optional()
       });
 
-      const profile = profileSchema.parse(req.body);
-      console.log("Parsed profile:", profile);
+      const rawProfile = profileSchema.parse(req.body);
+      
+      // SECURITY: Sanitize text inputs while preserving undefined for optional fields
+      // Use helper to ensure empty/whitespace-only inputs become undefined
+      const sanitizeOrUndefined = (val: string | undefined): string | undefined => {
+        if (!val) return undefined;
+        const sanitized = sanitizeAIInput(val);
+        return sanitized || undefined; // Empty string becomes undefined
+      };
+      
+      const profile = {
+        experience: sanitizeOrUndefined(rawProfile.experience),
+        education: sanitizeOrUndefined(rawProfile.education),
+        certifications: sanitizeOrUndefined(rawProfile.certifications),
+        interests: sanitizeOrUndefined(rawProfile.interests),
+        careerGoals: sanitizeOrUndefined(rawProfile.careerGoals),
+        currentLevel: sanitizeOrUndefined(rawProfile.currentLevel),
+      };
       
       const analysis = await aiCareerMapper.analyzeUserProfile(profile);
       console.log("Analysis result:", analysis);
@@ -882,9 +924,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/track-recommendation/:id", async (req, res) => {
+  // SECURITY: AI endpoint with rate limiting and input sanitization
+  app.post("/api/track-recommendation/:id", aiEndpointRateLimiter, async (req, res) => {
     try {
-      const trackId = parseInt(req.params.id);
+      const trackId = safeParseId(req.params.id);
+      if (trackId === null) {
+        return res.status(400).json({ message: "Invalid track ID" });
+      }
+      
       const profileSchema = z.object({
         experience: z.string().optional(),
         education: z.string().optional(),
@@ -894,7 +941,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         currentLevel: z.string().optional()
       });
 
-      const profile = profileSchema.parse(req.body);
+      const rawProfile = profileSchema.parse(req.body);
+      
+      // SECURITY: Sanitize inputs while preserving undefined for optional fields
+      const sanitizeOrUndefined = (val: string | undefined): string | undefined => {
+        if (!val) return undefined;
+        const sanitized = sanitizeAIInput(val);
+        return sanitized || undefined;
+      };
+      
+      const profile = {
+        experience: sanitizeOrUndefined(rawProfile.experience),
+        education: sanitizeOrUndefined(rawProfile.education),
+        certifications: sanitizeOrUndefined(rawProfile.certifications),
+        interests: sanitizeOrUndefined(rawProfile.interests),
+        careerGoals: sanitizeOrUndefined(rawProfile.careerGoals),
+        currentLevel: sanitizeOrUndefined(rawProfile.currentLevel),
+      };
+      
       const recommendation = await aiCareerMapper.getDetailedTrackRecommendation(trackId, profile);
       res.json(recommendation);
     } catch (error) {
@@ -904,9 +968,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Vacancy Mapping API endpoints
-  app.post("/api/analyze-vacancy", async (req, res) => {
+  // SECURITY: AI endpoint with rate limiting and input sanitization
+  app.post("/api/analyze-vacancy", aiEndpointRateLimiter, async (req, res) => {
     try {
-      console.log("Received vacancy analysis request:", req.body);
+      console.log("Received vacancy analysis request");
+      
+      // SECURITY: Validate input lengths before processing
+      const lengthChecks = [
+        validateInputLength(req.body.jobTitle, 'jobTitle', 500),
+        validateInputLength(req.body.jobDescription, 'jobDescription', SECURITY_CONFIG.MAX_JOB_DESCRIPTION_LENGTH),
+        validateInputLength(req.body.requiredQualifications, 'requiredQualifications', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.preferredQualifications, 'preferredQualifications', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.location, 'location', 500),
+      ];
+      
+      const invalidCheck = lengthChecks.find(c => !c.valid);
+      if (invalidCheck) {
+        return res.status(400).json({ message: invalidCheck.error });
+      }
       
       const vacancySchema = z.object({
         jobTitle: z.string(),
@@ -918,8 +997,24 @@ export async function registerRoutes(app: Express): Promise<Server> {
         location: z.string().optional()
       });
 
-      const jobPosting = vacancySchema.parse(req.body);
-      console.log("Parsed job posting:", jobPosting);
+      const rawPosting = vacancySchema.parse(req.body);
+      
+      // SECURITY: Sanitize inputs while preserving undefined for optional fields
+      const sanitizeOrUndefined = (val: string | undefined, maxLen?: number): string | undefined => {
+        if (!val) return undefined;
+        const sanitized = sanitizeAIInput(val, maxLen);
+        return sanitized || undefined;
+      };
+      
+      const jobPosting = {
+        jobTitle: sanitizeAIInput(rawPosting.jobTitle, 500),
+        jobDescription: sanitizeAIInput(rawPosting.jobDescription, SECURITY_CONFIG.MAX_JOB_DESCRIPTION_LENGTH),
+        requiredQualifications: sanitizeOrUndefined(rawPosting.requiredQualifications),
+        preferredQualifications: sanitizeOrUndefined(rawPosting.preferredQualifications),
+        salaryMin: rawPosting.salaryMin,
+        salaryMax: rawPosting.salaryMax,
+        location: sanitizeOrUndefined(rawPosting.location, 500),
+      };
       
       const analysis = await aiVacancyMapper.analyzeJobPosting(jobPosting);
       console.log("Vacancy analysis result:", analysis);
@@ -932,10 +1027,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Resume Upload and Analysis API endpoint
-  app.post("/api/upload-resume", upload.single('resume'), async (req: MulterRequest, res) => {
+  // SECURITY: AI endpoint with rate limiting and file content validation
+  app.post("/api/upload-resume", aiEndpointRateLimiter, upload.single('resume'), async (req: MulterRequest, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: "No resume file uploaded" });
+      }
+
+      // SECURITY: Validate file content matches extension (magic bytes check)
+      const extension = path.extname(req.file.originalname).toLowerCase();
+      if (!validateFileMagicBytes(req.file.path, extension)) {
+        fs.unlinkSync(req.file.path);
+        return res.status(400).json({ message: "File content does not match file extension" });
       }
 
       console.log("Processing uploaded resume:", req.file.originalname);
@@ -1092,9 +1195,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/work-role-match/:id", async (req, res) => {
+  // SECURITY: AI endpoint with rate limiting and input sanitization
+  app.post("/api/work-role-match/:id", aiEndpointRateLimiter, async (req, res) => {
     try {
-      const workRoleId = parseInt(req.params.id);
+      const workRoleId = safeParseId(req.params.id);
+      if (workRoleId === null) {
+        return res.status(400).json({ message: "Invalid work role ID" });
+      }
+      
+      // SECURITY: Validate input lengths before processing
+      const lengthChecks = [
+        validateInputLength(req.body.jobTitle, 'jobTitle', 500),
+        validateInputLength(req.body.jobDescription, 'jobDescription', SECURITY_CONFIG.MAX_JOB_DESCRIPTION_LENGTH),
+        validateInputLength(req.body.requiredQualifications, 'requiredQualifications', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+        validateInputLength(req.body.preferredQualifications, 'preferredQualifications', SECURITY_CONFIG.MAX_TEXT_INPUT_LENGTH),
+      ];
+      
+      const invalidCheck = lengthChecks.find(c => !c.valid);
+      if (invalidCheck) {
+        return res.status(400).json({ message: invalidCheck.error });
+      }
+      
       const vacancySchema = z.object({
         jobTitle: z.string(),
         jobDescription: z.string(),
@@ -1102,7 +1223,22 @@ export async function registerRoutes(app: Express): Promise<Server> {
         preferredQualifications: z.string().optional()
       });
 
-      const jobPosting = vacancySchema.parse(req.body);
+      const rawPosting = vacancySchema.parse(req.body);
+      
+      // SECURITY: Sanitize inputs while preserving undefined for optional fields
+      const sanitizeOrUndefined = (val: string | undefined, maxLen?: number): string | undefined => {
+        if (!val) return undefined;
+        const sanitized = sanitizeAIInput(val, maxLen);
+        return sanitized || undefined;
+      };
+      
+      const jobPosting = {
+        jobTitle: sanitizeAIInput(rawPosting.jobTitle, 500),
+        jobDescription: sanitizeAIInput(rawPosting.jobDescription, SECURITY_CONFIG.MAX_JOB_DESCRIPTION_LENGTH),
+        requiredQualifications: sanitizeOrUndefined(rawPosting.requiredQualifications),
+        preferredQualifications: sanitizeOrUndefined(rawPosting.preferredQualifications),
+      };
+      
       const match = await aiVacancyMapper.getDetailedWorkRoleMatch(workRoleId, jobPosting);
       res.json(match);
     } catch (error) {
