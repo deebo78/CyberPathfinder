@@ -55,7 +55,15 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 ### Recent Changes
 
 #### November 26, 2025
-- **Comprehensive Security Audit & Remediation**:
+- **Comprehensive Security Audit & Remediation (Phase 2)**:
+  - Added AI endpoint rate limiting: 10 req/15min for cost-sensitive endpoints (/api/analyze-profile, /api/analyze-vacancy, /api/upload-resume, /api/extract-document, /api/track-recommendation/:id, /api/work-role-match/:id)
+  - Implemented file magic bytes validation (validateFileMagicBytes) to prevent extension spoofing
+  - Added prompt injection protection with sanitizeAIInput helper (5000 char limit, control char stripping, injection pattern filtering)
+  - Created sanitizeOrUndefined helper to preserve undefined for optional AI inputs (prevents empty strings in prompts)
+  - Verified all database queries use Drizzle ORM parameterization (no SQL injection vectors)
+  - Updated SECURITY.md with API key generation instructions and prompt injection documentation
+
+- **Comprehensive Security Audit & Remediation (Phase 1)**:
   - Created server/security.ts with centralized security middleware and configuration
   - Replaced VITE_ENABLE_ADMIN flag-based auth with proper API key authentication (requireAdminApiKey middleware)
   - Protected all admin endpoints: /api/statistics, /api/search, /api/import/*, /api/export/*

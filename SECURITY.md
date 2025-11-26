@@ -169,6 +169,12 @@ AI endpoints are protected against prompt injection attacks where users attempt 
    - Excessive whitespace normalized
    - Filtered patterns replaced with `[FILTERED]`
 
+4. **Optional Field Preservation**: Optional fields use `sanitizeOrUndefined` helper to ensure:
+   - Empty/undefined inputs remain undefined (not coerced to empty strings)
+   - Whitespace-only inputs become undefined
+   - Non-empty inputs are properly sanitized
+   - Prevents empty string payloads from triggering unnecessary AI prompt segments
+
 ### Implementation
 
 ```typescript
