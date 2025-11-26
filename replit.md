@@ -40,9 +40,34 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 - **Transparent Match Score System**: 100-point scoring system with definable skills and soft skills analysis, providing detailed breakdowns.
 - **Map Vacancy Analysis System**: Analyzes job postings for consistency, identifies conflicts, and provides AI-powered improvement suggestions. Includes critical issue detection and nuanced scoring for education and relevance.
 - **Resume Validation & Credibility Assessment**: Analyzes resumes for timeline consistency, credential authority, and future expertise claims, providing a credibility score with visual assessment.
-- **Admin Access Control**: Environment-based security (VITE_ENABLE_ADMIN) for hiding admin features and securing endpoints.
+- **Admin Access Control**: API key authentication (X-Admin-API-Key header) for admin endpoints, with environment-based UI toggle (VITE_ENABLE_ADMIN) for hiding admin features in frontend.
+
+### Security Architecture
+- **Authentication**: Admin endpoints require X-Admin-API-Key header with valid ADMIN_API_KEY
+- **Rate Limiting**: Tiered rate limiting - 100 req/15min general, 50 req/15min API, 20 req/15min admin endpoints
+- **Diagnostic Endpoints**: Protected by ALLOW_DIAGNOSTICS=true environment variable requirement
+- **Error Handling**: Sanitized error responses prevent sensitive data leakage
+- **File Uploads**: Validated file types (.xlsx, .csv, .doc, .docx), size limits (10MB), path sanitization
+- **CORS**: Configured for Replit development URLs and production domains
+- **Security Headers**: Helmet.js middleware with CSP, HSTS, and other security headers
+- **Documentation**: See SECURITY.md for complete security architecture details
 
 ### Recent Changes
+
+#### November 26, 2025
+- **Comprehensive Security Audit & Remediation**:
+  - Created server/security.ts with centralized security middleware and configuration
+  - Replaced VITE_ENABLE_ADMIN flag-based auth with proper API key authentication (requireAdminApiKey middleware)
+  - Protected all admin endpoints: /api/statistics, /api/search, /api/import/*, /api/export/*
+  - Added restrictDiagnosticAccess middleware for test endpoints (/api/test, /api/test-openai, /api/test-database)
+  - Re-enabled and configured tiered rate limiting with SECURITY_CONFIG
+  - Fixed error handler that threw after sending response
+  - Added safeParseId helper for input validation on route parameters
+  - Enhanced file upload security with file type validation and path sanitization
+  - Implemented sanitizeLogData function to prevent sensitive data in logs
+  - Fixed CORS to accept dynamic Replit development URLs
+  - Created SECURITY.md documentation and updated .env.example
+  - E2E verified: Admin endpoints return 503 without key, public endpoints accessible, health check functional
 
 #### November 14, 2025
 - **Career Tracks Explorer NICE Framework v2.0 Category Integration**: Replaced hardcoded legacy category mappings with dynamic NICE Framework categories
