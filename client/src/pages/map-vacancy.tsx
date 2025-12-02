@@ -679,9 +679,15 @@ export default function MapVacancy() {
         </div>
 
         {/* Results Section */}
-        <div className="space-y-6">
+        <div className="space-y-6" data-testid="vacancy-analysis-results">
           {analysis && (
             <>
+              {/* Print-only header - hidden on screen, visible when printing */}
+              <div className="hidden print:block print-header" data-testid="print-header-vacancy">
+                <h1 style={{ fontSize: '24pt', marginBottom: '10px' }}>CyberPathfinder Job Posting Analysis Report</h1>
+                <p style={{ color: '#666' }}>Generated on {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+              </div>
+
               {/* Print/Save Actions */}
               <Card>
                 <CardHeader>
