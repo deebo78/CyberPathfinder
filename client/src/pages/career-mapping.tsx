@@ -210,6 +210,30 @@ export default function CareerMapping() {
       ` : ''}
       
       <div class="section">
+        <h2>Match Score Calculation Methodology</h2>
+        <div style="background: #f0f9ff; border: 1px solid #0284c7; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+              <h4 style="color: #0369a1; margin: 0 0 10px 0;">Definable Skills (60%):</h4>
+              <ul style="margin: 0; padding-left: 20px;">
+                <li>Certification Alignment (25%)</li>
+                <li>Experience Length & Depth (20%)</li>
+                <li>Technical Skills Match (15%)</li>
+              </ul>
+            </div>
+            <div>
+              <h4 style="color: #7c3aed; margin: 0 0 10px 0;">Soft Skills Analysis (40%):</h4>
+              <ul style="margin: 0; padding-left: 20px;">
+                <li>Previous Role Context (20%)</li>
+                <li>Industry Domain Knowledge (10%)</li>
+                <li>Career Progression Pattern (10%)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
         <h2>Recommended Career Tracks</h2>
         ${analysis.recommendations.map(rec => `
           <div class="recommendation">
@@ -218,8 +242,41 @@ export default function CareerMapping() {
               <span class="match-score">${rec.matchScore}% Match</span>
             </div>
             <p><strong>Recommended Level:</strong> ${rec.recommendedLevel}</p>
-            ${rec.salaryRange ? `<p class="salary">Salary Range: $${rec.salaryRange.min}K - $${rec.salaryRange.max}K USD</p>` : ''}
+            ${rec.salaryRange ? `
+              <p class="salary">Salary Range: $${rec.salaryRange.min}K - $${rec.salaryRange.max}K USD</p>
+              ${rec.salaryRange.calculationDetails ? `<p style="font-size: 0.9em; color: #666; margin-top: 5px;"><em>${rec.salaryRange.calculationDetails}</em></p>` : ''}
+            ` : ''}
             <p>${rec.reasoning}</p>
+            
+            ${rec.gapAnalysis ? `
+              ${rec.gapAnalysis.strengths && rec.gapAnalysis.strengths.length > 0 ? `
+                <div style="margin-top: 15px; background: #f0fdf4; border: 1px solid #22c55e; border-radius: 6px; padding: 12px;">
+                  <h4 style="color: #166534; margin: 0 0 8px 0;">Your Strengths:</h4>
+                  <ul style="margin: 0; padding-left: 20px;">
+                    ${rec.gapAnalysis.strengths.map(strength => `<li>${strength}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+              
+              ${rec.gapAnalysis.gaps && rec.gapAnalysis.gaps.length > 0 ? `
+                <div style="margin-top: 15px; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 6px; padding: 12px;">
+                  <h4 style="color: #92400e; margin: 0 0 8px 0;">Skill Gaps:</h4>
+                  <ul style="margin: 0; padding-left: 20px;">
+                    ${rec.gapAnalysis.gaps.map(gap => `<li>${gap}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+              
+              ${rec.gapAnalysis.recommendations && rec.gapAnalysis.recommendations.length > 0 ? `
+                <div style="margin-top: 15px; background: #eff6ff; border: 1px solid #3b82f6; border-radius: 6px; padding: 12px;">
+                  <h4 style="color: #1e40af; margin: 0 0 8px 0;">Action Items:</h4>
+                  <ul style="margin: 0; padding-left: 20px;">
+                    ${rec.gapAnalysis.recommendations.map(item => `<li>${item}</li>`).join('')}
+                  </ul>
+                </div>
+              ` : ''}
+            ` : ''}
+            
             <div style="margin-top: 15px;">
               <h4>Next Steps:</h4>
               <ul>
