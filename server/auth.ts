@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { users, userSessions, type User, type InsertUser } from "@shared/schema";
-import { eq, and, gt } from "drizzle-orm";
+import { eq, and, gt, lt } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
@@ -163,7 +163,7 @@ export async function deleteAllUserSessions(userId: number): Promise<void> {
 
 export async function cleanupExpiredSessions(): Promise<void> {
   const now = new Date();
-  await db.delete(userSessions).where(gt(now, userSessions.expiresAt));
+  await db.delete(userSessions).where(lt(userSessions.expiresAt, now));
 }
 
 export function sanitizeUser(user: User): Omit<User, 'passwordHash'> {

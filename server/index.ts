@@ -4,6 +4,7 @@ import { setupVite, serveStatic, log } from "./vite";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
+import cookieParser from "cookie-parser";
 import { SECURITY_CONFIG, sanitizeError, sanitizeLogData, getClientIp } from "./security";
 
 const app = express();
@@ -138,6 +139,7 @@ if (process.env.NODE_ENV === 'production') {
 
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
+app.use(cookieParser());
 
 // Request logging middleware with sanitization
 // SECURITY: Prevents logging of sensitive data like passwords, tokens, and PII

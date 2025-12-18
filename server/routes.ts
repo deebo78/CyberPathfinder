@@ -16,6 +16,21 @@ import {
   validateInputLength,
   SECURITY_CONFIG 
 } from "./security";
+import {
+  authenticateUser,
+  createUser,
+  changePassword,
+  resetUserPassword,
+  createSession,
+  validateSession,
+  deleteSession,
+  deleteAllUserSessions,
+  getAllUsers,
+  getUserById,
+  updateUser,
+  deleteUser,
+  sanitizeUser
+} from "./auth";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -76,7 +91,302 @@ function safeParseId(value: string): number | null {
   return parsed;
 }
 
+// Session cookie name
+const SESSION_COOKIE = 'session_id';
+
+// Middleware to require authentication
+function requireAuth(req: Request, res: Response, next: NextFunction): void {
+  const sessionId = req.cookies?.[SESSION_COOKIE];
+  if (!sessionId) {
+    res.status(401).json({ message: "Authentication required" });
+    return;
+  }
+  
+  validateSession(sessionId).then(user => {
+    if (!user) {
+      res.status(401).json({ message: "Invalid or expired session" });
+      return;
+    }
+    (req as any).user = user;
+    next();
+  }).catch(() => {
+    res.status(401).json({ message: "Authentication error" });
+  });
+}
+
+// Middleware to require admin role
+function requireAdminRole(req: Request, res: Response, next: NextFunction): void {
+  const user = (req as any).user;
+  if (!user || user.role !== 'admin') {
+    res.status(403).json({ message: "Admin access required" });
+    return;
+  }
+  next();
+}
+
 export async function registerRoutes(app: Express): Promise<Server> {
+  // ============================================
+  // AUTHENTICATION ROUTES
+  // ============================================
+  
+  // Login
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const loginSchema = z.object({
+        email: z.string().email(),
+        password: z.string().min(1)
+      });
+      
+      const { email, password } = loginSchema.parse(req.body);
+      const user = await authenticateUser(email, password);
+      
+      if (!user) {
+        return res.status(401).json({ message: "Invalid email or password" });
+      }
+      
+      const sessionId = await createSession(user.id);
+      
+      res.cookie(SESSION_COOKIE, sessionId, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      });
+      
+      res.json({ 
+        user: sanitizeUser(user),
+        mustChangePassword: user.mustChangePassword
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Login error:", error);
+      res.status(500).json({ message: "Login failed" });
+    }
+  });
+  
+  // Logout
+  app.post("/api/auth/logout", async (req, res) => {
+    try {
+      const sessionId = req.cookies?.[SESSION_COOKIE];
+      if (sessionId) {
+        await deleteSession(sessionId);
+      }
+      res.clearCookie(SESSION_COOKIE);
+      res.json({ message: "Logged out successfully" });
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.status(500).json({ message: "Logout failed" });
+    }
+  });
+  
+  // Get current session
+  app.get("/api/auth/session", async (req, res) => {
+    try {
+      const sessionId = req.cookies?.[SESSION_COOKIE];
+      if (!sessionId) {
+        return res.json({ authenticated: false });
+      }
+      
+      const user = await validateSession(sessionId);
+      if (!user) {
+        res.clearCookie(SESSION_COOKIE);
+        return res.json({ authenticated: false });
+      }
+      
+      res.json({ 
+        authenticated: true,
+        user: sanitizeUser(user),
+        mustChangePassword: user.mustChangePassword
+      });
+    } catch (error) {
+      console.error("Session check error:", error);
+      res.json({ authenticated: false });
+    }
+  });
+  
+  // Change password
+  app.post("/api/auth/change-password", requireAuth, async (req, res) => {
+    try {
+      const passwordSchema = z.object({
+        currentPassword: z.string().min(1),
+        newPassword: z.string().min(8, "Password must be at least 8 characters")
+      });
+      
+      const { currentPassword, newPassword } = passwordSchema.parse(req.body);
+      const user = (req as any).user;
+      
+      const authenticated = await authenticateUser(user.email, currentPassword);
+      if (!authenticated) {
+        return res.status(401).json({ message: "Current password is incorrect" });
+      }
+      
+      const success = await changePassword(user.id, newPassword);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to change password" });
+      }
+      
+      res.json({ message: "Password changed successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Change password error:", error);
+      res.status(500).json({ message: "Failed to change password" });
+    }
+  });
+  
+  // Set password (for first-time login)
+  app.post("/api/auth/set-password", requireAuth, async (req, res) => {
+    try {
+      const passwordSchema = z.object({
+        newPassword: z.string().min(8, "Password must be at least 8 characters")
+      });
+      
+      const { newPassword } = passwordSchema.parse(req.body);
+      const user = (req as any).user;
+      
+      if (!user.mustChangePassword) {
+        return res.status(400).json({ message: "Password change not required" });
+      }
+      
+      const success = await changePassword(user.id, newPassword);
+      if (!success) {
+        return res.status(500).json({ message: "Failed to set password" });
+      }
+      
+      res.json({ message: "Password set successfully" });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Set password error:", error);
+      res.status(500).json({ message: "Failed to set password" });
+    }
+  });
+  
+  // ============================================
+  // USER MANAGEMENT ROUTES (Admin only)
+  // ============================================
+  
+  // List all users
+  app.get("/api/admin/users", requireAuth, requireAdminRole, async (req, res) => {
+    try {
+      const users = await getAllUsers();
+      res.json(users.map(u => sanitizeUser(u)));
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      res.status(500).json({ message: "Failed to fetch users" });
+    }
+  });
+  
+  // Create/invite user
+  app.post("/api/admin/users", requireAuth, requireAdminRole, async (req, res) => {
+    try {
+      const userSchema = z.object({
+        email: z.string().email(),
+        role: z.enum(['admin', 'user']).default('user'),
+        displayName: z.string().optional()
+      });
+      
+      const { email, role, displayName } = userSchema.parse(req.body);
+      const { user, tempPassword } = await createUser(email, role, displayName);
+      
+      res.status(201).json({ 
+        user: sanitizeUser(user),
+        tempPassword // Show once to admin so they can share with user
+      });
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      if ((error as any)?.code === '23505') {
+        return res.status(409).json({ message: "User with this email already exists" });
+      }
+      console.error("Error creating user:", error);
+      res.status(500).json({ message: "Failed to create user" });
+    }
+  });
+  
+  // Update user
+  app.patch("/api/admin/users/:id", requireAuth, requireAdminRole, async (req, res) => {
+    try {
+      const id = safeParseId(req.params.id);
+      if (!id) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const updateSchema = z.object({
+        role: z.enum(['admin', 'user']).optional(),
+        displayName: z.string().optional(),
+        isActive: z.boolean().optional()
+      });
+      
+      const updates = updateSchema.parse(req.body);
+      const user = await updateUser(id, updates);
+      
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json(sanitizeUser(user));
+    } catch (error) {
+      if (error instanceof z.ZodError) {
+        return res.status(400).json({ message: "Invalid input", errors: error.errors });
+      }
+      console.error("Error updating user:", error);
+      res.status(500).json({ message: "Failed to update user" });
+    }
+  });
+  
+  // Reset user password
+  app.post("/api/admin/users/:id/reset-password", requireAuth, requireAdminRole, async (req, res) => {
+    try {
+      const id = safeParseId(req.params.id);
+      if (!id) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const tempPassword = await resetUserPassword(id);
+      if (!tempPassword) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      await deleteAllUserSessions(id);
+      
+      res.json({ tempPassword });
+    } catch (error) {
+      console.error("Error resetting password:", error);
+      res.status(500).json({ message: "Failed to reset password" });
+    }
+  });
+  
+  // Delete user
+  app.delete("/api/admin/users/:id", requireAuth, requireAdminRole, async (req, res) => {
+    try {
+      const id = safeParseId(req.params.id);
+      if (!id) {
+        return res.status(400).json({ message: "Invalid user ID" });
+      }
+      
+      const currentUser = (req as any).user;
+      if (currentUser.id === id) {
+        return res.status(400).json({ message: "Cannot delete your own account" });
+      }
+      
+      const deleted = await deleteUser(id);
+      if (!deleted) {
+        return res.status(404).json({ message: "User not found" });
+      }
+      
+      res.json({ message: "User deleted successfully" });
+    } catch (error) {
+      console.error("Error deleting user:", error);
+      res.status(500).json({ message: "Failed to delete user" });
+    }
+  });
+
   // Statistics endpoint (admin only)
   // SECURITY: Requires API key authentication in production, UI flag check in development
   app.get("/api/statistics", requireAdminApiKey, async (req, res) => {
