@@ -546,6 +546,7 @@ export const userSessions = pgTable("user_sessions", {
   sessionId: text("session_id").notNull().unique(),
   userId: integer("user_id").references(() => users.id).notNull(),
   expiresAt: timestamp("expires_at").notNull(),
+  lastActiveAt: timestamp("last_active_at").defaultNow(), // For idle timeout tracking
   createdAt: timestamp("created_at").defaultNow(),
 });
 

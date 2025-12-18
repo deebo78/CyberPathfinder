@@ -6,6 +6,7 @@ import crypto from "crypto";
 
 const SALT_ROUNDS = 12;
 const SESSION_DURATION_DAYS = 7;
+const IDLE_TIMEOUT_MINUTES = 30; // Logout after 30 minutes of inactivity
 
 export async function hashPassword(password: string): Promise<string> {
   return bcrypt.hash(password, SALT_ROUNDS);
