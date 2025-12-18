@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { users, userSessions, type User, type InsertUser } from "@shared/schema";
-import { eq, and, gt, lt } from "drizzle-orm";
+import { eq, and, gt, lt, ne } from "drizzle-orm";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 
@@ -84,7 +84,7 @@ export async function authenticateUser(email: string, password: string): Promise
   return user;
 }
 
-export async function changePassword(userId: number, newPassword: string): Promise<boolean> {
+export async function changePassword(userId: number, newPassword: string, currentSessionId?: string): Promise<boolean> {
   const passwordHash = await hashPassword(newPassword);
   
   const [updated] = await db.update(users)
@@ -94,6 +94,23 @@ export async function changePassword(userId: number, newPassword: string): Promi
     })
     .where(eq(users.id, userId))
     .returning();
+  
+  if (updated) {
+    // Invalidate all sessions for security (except current session if provided)
+    if (currentSessionId) {
+      // Delete all sessions except the current one
+      await db.delete(userSessions)
+        .where(
+          and(
+            eq(userSessions.userId, userId),
+            ne(userSessions.sessionId, currentSessionId)
+          )
+        );
+    } else {
+      // No current session specified, invalidate all
+      await deleteAllUserSessions(userId);
+    }
+  }
   
   return !!updated;
 }
@@ -115,13 +132,15 @@ export async function resetUserPassword(userId: number): Promise<string | null> 
 
 export async function createSession(userId: number): Promise<string> {
   const sessionId = generateSessionId();
-  const expiresAt = new Date();
+  const now = new Date();
+  const expiresAt = new Date(now);
   expiresAt.setDate(expiresAt.getDate() + SESSION_DURATION_DAYS);
   
   await db.insert(userSessions).values({
     sessionId,
     userId,
     expiresAt,
+    lastActiveAt: now, // Initialize for idle timeout tracking
   });
   
   return sessionId;
@@ -143,12 +162,28 @@ export async function validateSession(sessionId: string): Promise<User | null> {
     return null;
   }
   
+  // Check idle timeout - if no activity for 30 minutes, session is invalid
+  if (session.lastActiveAt) {
+    const idleThreshold = new Date(now.getTime() - IDLE_TIMEOUT_MINUTES * 60 * 1000);
+    if (session.lastActiveAt < idleThreshold) {
+      // Session has been idle too long, delete it
+      await deleteSession(sessionId);
+      return null;
+    }
+  }
+  
   const user = await getUserById(session.userId);
   if (!user || !user.isActive) {
     return null;
   }
   
   return user;
+}
+
+export async function updateSessionActivity(sessionId: string): Promise<void> {
+  await db.update(userSessions)
+    .set({ lastActiveAt: new Date() })
+    .where(eq(userSessions.sessionId, sessionId));
 }
 
 export async function deleteSession(sessionId: string): Promise<boolean> {

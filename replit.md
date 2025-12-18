@@ -43,7 +43,18 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 - **Admin Access Control**: API key authentication (X-Admin-API-Key header) for admin endpoints, with environment-based UI toggle (VITE_ENABLE_ADMIN) for hiding admin features in frontend.
 
 ### Security Architecture
-- **Authentication**: Admin endpoints require X-Admin-API-Key header with valid ADMIN_API_KEY
+- **User Authentication**: Cookie-based session management with bcrypt password hashing (12 rounds)
+  - Session cookie: HTTP-only, sameSite, 7-day max age
+  - Invite-only registration: Admin creates users with temporary passwords
+  - First-time login: Users must set a new password
+  - Role-based access: admin and user roles
+- **Session Security**:
+  - Idle timeout: Sessions expire after 30 minutes of inactivity
+  - Absolute timeout: Sessions expire after 7 days regardless of activity
+  - Password change invalidation: All other sessions are invalidated when password is changed (current session preserved)
+  - Automatic cleanup: Expired sessions are cleaned up on server startup and every 15 minutes
+  - Activity tracking: `lastActiveAt` timestamp updated on each authenticated request
+- **Admin API Protection**: Admin endpoints require X-Admin-API-Key header with valid ADMIN_API_KEY
 - **Rate Limiting**: Tiered rate limiting - 100 req/15min general, 50 req/15min API, 20 req/15min admin endpoints
 - **Diagnostic Endpoints**: Protected by ALLOW_DIAGNOSTICS=true environment variable requirement
 - **Error Handling**: Sanitized error responses prevent sensitive data leakage
@@ -53,6 +64,15 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 - **Documentation**: See SECURITY.md for complete security architecture details
 
 ### Recent Changes
+
+#### December 18, 2025
+- **Session Security Improvements**:
+  - Added `lastActiveAt` column to user_sessions table for tracking activity
+  - Implemented 30-minute idle timeout - sessions expire after 30 minutes of no activity
+  - Sessions are automatically invalidated when user changes their password (current session preserved)
+  - Added automatic cleanup of expired sessions on server startup and every 15 minutes
+  - Each authenticated request updates the session activity timestamp
+  - Added user menu to homepage header showing login status with Sign In/Sign Out functionality
 
 #### November 26, 2025
 - **Comprehensive Security Audit & Remediation (Phase 2)**:

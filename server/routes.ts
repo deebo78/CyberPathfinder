@@ -20,11 +20,13 @@ import {
   authenticateUser,
   createUser,
   changePassword,
+  updateSessionActivity,
   resetUserPassword,
   createSession,
   validateSession,
   deleteSession,
   deleteAllUserSessions,
+  cleanupExpiredSessions,
   getAllUsers,
   getUserById,
   updateUser,
@@ -102,12 +104,16 @@ function requireAuth(req: Request, res: Response, next: NextFunction): void {
     return;
   }
   
-  validateSession(sessionId).then(user => {
+  validateSession(sessionId).then(async user => {
     if (!user) {
+      res.clearCookie(SESSION_COOKIE);
       res.status(401).json({ message: "Invalid or expired session" });
       return;
     }
+    // Update session activity timestamp on each authenticated request
+    await updateSessionActivity(sessionId);
     (req as any).user = user;
+    (req as any).sessionId = sessionId; // Store for password change endpoint
     next();
   }).catch(() => {
     res.status(401).json({ message: "Authentication error" });
@@ -216,18 +222,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { currentPassword, newPassword } = passwordSchema.parse(req.body);
       const user = (req as any).user;
+      const currentSessionId = (req as any).sessionId;
       
       const authenticated = await authenticateUser(user.email, currentPassword);
       if (!authenticated) {
         return res.status(401).json({ message: "Current password is incorrect" });
       }
       
-      const success = await changePassword(user.id, newPassword);
+      // Pass current session ID to keep this session active while invalidating others
+      const success = await changePassword(user.id, newPassword, currentSessionId);
       if (!success) {
         return res.status(500).json({ message: "Failed to change password" });
       }
       
-      res.json({ message: "Password changed successfully" });
+      res.json({ message: "Password changed successfully. Other sessions have been logged out." });
     } catch (error) {
       if (error instanceof z.ZodError) {
         return res.status(400).json({ message: "Invalid input", errors: error.errors });
@@ -246,12 +254,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const { newPassword } = passwordSchema.parse(req.body);
       const user = (req as any).user;
+      const currentSessionId = (req as any).sessionId;
       
       if (!user.mustChangePassword) {
         return res.status(400).json({ message: "Password change not required" });
       }
       
-      const success = await changePassword(user.id, newPassword);
+      // Pass current session ID to keep this session active
+      const success = await changePassword(user.id, newPassword, currentSessionId);
       if (!success) {
         return res.status(500).json({ message: "Failed to set password" });
       }
@@ -1602,5 +1612,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   const httpServer = createServer(app);
+  
+  // Clean up expired sessions on startup and periodically (every 15 minutes)
+  cleanupExpiredSessions().catch(err => console.error("Initial session cleanup failed:", err));
+  setInterval(() => {
+    cleanupExpiredSessions().catch(err => console.error("Periodic session cleanup failed:", err));
+  }, 15 * 60 * 1000); // 15 minutes
+  
   return httpServer;
 }
