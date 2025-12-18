@@ -34,7 +34,7 @@ export default function Login() {
   });
 
   if (isAuthenticated) {
-    setLocation("/");
+    setLocation("/career-tracks");
     return null;
   }
 
@@ -48,7 +48,7 @@ export default function Login() {
         title: "Welcome back!",
         description: "You have successfully logged in.",
       });
-      setLocation("/");
+      setLocation("/career-tracks");
     } else {
       toast({
         title: "Login Failed",

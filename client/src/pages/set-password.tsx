@@ -47,7 +47,7 @@ export default function SetPassword() {
   }
 
   if (!mustChangePassword) {
-    setLocation("/");
+    setLocation("/career-tracks");
     return null;
   }
 
@@ -61,7 +61,7 @@ export default function SetPassword() {
         title: "Password Set",
         description: "Your password has been set successfully. Welcome to CyberPathfinder!",
       });
-      setLocation("/");
+      setLocation("/career-tracks");
     } else {
       toast({
         title: "Failed to Set Password",
