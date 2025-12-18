@@ -145,7 +145,6 @@ export default function CareerTracksExplorer() {
   // Dynamic counts from framework stats API
   const trackCount = frameworkStats?.careerTracks ?? (careerTracks as CareerTrack[])?.length ?? 0;
   const experienceLevels = frameworkStats?.experienceLevels ?? 4;
-  const workRolesCount = frameworkStats?.workRoles ?? 41;
   const certificationCount = frameworkStats?.certifications ?? (certifications ? (certifications as Certification[]).length : 0);
 
   const getCategoryIcon = (categoryCode?: string) => {
@@ -278,7 +277,7 @@ export default function CareerTracksExplorer() {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-3 gap-4 mb-8 max-w-2xl mx-auto">
           <Card>
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-blue-600">{trackCount}</div>
@@ -289,12 +288,6 @@ export default function CareerTracksExplorer() {
             <CardContent className="p-4 text-center">
               <div className="text-2xl font-bold text-green-600">{experienceLevels}</div>
               <div className="text-sm text-gray-600">Experience Levels</div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 text-center">
-              <div className="text-2xl font-bold text-purple-600">{workRolesCount}</div>
-              <div className="text-sm text-gray-600">Work Roles</div>
             </CardContent>
           </Card>
           <Card>
