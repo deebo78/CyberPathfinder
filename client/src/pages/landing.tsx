@@ -1,7 +1,15 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 import { 
   TrendingUp, 
   Building2, 
@@ -12,10 +20,17 @@ import {
   ArrowRight,
   CheckCircle2,
   Globe,
-  Briefcase
+  Briefcase,
+  LogIn,
+  LogOut,
+  UserCircle
 } from "lucide-react";
+import { useAuth } from "@/lib/auth";
 
 export default function Landing() {
+  const { user, isAuthenticated, logout } = useAuth();
+  const [, setLocation] = useLocation();
+  const isAdmin = user?.role === 'admin';
   const features = [
     {
       icon: TrendingUp,
@@ -52,6 +67,70 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      {/* Header */}
+      <header className="bg-white/80 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50">
+        <div className="container mx-auto px-6 py-4 flex justify-between items-center">
+          <div className="flex items-center">
+            <Shield className="h-6 w-6 text-blue-600 mr-2" />
+            <span className="font-semibold text-gray-900">CyberPathfinder</span>
+          </div>
+          
+          {isAuthenticated && user ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button 
+                  className="flex items-center gap-2 text-gray-700 hover:text-gray-900 focus:outline-none"
+                  data-testid="button-user-menu-landing"
+                >
+                  <div className={`p-1.5 rounded-full ${isAdmin ? 'bg-purple-100' : 'bg-blue-100'}`}>
+                    {isAdmin ? (
+                      <Shield className="w-5 h-5 text-purple-600" />
+                    ) : (
+                      <UserCircle className="w-5 h-5 text-blue-600" />
+                    )}
+                  </div>
+                  <span className="text-sm font-medium">
+                    {user.displayName || user.email.split('@')[0]}
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>
+                  <div className="flex flex-col">
+                    <span>{user.displayName || user.email.split('@')[0]}</span>
+                    <span className="text-xs text-gray-500 font-normal">{user.email}</span>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                {isAdmin && (
+                  <>
+                    <DropdownMenuItem onClick={() => setLocation("/users")}>
+                      <Users className="w-4 h-4 mr-2" />
+                      Manage Users
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                  </>
+                )}
+                <DropdownMenuItem 
+                  onClick={logout}
+                  className="text-red-600 focus:text-red-600"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Link href="/login">
+              <Button variant="outline" size="sm" data-testid="button-sign-in">
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign In
+              </Button>
+            </Link>
+          )}
+        </div>
+      </header>
+      
       {/* Hero Section */}
       <div className="container mx-auto px-6 py-16">
         <div className="text-center mb-16">
