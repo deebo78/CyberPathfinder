@@ -17,12 +17,16 @@ interface VacancyAnalysis {
   primaryMatches: WorkRoleMatch[];
   otherNotableRoles: WorkRoleMatch[];
   bestTrackMatch: {
-    trackId: number;
-    trackName: string;
-    matchPercentage: number;
-    careerProgression: CareerLevel[];
-    jobPositionLevel: string;
-    levelAlignment: {
+    trackId?: number;
+    id?: number;
+    trackName?: string;
+    name?: string;
+    description?: string;
+    rationale?: string;
+    matchPercentage?: number;
+    careerProgression?: CareerLevel[];
+    jobPositionLevel?: string;
+    levelAlignment?: {
       isAligned: boolean;
       issues: string[];
       recommendations: string[];
@@ -71,6 +75,7 @@ interface VacancyAnalysis {
       finalScore: number;
     };
   };
+  qualityAssessment?: string;
 }
 
 interface CareerLevel {
@@ -849,6 +854,14 @@ export default function MapVacancy() {
                               </div>
                             ))}
                           </div>
+                        </div>
+                      )}
+                      
+                      {/* Recommendation Rationale */}
+                      {analysis.bestTrackMatch.rationale && (
+                        <div className="bg-blue-50 border border-blue-100 rounded-lg p-3">
+                          <h4 className="text-sm font-medium text-blue-900 mb-1">Why This Recommendation</h4>
+                          <p className="text-sm text-blue-800">{analysis.bestTrackMatch.rationale}</p>
                         </div>
                       )}
                       

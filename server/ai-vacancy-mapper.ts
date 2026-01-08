@@ -266,7 +266,8 @@ RESPONSE FORMAT (JSON only):
   "bestTrackMatch": {
     "id": track_id_number,
     "name": "track_name_from_available_tracks",
-    "description": "track_description_from_available_tracks"
+    "description": "track_description_from_available_tracks",
+    "rationale": "Explain WHY this career track was recommended - consider factors like: seniority level indicated by experience requirements, strategic vs tactical focus, leadership/oversight responsibilities, and how the role fits into a broader career trajectory. Be specific about what in the job posting led to this recommendation."
   } // or null if not cybersecurity related,
   "extractedRequirements": {
     "skills": ["skill1", "skill2"],
