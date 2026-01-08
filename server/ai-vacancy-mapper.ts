@@ -106,9 +106,9 @@ export class AIVacancyMapper {
 
   async analyzeJobPosting(jobPosting: JobPosting): Promise<VacancyAnalysis> {
     try {
-      // Get all work roles, career tracks, and certifications from the database
+      // Get all work roles, career tracks (NICE v2.0 only), and certifications from the database
       const workRoles = await storage.getWorkRoles();
-      const careerTracks = await storage.getCareerTracks();
+      const careerTracks = await storage.getCareerTracks({ isNiceV2: true });
       const certifications = await storage.getCertifications();
       
       // Create a summary of work roles for the AI
@@ -221,6 +221,13 @@ Common certification prerequisites to validate:
 - CISM: Requires 5 years experience in information security management
 - CRISC: Requires 3 years experience in IS risk and control
 Flag when job postings state eligibility requirements that contradict these official prerequisites.
+
+IMPORTANT - SECURITY CLEARANCES ARE NOT CERTIFICATIONS:
+Security clearances (SECRET, TOP SECRET, TS/SCI, etc.) are government-granted access levels based on background investigations and adjudication. They are NOT professional certifications and should NOT be:
+- Listed under "certifications" in extractedRequirements
+- Flagged as certification mismatches or mischaracterizations
+- Compared against certification level references
+Instead, clearance requirements should be noted as part of "experience" requirements if mentioned, but never treated as credential issues.
 
 Step 2: 📝 List Issues with Specific Examples
 Output each problem as its own bullet beginning with an em-dash (—).
