@@ -52,19 +52,21 @@ interface VacancyAnalysis {
   };
   roleConsistencyAnalysis?: {
     summary: string;
-    conflictsFound: string[];
-    unrealisticExpectations: string[];
-    redundantOrDuplicateRequirements: string[];
+    issuesFound?: string[];
+    // Legacy fields for backward compatibility
+    conflictsFound?: string[];
+    unrealisticExpectations?: string[];
+    redundantOrDuplicateRequirements?: string[];
     missingCompetencies?: string[];
-    recommendedImprovements: string[];
+    recommendedImprovements?: string[];
     exampleRewrites?: Array<{
       section: string;
       original: string;
       improved: string;
       rationale: string;
     }>;
-    overallConsistencyScore: number;
-    severityLevel: 'low' | 'medium' | 'high' | 'critical';
+    overallConsistencyScore?: number;
+    severityLevel?: 'low' | 'medium' | 'high' | 'critical' | 'ready';
     scoringBreakdown?: {
       baseScore: number;
       deductions: Array<{
@@ -287,8 +289,8 @@ export default function MapVacancy() {
         <div class="section">
           <h2>Quality Assessment</h2>
           <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-            <span class="severity ${analysis.roleConsistencyAnalysis.severityLevel.toLowerCase()}">
-              ${analysis.roleConsistencyAnalysis.severityLevel} Priority
+            <span class="severity ${(analysis.roleConsistencyAnalysis.severityLevel || 'moderate').toLowerCase()}">
+              ${analysis.roleConsistencyAnalysis.severityLevel || 'Moderate'} Priority
             </span>
             ${analysis.roleConsistencyAnalysis.overallConsistencyScore ? `
               <span><strong>Score:</strong> ${analysis.roleConsistencyAnalysis.overallConsistencyScore}/100</span>
@@ -296,21 +298,18 @@ export default function MapVacancy() {
           </div>
           <p>${analysis.roleConsistencyAnalysis.summary}</p>
           
-          ${analysis.roleConsistencyAnalysis.conflictsFound && analysis.roleConsistencyAnalysis.conflictsFound.length > 0 ? `
-            <div style="margin: 15px 0;">
-              <h4>Conflicts Found:</h4>
-              <ul>
-                ${analysis.roleConsistencyAnalysis.conflictsFound.map(conflict => `<li>${conflict}</li>`).join('')}
-              </ul>
-            </div>
-          ` : ''}
           
-          ${analysis.roleConsistencyAnalysis.recommendedImprovements && analysis.roleConsistencyAnalysis.recommendedImprovements.length > 0 ? `
+          ${analysis.roleConsistencyAnalysis?.exampleRewrites && analysis.roleConsistencyAnalysis.exampleRewrites.length > 0 ? `
             <div style="margin: 15px 0;">
-              <h4>Recommended Improvements:</h4>
-              <ul>
-                ${analysis.roleConsistencyAnalysis.recommendedImprovements.map(improvement => `<li>${improvement}</li>`).join('')}
-              </ul>
+              <h4>Suggested Rewrites:</h4>
+              ${analysis.roleConsistencyAnalysis.exampleRewrites.map((rewrite: any) => `
+                <div style="margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 5px;">
+                  <p><strong>${rewrite.section}</strong></p>
+                  <p style="color: #c53030;"><em>Original:</em> "${rewrite.original}"</p>
+                  <p style="color: #276749;"><em>Improved:</em> "${rewrite.improved}"</p>
+                  <p style="color: #555; font-size: 0.9em;"><em>Why:</em> ${rewrite.rationale}</p>
+                </div>
+              `).join('')}
             </div>
           ` : ''}
         </div>
@@ -1008,63 +1007,28 @@ export default function MapVacancy() {
                         </div>
                       )}
 
-                      {/* Missing Competencies */}
-                      {analysis.roleConsistencyAnalysis.missingCompetencies && analysis.roleConsistencyAnalysis.missingCompetencies.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">Missing Competencies</h4>
-                          <div className="space-y-2">
-                            {analysis.roleConsistencyAnalysis.missingCompetencies.map((competency, idx) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <AlertTriangle className="h-4 w-4 text-orange-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">{competency}</span>
-                              </div>
-                            ))}
+                      {/* Issues Found - only show if qualityAssessment isn't present (to avoid redundancy) */}
+                      {!analysis.qualityAssessment && (() => {
+                        const issues = analysis.roleConsistencyAnalysis.issuesFound || [
+                          ...(analysis.roleConsistencyAnalysis.conflictsFound || []),
+                          ...(analysis.roleConsistencyAnalysis.unrealisticExpectations || []),
+                          ...(analysis.roleConsistencyAnalysis.redundantOrDuplicateRequirements || []),
+                          ...(analysis.roleConsistencyAnalysis.missingCompetencies || [])
+                        ];
+                        return issues.length > 0 ? (
+                          <div>
+                            <h4 className="text-sm font-medium text-gray-900 mb-2">Issues Found</h4>
+                            <div className="space-y-2">
+                              {issues.map((issue, idx) => (
+                                <div key={idx} className="flex items-start gap-2 text-sm">
+                                  <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                                  <span className="text-gray-700">{issue}</span>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        </div>
-                      )}
-
-                      {/* Issues and Recommendations */}
-                      {(analysis.roleConsistencyAnalysis.conflictsFound.length > 0 ||
-                        analysis.roleConsistencyAnalysis.unrealisticExpectations.length > 0 ||
-                        analysis.roleConsistencyAnalysis.redundantOrDuplicateRequirements.length > 0) && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">Issues Found</h4>
-                          <div className="space-y-2">
-                            {analysis.roleConsistencyAnalysis.conflictsFound.map((conflict, idx) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <XCircle className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">{conflict}</span>
-                              </div>
-                            ))}
-                            {analysis.roleConsistencyAnalysis.unrealisticExpectations.map((expectation, idx) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <AlertCircle className="h-4 w-4 text-amber-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">{expectation}</span>
-                              </div>
-                            ))}
-                            {analysis.roleConsistencyAnalysis.redundantOrDuplicateRequirements.map((redundant, idx) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <AlertCircle className="h-4 w-4 text-blue-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">{redundant}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-
-                      {analysis.roleConsistencyAnalysis.recommendedImprovements.length > 0 && (
-                        <div>
-                          <h4 className="text-sm font-medium text-gray-900 mb-2">Recommended Improvements</h4>
-                          <div className="space-y-2">
-                            {analysis.roleConsistencyAnalysis.recommendedImprovements.map((improvement, idx) => (
-                              <div key={idx} className="flex items-start gap-2 text-sm">
-                                <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
-                                <span className="text-gray-700">{improvement}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
+                        ) : null;
+                      })()}
 
                       {/* Example Rewrites */}
                       {analysis.roleConsistencyAnalysis.exampleRewrites && analysis.roleConsistencyAnalysis.exampleRewrites.length > 0 && (

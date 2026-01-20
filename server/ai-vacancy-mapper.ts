@@ -61,11 +61,13 @@ interface VacancyAnalysis {
   qualityAssessment?: string;
   roleConsistencyAnalysis?: {
     summary: string;
-    conflictsFound: string[];
-    unrealisticExpectations: string[];
-    redundantOrDuplicateRequirements: string[];
-    missingCompetencies: string[];
-    recommendedImprovements: string[];
+    issuesFound?: string[];
+    // Legacy fields for backward compatibility
+    conflictsFound?: string[];
+    unrealisticExpectations?: string[];
+    redundantOrDuplicateRequirements?: string[];
+    missingCompetencies?: string[];
+    recommendedImprovements?: string[];
     exampleRewrites?: Array<{
       section: string;
       original: string;
@@ -73,7 +75,7 @@ interface VacancyAnalysis {
       rationale: string;
     }>;
     overallConsistencyScore?: number;
-    severityLevel: string;
+    severityLevel?: string;
     scoringBreakdown?: {
       baseScore: number;
       deductions: Array<{
@@ -289,74 +291,34 @@ RESPONSE FORMAT (JSON only):
   "matchSummary": "Honest overall assessment",
   "qualityAssessment": "SEVERITY CATEGORY\nSummary: One-sentence overall health assessment\nIssues:\n— Issue 1 description\n— Issue 2 description\n— Additional issues as needed",
   "roleConsistencyAnalysis": {
-    "summary": "Overall priority level for revision with specific rationale",
-    "conflictsFound": ["All specific conflicts identified with quoted text"],
-    "unrealisticExpectations": ["All unrealistic requirements with specific examples"],
-    "redundantOrDuplicateRequirements": ["All redundancies with quoted examples"],
-    "missingCompetencies": ["All missing cybersecurity competencies"],
-    "recommendedImprovements": ["All specific improvement suggestions with actionable steps"],
-    "internalConsistencyCheck": "Validation that all recommended changes work together harmoniously without creating new conflicts",
-    "coherentSolutionSet": "Summary of how all recommendations align to create a consistent, improved job posting",
+    "summary": "2-3 sentence assessment of the job posting's overall quality and what needs improvement",
+    "issuesFound": ["Each distinct issue with a brief description - do NOT repeat the full qualityAssessment issues here, just list the category names"],
     "exampleRewrites": [
       {
-        "section": "section name",
-        "original": "exact problematic text from job posting",
-        "improved": "specific rewrite suggestion",
-        "rationale": "DETAILED explanation including: 1) What specific problem this fixes, 2) Why this change improves candidate attraction, 3) How it aligns with industry standards, 4) What impact the original wording had on qualified candidates, 5) How this change works with other recommendations to create a coherent job posting"
+        "section": "section name (e.g., Education Requirements, Certification Requirements, Experience Requirements)",
+        "original": "exact problematic text quoted from the job posting",
+        "improved": "your specific rewrite that fixes the issue",
+        "rationale": "2-3 sentences explaining: what's wrong with the original, how the fix helps, and why it matters for candidates"
       }
     ],
     "severityLevel": "critical|high|moderate|low|ready"
   }
 }
 
-REWRITE EXAMPLES REQUIREMENT:
-For EVERY significant issue identified in the qualityAssessment, provide specific rewrite examples in the exampleRewrites array.
-Include the exact problematic text from the job posting and show how to fix it.
+REWRITE GUIDELINES:
+- Provide ONE rewrite example per significant issue (not every minor concern)
+- Quote the EXACT problematic text from the job posting in "original"
+- Keep rationales concise: 2-3 sentences max explaining the problem and benefit of the fix
+- DO NOT rewrite salary sections unless there's a clear misalignment
+- Ensure all rewrites work together consistently (e.g., if you upgrade education, ensure certifications align)
 
-IMPORTANT: DO NOT provide rewrite examples for salary sections unless there is a clear salary-experience misalignment.
-DO NOT suggest adding generic phrases like "commensurate with experience and qualifications" to salary ranges.
-
-EXAMPLE REWRITE FORMAT:
+EXAMPLE REWRITE:
 {
   "section": "Certification Requirements",
-  "original": "Possesses or obtains within 12 months of employment an intermediate-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
-  "improved": "Possesses or obtains within 12 months of employment a professional-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
-  "rationale": "CISSP, CRISC, CISA, and CISM are professional-level certifications that typically require 3-5 years of experience and demonstrate advanced expertise in cybersecurity governance, risk management, and compliance. Calling them 'intermediate-level' misrepresents their difficulty and value, potentially deterring qualified candidates who recognize these as senior-level achievements. The CISSP alone requires 5 years of experience in two or more security domains, making it clearly a professional-level certification. This mischaracterization could also lead to compensation issues since professional-level certifications command higher salaries than intermediate ones."
-}
-
-CRITICAL REQUIREMENT: For EVERY issue mentioned in qualityAssessment, provide a corresponding rewrite example in the exampleRewrites array.
-DO NOT leave the roleConsistencyAnalysis partially filled. Complete ALL fields with substantive content.
-
-MANDATORY REWRITE EXAMPLES:
-- If you identify "Certification Prerequisite Errors" → provide rewrite for certification requirements
-- If you identify "Salary-Experience Misalignment" → provide rewrite for salary or experience section  
-- If you identify "Education-Level Mismatch" → provide rewrite for education requirements
-- If you identify "Role Level Blurred" → provide rewrite for job title or role description
-
-RATIONALE REQUIREMENTS:
-Each rewrite rationale must be comprehensive and educational, including:
-1. SPECIFIC PROBLEM: What exactly is wrong with the original text
-2. INDUSTRY CONTEXT: Why this matters in cybersecurity hiring
-3. CANDIDATE IMPACT: How the original wording affects qualified applicants
-4. MARKET ALIGNMENT: How the change aligns with industry standards
-5. COHERENCE: How this change works with other recommendations
-6. MEASURABLE BENEFIT: What improvement this creates (better candidate quality, reduced confusion, etc.)
-
-Minimum 3-4 sentences per rationale. Avoid generic explanations.
-
-INTERNAL CONSISTENCY VALIDATION:
-Before finalizing recommendations, validate that all suggested changes work together harmoniously:
-- If suggesting role level changes AND certification level changes, ensure they align (e.g., don't suggest "intermediate role" with "professional certifications")
-- If suggesting salary changes AND experience changes, ensure compensation matches new experience requirements
-- If suggesting education changes AND certification changes, ensure they're complementary not contradictory
-- Provide ONE coherent set of recommendations that work together as a complete solution
-
-EXAMPLE COHERENT SOLUTION SET:
-If certifications are professional-level (CISSP, CISA, CISM), then:
-- Role level should be "Senior" or "Professional" level
-- Experience should be 5+ years minimum
-- Salary should align with senior/professional range ($110K-150K)
-- Education should match professional expectations (Bachelor's required, Master's preferred)`;
+  "original": "intermediate-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
+  "improved": "professional-level cybersecurity certification (e.g., CISSP, CRISC, CISA, CISM)",
+  "rationale": "CISSP, CISA, and CISM require 5+ years experience and are professional-level certifications, not intermediate. Mislabeling them may deter qualified candidates who recognize their true value."
+}`;
 
       // Try gpt-4o-mini first as fallback, then gpt-4o
       let response;
@@ -416,11 +378,8 @@ If certifications are professional-level (CISSP, CISA, CISM), then:
       if (!analysis.roleConsistencyAnalysis) {
         analysis.roleConsistencyAnalysis = {
           summary: "No consistency analysis available.",
-          conflictsFound: [],
-          unrealisticExpectations: [],
-          redundantOrDuplicateRequirements: [],
-          recommendedImprovements: [],
-          overallConsistencyScore: 75,
+          issuesFound: [],
+          exampleRewrites: [],
           severityLevel: "low"
         };
       }
@@ -485,12 +444,9 @@ If certifications are professional-level (CISSP, CISA, CISM), then:
         matchSummary: 'Analysis could not be completed due to API error. Manual review recommended.',
         qualityAssessment: 'MODERATE PRIORITY\nSummary: Unable to perform analysis due to API error.\nIssues:\n— API connection failed, manual review required',
         roleConsistencyAnalysis: {
-          summary: 'Unable to perform consistency analysis due to API error.',
-          conflictsFound: [],
-          unrealisticExpectations: [],
-          redundantOrDuplicateRequirements: [],
-          missingCompetencies: [],
-          recommendedImprovements: ['Please verify job posting requirements manually'],
+          summary: 'Unable to perform consistency analysis due to API error. Please verify job posting requirements manually.',
+          issuesFound: [],
+          exampleRewrites: [],
           severityLevel: 'moderate'
         }
       } as VacancyAnalysis;
