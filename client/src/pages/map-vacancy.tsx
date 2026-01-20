@@ -118,6 +118,7 @@ interface WorkRoleMatch {
     matchedKSAs: string[];
     missingCriticalKSAs: string[];
   };
+  kstAlignmentExplanation?: string; // HR-friendly explanation of why this role matches
 }
 
 export default function MapVacancy() {
@@ -249,6 +250,12 @@ export default function MapVacancy() {
             </div>
             <p><strong>Code:</strong> ${match.workRoleCode} • <strong>Specialty:</strong> ${match.specialtyArea}</p>
             <p>${match.matchReason}</p>
+            ${match.kstAlignmentExplanation ? `
+              <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 6px; margin-top: 10px;">
+                <p style="font-weight: 600; font-size: 0.85em; color: #1e40af; margin: 0 0 6px 0;">Why This Role Matches</p>
+                <p style="margin: 0; color: #1e3a8a; font-size: 0.9em;">${match.kstAlignmentExplanation}</p>
+              </div>
+            ` : ''}
           </div>
         `).join('')}
       </div>
@@ -781,6 +788,12 @@ export default function MapVacancy() {
                           </Badge>
                         </div>
                         <p className="text-sm text-gray-700 mb-3">{match.matchReason}</p>
+                        {match.kstAlignmentExplanation && (
+                          <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 mb-3">
+                            <p className="text-xs font-medium text-blue-800 mb-1">Why This Role Matches</p>
+                            <p className="text-sm text-blue-900">{match.kstAlignmentExplanation}</p>
+                          </div>
+                        )}
                         <Button
                           onClick={() => getCandidatesByWorkRole(match.workRoleId)}
                           variant="outline"

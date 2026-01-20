@@ -27,6 +27,7 @@ interface WorkRoleMatch {
   category: string;
   specialtyArea: string;
   candidateCount?: number;
+  kstAlignmentExplanation?: string; // HR-friendly explanation of why this role matches based on KSTs
 }
 
 interface VacancyAnalysis {
@@ -224,6 +225,113 @@ export class AIVacancyMapper {
       },
       calculationDetails
     };
+  }
+
+  /**
+   * Generates HR-friendly explanations of why work roles match based on NICE Framework KSTs
+   */
+  private async generateKSTAlignmentExplanations(
+    matches: WorkRoleMatch[],
+    jobPosting: JobPosting
+  ): Promise<WorkRoleMatch[]> {
+    if (matches.length === 0) return matches;
+
+    try {
+      // Fetch KSTs for matched work roles (limit to top 3 to keep prompt size manageable)
+      const topMatches = matches.slice(0, 3);
+      const workRoleKSTs = await Promise.all(
+        topMatches.map(async (match) => {
+          const roleWithRelations = await storage.getWorkRoleWithRelations(match.workRoleId);
+          if (!roleWithRelations) return null;
+          
+          // Get sample KSTs (first 5 of each type)
+          const tasks = (roleWithRelations.workRoleTasks || [])
+            .slice(0, 5)
+            .map((t: any) => t.task?.description || '')
+            .filter((d: string) => d);
+          const knowledge = (roleWithRelations.workRoleKnowledge || [])
+            .slice(0, 5)
+            .map((k: any) => k.knowledgeItem?.description || '')
+            .filter((d: string) => d);
+          const skills = (roleWithRelations.workRoleSkills || [])
+            .slice(0, 5)
+            .map((s: any) => s.skill?.description || '')
+            .filter((d: string) => d);
+          
+          return {
+            workRoleId: match.workRoleId,
+            workRoleName: match.workRoleName,
+            tasks,
+            knowledge,
+            skills
+          };
+        })
+      );
+
+      const validKSTs = workRoleKSTs.filter(k => k !== null);
+      if (validKSTs.length === 0) return matches;
+
+      // Generate HR-friendly explanations using AI
+      const prompt = `
+You are an HR advisor helping explain why job positions align with specific NICE Framework work roles. 
+Write explanations that non-technical HR professionals can understand.
+
+JOB POSTING:
+Title: ${jobPosting.jobTitle}
+Description: ${jobPosting.jobDescription}
+Required Qualifications: ${jobPosting.requiredQualifications || 'Not specified'}
+
+MATCHED WORK ROLES WITH THEIR NICE FRAMEWORK COMPETENCIES:
+${JSON.stringify(validKSTs, null, 2)}
+
+For each work role, write a 2-3 sentence paragraph explaining WHY this role matches the job posting.
+- Connect specific job duties or requirements to the role's competencies
+- Use plain, everyday language (avoid jargon like "KSTs" or "NICE Framework")
+- Explain what someone in this role actually does that matches what the job needs
+- Be specific but concise
+
+RESPONSE FORMAT (JSON):
+{
+  "explanations": [
+    {
+      "workRoleId": number,
+      "explanation": "2-3 sentence paragraph explaining the alignment in HR-friendly language"
+    }
+  ]
+}`;
+
+      const response = await this.openai.chat.completions.create({
+        model: "gpt-4o-mini",
+        messages: [
+          {
+            role: "system",
+            content: "You translate technical competency frameworks into clear, everyday language for HR professionals."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ],
+        response_format: { type: "json_object" },
+        temperature: 0.3
+      });
+
+      const result = JSON.parse(response.choices[0].message.content || '{}');
+      const explanations = result.explanations || [];
+
+      // Merge explanations into matches
+      return matches.map(match => {
+        const explanation = explanations.find((e: any) => e.workRoleId === match.workRoleId);
+        return {
+          ...match,
+          kstAlignmentExplanation: explanation?.explanation || undefined
+        };
+      });
+
+    } catch (error) {
+      console.error('Error generating KST explanations:', error);
+      return matches; // Return original matches without explanations on error
+    }
   }
 
   async analyzeJobPosting(jobPosting: JobPosting): Promise<VacancyAnalysis> {
@@ -575,6 +683,14 @@ EXAMPLE REWRITE:
             }
           }
         }
+      }
+
+      // Generate HR-friendly KST alignment explanations for primary matches
+      if (analysis.primaryMatches && analysis.primaryMatches.length > 0) {
+        analysis.primaryMatches = await this.generateKSTAlignmentExplanations(
+          analysis.primaryMatches,
+          jobPosting
+        );
       }
 
       return analysis as VacancyAnalysis;
