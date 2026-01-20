@@ -939,7 +939,31 @@ export default function MapVacancy() {
                             const lines = analysis.qualityAssessment.split('\n');
                             const severityLine = lines[0] || 'MODERATE PRIORITY';
                             const summaryLine = lines.find((line: string) => line.startsWith('Summary:'));
-                            const issueLines = lines.filter((line: string) => line.startsWith('—'));
+                            
+                            const issuesStartIndex = lines.findIndex((line: string) => 
+                              line.trim().toLowerCase().startsWith('issues:')
+                            );
+                            
+                            let issueLines: string[] = [];
+                            if (issuesStartIndex !== -1) {
+                              issueLines = lines.slice(issuesStartIndex + 1).filter((line: string) => {
+                                const trimmed = line.trim();
+                                if (!trimmed) return false;
+                                return trimmed.startsWith('—') || 
+                                       trimmed.startsWith('-') || 
+                                       trimmed.startsWith('•') ||
+                                       trimmed.startsWith('–') ||
+                                       (trimmed.match(/^[A-Z][a-zA-Z\-]+:/) !== null);
+                              });
+                            } else {
+                              issueLines = lines.filter((line: string) => {
+                                const trimmed = line.trim();
+                                return trimmed.startsWith('—') || 
+                                       (trimmed.startsWith('-') && !trimmed.startsWith('--')) ||
+                                       trimmed.startsWith('•') ||
+                                       trimmed.startsWith('–');
+                              });
+                            }
                             
                             const getSeverityStyle = (severity: string) => {
                               if (severity.includes('CRITICAL')) return 'bg-red-50 text-red-700 border-red-200';
@@ -976,12 +1000,17 @@ export default function MapVacancy() {
                                     <h4 className="text-sm font-medium text-gray-900 mb-2">Issues Identified</h4>
                                     <div className="bg-red-50 rounded-lg p-3 space-y-2">
                                       <ul className="text-sm text-red-700 space-y-1">
-                                        {issueLines.map((issue: string, index: number) => (
-                                          <li key={index} className="flex items-start gap-2">
-                                            <span className="text-red-500 mt-0.5 font-bold">•</span>
-                                            <span>{issue.replace('— ', '')}</span>
-                                          </li>
-                                        ))}
+                                        {issueLines.map((issue: string, index: number) => {
+                                          const cleanedIssue = issue.trim()
+                                            .replace(/^[—–\-•]\s*/, '')
+                                            .replace(/^Issues:\s*/i, '');
+                                          return (
+                                            <li key={index} className="flex items-start gap-2">
+                                              <span className="text-red-500 mt-0.5 font-bold">•</span>
+                                              <span>{cleanedIssue}</span>
+                                            </li>
+                                          );
+                                        })}
                                       </ul>
                                     </div>
                                   </div>
