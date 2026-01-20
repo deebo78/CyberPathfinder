@@ -36,7 +36,7 @@ Map Vacancy Analysis: NICE Framework encompasses broad IT roles that support cyb
 - **Data Import System**: Processes Excel/CSV files for bulk data operations, including automated NICE Framework v2.0 import.
 - **Market-Tiered Salary Calculation Engine**: Differentiated calculation paths for executive vs. non-executive positions, incorporating geographic market tiers, career track multipliers, and certification premiums.
 - **Transparent Match Score System**: A 100-point scoring system with detailed breakdowns for skills and soft skills analysis.
-- **Map Vacancy Analysis System**: Analyzes job postings for consistency, identifies conflicts, and offers AI-powered improvement suggestions. Includes salary calculation transparency showing expected salary range with detailed breakdown (base salary by level, career track multiplier, geographic market tier adjustment, and certification premiums).
+- **Map Vacancy Analysis System**: Analyzes job postings for consistency, identifies conflicts, and offers AI-powered improvement suggestions. Includes salary calculation transparency showing expected salary range with detailed breakdown (base salary by level, career track multiplier, geographic market tier adjustment, and certification premiums). Features HR-friendly "Why This Role Matches" explanations that translate NICE Framework competencies (Tasks, Knowledge, Skills) into plain language for non-technical HR professionals.
 - **Resume Validation & Credibility Assessment**: Analyzes resumes for timeline consistency, credential authority, and future expertise claims, generating a credibility score.
 
 ### Security Architecture
