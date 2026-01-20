@@ -1,5 +1,12 @@
 import OpenAI from "openai";
 import { storage } from "./storage";
+import { 
+  MarketTier, 
+  getLocationTier, 
+  getExecutiveSalaryBand, 
+  getExecutiveSalaryCaps, 
+  EXECUTIVE_CERT_PREMIUMS 
+} from "@shared/compensation";
 
 interface JobPosting {
   jobTitle: string;
@@ -53,9 +60,25 @@ interface VacancyAnalysis {
       max: number | null;
       payGrade: string | null;
     };
+    expectedSalary?: {
+      min: number;
+      max: number;
+      calculationBreakdown: {
+        baseRange: { min: number; max: number };
+        trackMultiplier: number;
+        trackName: string;
+        geoMultiplier: number;
+        marketTier: string;
+        location: string;
+        certificationPremium: number;
+        certifications: string[];
+      };
+      calculationDetails: string;
+    };
     marketAlignment: string;
     seniorityMismatch: string;
     mismatchDetails: string;
+    comparisonSummary?: string;
   };
   matchSummary: string;
   qualityAssessment?: string;
@@ -104,6 +127,103 @@ export class AIVacancyMapper {
       throw new Error("OPENAI_API_KEY environment variable is required");
     }
     this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+
+  /**
+   * Calculates expected salary range based on role, level, location, and certifications
+   * Uses the same methodology as Career Planning for consistency
+   */
+  private calculateExpectedSalary(
+    experienceLevel: string,
+    track: { id: number; name: string; salaryWeighting?: number | string | null },
+    location: string | undefined,
+    certifications: string[]
+  ): {
+    min: number;
+    max: number;
+    calculationBreakdown: {
+      baseRange: { min: number; max: number };
+      trackMultiplier: number;
+      trackName: string;
+      geoMultiplier: number;
+      marketTier: string;
+      location: string;
+      certificationPremium: number;
+      certifications: string[];
+    };
+    calculationDetails: string;
+  } {
+    // Base salary ranges by experience level (in thousands)
+    const baseSalaryRanges: Record<string, { min: number; max: number }> = {
+      'Entry': { min: 55, max: 75 },
+      'Mid': { min: 75, max: 105 },
+      'Senior': { min: 105, max: 145 },
+      'Expert': { min: 140, max: 190 },
+      'Lead': { min: 140, max: 190 }
+    };
+
+    // Normalize experience level
+    const normalizedLevel = experienceLevel.includes('Entry') ? 'Entry' :
+                           experienceLevel.includes('Mid') ? 'Mid' :
+                           experienceLevel.includes('Senior') ? 'Senior' :
+                           experienceLevel.includes('Expert') || experienceLevel.includes('Lead') ? 'Expert' : 'Mid';
+
+    // Get track multiplier (salaryWeighting from career track)
+    const trackMultiplier = track.salaryWeighting ? Number(track.salaryWeighting) : 1.0;
+
+    // Geographic multiplier based on market tier
+    const tier = getLocationTier(location);
+    const geoMultipliers: Record<MarketTier, { multiplier: number; description: string }> = {
+      [MarketTier.TIER_A]: { multiplier: 1.25, description: 'Premium Market (SF/NYC/Boston)' },
+      [MarketTier.TIER_B]: { multiplier: 1.12, description: 'Large Metro (DC/Seattle/LA/Chicago)' },
+      [MarketTier.TIER_C]: { multiplier: 1.0, description: 'Mid-Size Market' },
+      [MarketTier.TIER_D]: { multiplier: 0.88, description: 'Small City/Rural' }
+    };
+    const geoInfo = geoMultipliers[tier];
+
+    // Certification premiums (in thousands)
+    let certPremium = 0;
+    const matchedCerts: string[] = [];
+    const normalizedCerts = certifications.map(c => c.toUpperCase());
+    
+    if (normalizedCerts.some(c => c.includes('CISSP') || c.includes('CISM'))) {
+      certPremium += 12;
+      matchedCerts.push('CISSP/CISM (+$12K)');
+    }
+    if (normalizedCerts.some(c => c.includes('AWS') || c.includes('AZURE') || c.includes('GCP') || c.includes('CLOUD'))) {
+      certPremium += 10;
+      matchedCerts.push('Cloud Certs (+$10K)');
+    }
+    if (normalizedCerts.some(c => c.includes('CEH') || c.includes('OSCP') || c.includes('GPEN') || c.includes('GCIH'))) {
+      certPremium += 7;
+      matchedCerts.push('Specialized (+$7K)');
+    }
+    if (normalizedCerts.length >= 3 && certPremium === 0) {
+      certPremium += 8;
+      matchedCerts.push('Multiple Certs (+$8K)');
+    }
+
+    const baseRange = baseSalaryRanges[normalizedLevel] || baseSalaryRanges['Mid'];
+    const minSalary = Math.round((baseRange.min * trackMultiplier * geoInfo.multiplier) + certPremium);
+    const maxSalary = Math.round((baseRange.max * trackMultiplier * geoInfo.multiplier) + certPremium);
+
+    const calculationDetails = `${normalizedLevel}-Level: $${baseRange.min}K-$${baseRange.max}K base × ${trackMultiplier.toFixed(2)} (${track.name}) × ${geoInfo.multiplier.toFixed(2)} (${geoInfo.description}) + $${certPremium}K certs = $${minSalary}K-$${maxSalary}K`;
+
+    return {
+      min: minSalary,
+      max: maxSalary,
+      calculationBreakdown: {
+        baseRange: baseRange,
+        trackMultiplier: trackMultiplier,
+        trackName: track.name,
+        geoMultiplier: geoInfo.multiplier,
+        marketTier: `Tier ${tier}`,
+        location: location || 'Not specified',
+        certificationPremium: certPremium,
+        certifications: matchedCerts
+      },
+      calculationDetails
+    };
   }
 
   async analyzeJobPosting(jobPosting: JobPosting): Promise<VacancyAnalysis> {
@@ -406,7 +526,56 @@ EXAMPLE REWRITE:
         }
       }
       
-
+      // Calculate expected salary based on matched track, level, location, and certifications
+      if (analysis.bestTrackMatch && analysis.extractedRequirements) {
+        const trackId = analysis.bestTrackMatch.id;
+        const matchedTrack = careerTracks.find(t => t.id === trackId);
+        
+        if (matchedTrack) {
+          const experienceLevel = analysis.extractedRequirements.experienceLevel || 'Mid';
+          const location = jobPosting.location || undefined; // Pass undefined to get Tier C default
+          const certifications = analysis.extractedRequirements.certifications || [];
+          
+          const expectedSalary = this.calculateExpectedSalary(
+            experienceLevel,
+            { 
+              id: matchedTrack.id, 
+              name: matchedTrack.name, 
+              salaryWeighting: matchedTrack.salaryWeighting 
+            },
+            location,
+            certifications
+          );
+          
+          // Ensure salaryAnalysis exists
+          if (!analysis.salaryAnalysis) {
+            analysis.salaryAnalysis = {
+              extractedSalary: { min: null, max: null, payGrade: null },
+              marketAlignment: 'insufficient_data',
+              seniorityMismatch: 'none',
+              mismatchDetails: ''
+            };
+          }
+          
+          // Add expected salary calculation
+          analysis.salaryAnalysis.expectedSalary = expectedSalary;
+          
+          // Generate comparison summary if we have both extracted and expected salaries
+          if (analysis.salaryAnalysis.extractedSalary.min && analysis.salaryAnalysis.extractedSalary.max) {
+            const extractedMid = (analysis.salaryAnalysis.extractedSalary.min + analysis.salaryAnalysis.extractedSalary.max) / 2;
+            const expectedMid = ((expectedSalary.min + expectedSalary.max) / 2) * 1000; // Convert from K
+            const percentDiff = Math.round(((extractedMid - expectedMid) / expectedMid) * 100);
+            
+            if (percentDiff < -15) {
+              analysis.salaryAnalysis.comparisonSummary = `Posted salary is ${Math.abs(percentDiff)}% below expected range. This may affect ability to attract qualified candidates.`;
+            } else if (percentDiff > 15) {
+              analysis.salaryAnalysis.comparisonSummary = `Posted salary is ${percentDiff}% above expected range. This is competitive and should attract strong candidates.`;
+            } else {
+              analysis.salaryAnalysis.comparisonSummary = `Posted salary is well-aligned with market expectations for this role and location.`;
+            }
+          }
+        }
+      }
 
       return analysis as VacancyAnalysis;
 

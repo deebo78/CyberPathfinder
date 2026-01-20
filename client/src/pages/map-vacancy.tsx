@@ -46,9 +46,25 @@ interface VacancyAnalysis {
       max: number | null;
       payGrade?: string;
     };
+    expectedSalary?: {
+      min: number;
+      max: number;
+      calculationBreakdown: {
+        baseRange: { min: number; max: number };
+        trackMultiplier: number;
+        trackName: string;
+        geoMultiplier: number;
+        marketTier: string;
+        location: string;
+        certificationPremium: number;
+        certifications: string[];
+      };
+      calculationDetails: string;
+    };
     marketAlignment: 'aligned' | 'below_market' | 'above_market' | 'insufficient_data';
     seniorityMismatch: 'none' | 'minor' | 'moderate' | 'severe';
     mismatchDetails: string;
+    comparisonSummary?: string;
   };
   roleConsistencyAnalysis?: {
     summary: string;
@@ -277,7 +293,24 @@ export default function MapVacancy() {
         <div class="section">
           <h2>Salary Analysis</h2>
           ${analysis.salaryAnalysis.extractedSalary.min && analysis.salaryAnalysis.extractedSalary.max ? `
-            <p><strong>Extracted Range:</strong> $${analysis.salaryAnalysis.extractedSalary.min.toLocaleString()} - $${analysis.salaryAnalysis.extractedSalary.max.toLocaleString()}</p>
+            <p><strong>Posted Salary:</strong> $${analysis.salaryAnalysis.extractedSalary.min.toLocaleString()} - $${analysis.salaryAnalysis.extractedSalary.max.toLocaleString()}</p>
+          ` : ''}
+          ${analysis.salaryAnalysis.expectedSalary ? `
+            <p><strong>Expected Range:</strong> $${analysis.salaryAnalysis.expectedSalary.min}K - $${analysis.salaryAnalysis.expectedSalary.max}K</p>
+            <div style="background: #f0f4f8; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 0.9em;">
+              <strong>Calculation Breakdown:</strong>
+              <ul style="margin: 5px 0; padding-left: 20px;">
+                <li>Base Range: $${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.baseRange.min}K - $${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.baseRange.max}K</li>
+                <li>Track Multiplier: ×${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.trackMultiplier.toFixed(2)} (${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.trackName})</li>
+                <li>Location (${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.marketTier}): ×${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.geoMultiplier.toFixed(2)}</li>
+                ${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.certificationPremium > 0 ? `
+                  <li>Certification Premium: +$${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.certificationPremium}K</li>
+                ` : ''}
+              </ul>
+            </div>
+            ${analysis.salaryAnalysis.comparisonSummary ? `
+              <p style="font-style: italic; color: #555;">${analysis.salaryAnalysis.comparisonSummary}</p>
+            ` : ''}
           ` : ''}
           <p><strong>Market Alignment:</strong> ${analysis.salaryAnalysis.marketAlignment.replace('_', ' ').toUpperCase()}</p>
           <p><strong>Seniority Match:</strong> ${analysis.salaryAnalysis.seniorityMismatch}</p>
@@ -955,15 +988,69 @@ export default function MapVacancy() {
                       {analysis.salaryAnalysis && (
                         <div>
                           <h4 className="text-sm font-medium text-gray-900 mb-2">Salary Analysis</h4>
-                          <div className="bg-gray-50 rounded-lg p-3 space-y-2">
+                          <div className="bg-gray-50 rounded-lg p-3 space-y-3">
+                            {/* Posted Salary */}
                             {analysis.salaryAnalysis.extractedSalary.min && analysis.salaryAnalysis.extractedSalary.max && (
                               <div className="flex justify-between text-sm">
-                                <span>Extracted Range:</span>
+                                <span>Posted Salary:</span>
                                 <span className="font-medium">
                                   ${analysis.salaryAnalysis.extractedSalary.min.toLocaleString()} - ${analysis.salaryAnalysis.extractedSalary.max.toLocaleString()}
                                 </span>
                               </div>
                             )}
+                            
+                            {/* Expected Salary with Calculation Breakdown */}
+                            {analysis.salaryAnalysis.expectedSalary && (
+                              <>
+                                <div className="flex justify-between text-sm">
+                                  <span>Expected Range:</span>
+                                  <span className="font-medium text-blue-700">
+                                    ${analysis.salaryAnalysis.expectedSalary.min}K - ${analysis.salaryAnalysis.expectedSalary.max}K
+                                  </span>
+                                </div>
+                                
+                                {/* Calculation Breakdown */}
+                                <div className="bg-white rounded border border-gray-200 p-3 text-xs space-y-2">
+                                  <div className="font-medium text-gray-700 mb-1">Calculation Breakdown:</div>
+                                  <div className="grid grid-cols-2 gap-x-4 gap-y-1">
+                                    <span className="text-gray-500">Base Range:</span>
+                                    <span>${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.baseRange.min}K - ${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.baseRange.max}K</span>
+                                    
+                                    <span className="text-gray-500">Track Multiplier:</span>
+                                    <span>×{analysis.salaryAnalysis.expectedSalary.calculationBreakdown.trackMultiplier.toFixed(2)} ({analysis.salaryAnalysis.expectedSalary.calculationBreakdown.trackName})</span>
+                                    
+                                    <span className="text-gray-500">Location ({analysis.salaryAnalysis.expectedSalary.calculationBreakdown.marketTier}):</span>
+                                    <span>×{analysis.salaryAnalysis.expectedSalary.calculationBreakdown.geoMultiplier.toFixed(2)}</span>
+                                    
+                                    {analysis.salaryAnalysis.expectedSalary.calculationBreakdown.certificationPremium > 0 && (
+                                      <>
+                                        <span className="text-gray-500">Cert Premium:</span>
+                                        <span>+${analysis.salaryAnalysis.expectedSalary.calculationBreakdown.certificationPremium}K</span>
+                                      </>
+                                    )}
+                                  </div>
+                                  {analysis.salaryAnalysis.expectedSalary.calculationBreakdown.certifications.length > 0 && (
+                                    <div className="text-gray-500 mt-1">
+                                      Certs: {analysis.salaryAnalysis.expectedSalary.calculationBreakdown.certifications.join(', ')}
+                                    </div>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                            
+                            {/* Comparison Summary */}
+                            {analysis.salaryAnalysis.comparisonSummary && (
+                              <div className={`text-sm p-2 rounded ${
+                                analysis.salaryAnalysis.marketAlignment === 'below_market'
+                                  ? 'bg-red-50 text-red-700 border border-red-200'
+                                  : analysis.salaryAnalysis.marketAlignment === 'above_market'
+                                  ? 'bg-blue-50 text-blue-700 border border-blue-200'
+                                  : 'bg-green-50 text-green-700 border border-green-200'
+                              }`}>
+                                {analysis.salaryAnalysis.comparisonSummary}
+                              </div>
+                            )}
+                            
                             {analysis.salaryAnalysis.extractedSalary.payGrade && (
                               <div className="flex justify-between text-sm">
                                 <span>Pay Grade:</span>
