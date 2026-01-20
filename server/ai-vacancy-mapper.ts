@@ -415,9 +415,41 @@ Look for any of these issues (and flag others you judge equivalent):
 • Certification Prerequisite Errors (e.g., stating eligibility for PMP with insufficient experience for education level)
 • Certification Misalignment with Job Level and Salary Grade
 • GRC vs. Technical Scope Misalignment
+• Frankenjob/Title Inflation (high-level title like "Architect", "Director", "Manager" combined with low-level duties like cable routing, using hand tools, physical labor, cleaning, helpdesk tasks)
+• Skill Stack Overflow (requiring incompatible technology generations together: legacy tech like VBScript, Classic ASP, COBOL alongside cutting-edge tech like AI/LLM tools, cloud-native platforms - unrealistic "unicorn" expectations)
+• Burnout Risk/Single Point of Failure (24/7 on-call or zero-downtime requirements combined with single headcount for critical systems)
+• Salary Hierarchy Inversion (salary offered is less than market rate for the minimum qualifications listed - e.g., paying Architect salary but requiring Senior Analyst experience that pays more)
 • Any other red-flag likely to confuse or deter qualified applicants
 
 IMPORTANT: NICE Framework includes many IT roles that support cybersecurity objectives (Technical Support, Network Operations, System Administration, etc.). Do NOT flag these as "Non-Cyber/IT Role". Only flag roles that are clearly outside both cybersecurity AND information technology domains (e.g., marketing, finance, HR roles with no tech component).
+
+NEW ANTI-PATTERN DETECTION GUIDANCE:
+
+FRANKENJOB/TITLE INFLATION DETECTION:
+Look for mismatches between job title seniority and actual duties:
+- "Architect" titles should focus on high-level design/strategy, NOT cable routing, using hand tools, cleaning spaces, climbing ladders
+- "Director/Manager" titles should focus on leadership/governance, NOT helpdesk tickets or physical labor
+- If a role combines 3+ distinct job levels (strategic + operational + manual labor), flag as "Frankenjob"
+Example keywords signaling manual labor: "cable routing", "hand tools", "power tools", "stepladder", "clean condition", "equipment placement", "ergonomic adjustments"
+
+SKILL STACK OVERFLOW DETECTION:
+Flag when legacy and cutting-edge technologies are required together:
+- Legacy: VBScript, Classic ASP, COBOL, Perl, FoxPro, Visual Basic 6, ancient frameworks
+- Cutting-edge: AI/LLM tools, GPT integration, cloud-native, Kubernetes, modern microservices
+- This creates "unicorn" expectations - finding someone expert in both 20-year-old AND bleeding-edge tech is unrealistic
+
+BURNOUT RISK/SINGLE POINT OF FAILURE DETECTION:
+Flag combinations of:
+- 24/7 on-call OR "zero-downtime" requirements
+- Single headcount (Number of Openings: 1)
+- Mission-critical or emergency response systems
+This pattern creates unsustainable workload and organizational risk.
+
+SALARY HIERARCHY INVERSION DETECTION:
+Flag when the salary offered is below market rate for stated minimum qualifications:
+- If minimum quals require "Senior Analyst" experience but salary is entry-level
+- If title is "Architect" ($120K-180K market) but pays $62K
+- Compare: Government benchmarks are typically 20-30% below private sector, but should still be internally consistent
 
 SALARY ANALYSIS FOCUS:
 - Always evaluate salary alignment using market benchmarks, never default to "insufficient_data"
