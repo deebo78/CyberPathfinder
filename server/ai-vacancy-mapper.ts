@@ -423,33 +423,43 @@ Look for any of these issues (and flag others you judge equivalent):
 
 IMPORTANT: NICE Framework includes many IT roles that support cybersecurity objectives (Technical Support, Network Operations, System Administration, etc.). Do NOT flag these as "Non-Cyber/IT Role". Only flag roles that are clearly outside both cybersecurity AND information technology domains (e.g., marketing, finance, HR roles with no tech component).
 
-NEW ANTI-PATTERN DETECTION GUIDANCE:
+MANDATORY ANTI-PATTERN CHECKLIST - YOU MUST CHECK EACH ONE:
 
-FRANKENJOB/TITLE INFLATION DETECTION:
-Look for mismatches between job title seniority and actual duties:
-- "Architect" titles should focus on high-level design/strategy, NOT cable routing, using hand tools, cleaning spaces, climbing ladders
-- "Director/Manager" titles should focus on leadership/governance, NOT helpdesk tickets or physical labor
-- If a role combines 3+ distinct job levels (strategic + operational + manual labor), flag as "Frankenjob"
-Example keywords signaling manual labor: "cable routing", "hand tools", "power tools", "stepladder", "clean condition", "equipment placement", "ergonomic adjustments"
+**CHECK 1: FRANKENJOB/TITLE INFLATION**
+Scan the job description for BOTH of these:
+- High-level title words: "Architect", "Director", "Manager", "Principal", "Lead", "Chief"
+- Manual/low-level duty words: "cable routing", "hand tools", "power tools", "stepladder", "clean condition", "equipment placement", "ergonomic adjustments", "installs hardware", "physical labor"
+IF BOTH FOUND → MUST flag as "Frankenjob/Title Inflation" with specific quotes from the posting
 
-SKILL STACK OVERFLOW DETECTION:
-Flag when legacy and cutting-edge technologies are required together:
-- Legacy: VBScript, Classic ASP, COBOL, Perl, FoxPro, Visual Basic 6, ancient frameworks
-- Cutting-edge: AI/LLM tools, GPT integration, cloud-native, Kubernetes, modern microservices
-- This creates "unicorn" expectations - finding someone expert in both 20-year-old AND bleeding-edge tech is unrealistic
+**CHECK 2: SKILL STACK OVERFLOW**
+SPECIFICALLY scan for these exact patterns:
+- Legacy tech keywords: "VBScript", "Classic ASP", "ASP (VBScript", "COBOL", "Perl", "FoxPro", "Visual Basic 6", "VB6"
+- Modern tech keywords: "AI/LLM", "LLM tools", "AI tools", "GPT", "ChatGPT", "cloud-native", "Kubernetes"
+IF the job description contains BOTH a legacy AND a modern keyword → MUST flag as "Skill Stack Overflow"
+Example: If posting mentions "Classic ASP (VBScript)" AND "AI/LLM tools" → flag it with: "Skill Stack Overflow: Role requires expertise in legacy 'Classic ASP (VBScript)' alongside modern 'AI/LLM tools' - finding candidates proficient in both 20-year-old AND cutting-edge technologies is unrealistic."
 
-BURNOUT RISK/SINGLE POINT OF FAILURE DETECTION:
-Flag combinations of:
-- 24/7 on-call OR "zero-downtime" requirements
-- Single headcount (Number of Openings: 1)
-- Mission-critical or emergency response systems
-This pattern creates unsustainable workload and organizational risk.
+**CHECK 3: BURNOUT RISK/SINGLE POINT OF FAILURE**
+Scan for ANY of these combinations:
+- "24/7" OR "24-hour" OR "on-call" requirements
+- "zero-downtime" OR "mission-critical" systems
+- Single headcount role for critical systems
+IF FOUND → MUST flag as "Burnout Risk/Single Point of Failure"
 
-SALARY HIERARCHY INVERSION DETECTION:
-Flag when the salary offered is below market rate for stated minimum qualifications:
-- If minimum quals require "Senior Analyst" experience but salary is entry-level
-- If title is "Architect" ($120K-180K market) but pays $62K
-- Compare: Government benchmarks are typically 20-30% below private sector, but should still be internally consistent
+**CHECK 4: SALARY HIERARCHY INVERSION**
+Compare the salary against title expectations:
+- "Architect" roles typically pay $120K-180K in private sector, $85K-140K in government
+- If an "Architect" title pays under $80K → MUST flag as "Salary Hierarchy Inversion"
+- If salary is more than 30% below market rate for the job title → MUST flag
+Example: $62,500 for "Systems Architect" → flag as: "Salary Hierarchy Inversion: The salary of $62,500 is significantly below market expectations for an Architect-level position, which typically commands $85,000-$140,000 even in government roles."
+
+**CRITICAL: List ALL 4 issues that apply. Do NOT limit to 2-3 issues.**
+- If all 4 anti-patterns are present, you MUST list all 4 in the Issues section
+- Each issue should be on its own line starting with —
+- A complete Issues section for a problematic posting might look like:
+— Frankenjob/Title Inflation: ...
+— Skill Stack Overflow: ...
+— Burnout Risk/Single Point of Failure: ...
+— Salary Hierarchy Inversion: ...
 
 SALARY ANALYSIS FOCUS:
 - Always evaluate salary alignment using market benchmarks, never default to "insufficient_data"
@@ -649,6 +659,71 @@ EXAMPLE REWRITE:
       // Add default qualityAssessment if missing
       if (!analysis.qualityAssessment) {
         analysis.qualityAssessment = "MODERATE PRIORITY\nSummary: Analysis completed with standard assessment.\nIssues:\n— No specific issues identified in initial analysis";
+      }
+      
+      // DETERMINISTIC ANTI-PATTERN DETECTION
+      // Supplement AI detection with keyword-based checks to ensure consistency
+      const jobText = `${jobPosting.jobTitle} ${jobPosting.jobDescription} ${jobPosting.requiredQualifications || ''} ${jobPosting.preferredQualifications || ''}`.toLowerCase();
+      const qualityText = analysis.qualityAssessment.toLowerCase();
+      
+      const detectedIssues: string[] = [];
+      
+      // CHECK 1: Frankenjob/Title Inflation
+      const hasHighLevelTitle = /architect|director|manager|principal|lead|chief/i.test(jobPosting.jobTitle);
+      const hasManualLabor = /cable routing|hand tools|power tools|stepladder|clean condition|equipment placement|ergonomic adjustments|installs hardware/i.test(jobText);
+      if (hasHighLevelTitle && hasManualLabor && !qualityText.includes('frankenjob') && !qualityText.includes('title inflation')) {
+        detectedIssues.push('— Frankenjob/Title Inflation: The job title suggests a senior/strategic role, but duties include manual labor tasks like cable routing, using hand tools, or equipment setup - these are typically technician-level responsibilities');
+      }
+      
+      // CHECK 2: Skill Stack Overflow
+      const hasLegacyTech = /vbscript|classic asp|cobol|perl|foxpro|visual basic 6|vb6/i.test(jobText);
+      const hasModernTech = /ai\/llm|llm tools|ai tools|gpt|chatgpt|cloud-native|kubernetes/i.test(jobText);
+      if (hasLegacyTech && hasModernTech && !qualityText.includes('skill stack') && !qualityText.includes('stack overflow')) {
+        const legacyMatch = jobText.match(/vbscript|classic asp|cobol|perl|foxpro|visual basic 6|vb6/i)?.[0] || 'legacy technology';
+        const modernMatch = jobText.match(/ai\/llm|llm tools|ai tools|gpt|chatgpt|cloud-native|kubernetes/i)?.[0] || 'modern AI tools';
+        detectedIssues.push(`— Skill Stack Overflow: Role requires expertise in legacy technology "${legacyMatch}" alongside modern "${modernMatch}" - finding candidates proficient in both 20+ year-old AND cutting-edge technologies is unrealistic`);
+      }
+      
+      // CHECK 3: Burnout Risk/Single Point of Failure
+      const hasBurnoutIndicators = /24\/7|24-hour|on-call|zero-downtime|zero downtime/i.test(jobText);
+      const hasSingleHeadcount = /number of openings:\s*1|openings:\s*1|single position/i.test(jobText);
+      if (hasBurnoutIndicators && !qualityText.includes('burnout') && !qualityText.includes('single point')) {
+        detectedIssues.push('— Burnout Risk/Single Point of Failure: Role requires 24/7 availability or zero-downtime operations, creating unsustainable workload expectations and organizational risk');
+      }
+      
+      // CHECK 4: Salary Hierarchy Inversion
+      const isArchitectTitle = /architect/i.test(jobPosting.jobTitle);
+      const salaryMin = jobPosting.salaryMin || 0;
+      const salaryMax = jobPosting.salaryMax || 0;
+      const avgSalary = (salaryMin + salaryMax) / 2;
+      // Only suppress if the SPECIFIC issue is already present, not just any salary mention
+      const hasSalaryInversion = qualityText.includes('salary hierarchy inversion') || qualityText.includes('salary-hierarchy inversion');
+      if (isArchitectTitle && avgSalary > 0 && avgSalary < 80000 && !hasSalaryInversion) {
+        detectedIssues.push(`— Salary Hierarchy Inversion: The salary of $${avgSalary.toLocaleString()} is significantly below market expectations for an Architect-level position, which typically commands $85,000-$140,000 even in government roles`);
+      }
+      
+      // Merge detected issues into qualityAssessment if any were found
+      if (detectedIssues.length > 0) {
+        const lines = analysis.qualityAssessment.split('\n');
+        const issuesIndex = lines.findIndex((line: string) => line.toLowerCase().includes('issues:'));
+        
+        if (issuesIndex !== -1) {
+          // Insert new issues after the "Issues:" line
+          const beforeIssues = lines.slice(0, issuesIndex + 1);
+          const afterIssues = lines.slice(issuesIndex + 1);
+          analysis.qualityAssessment = [...beforeIssues, ...detectedIssues, ...afterIssues].join('\n');
+        } else {
+          // Append issues section if not found
+          analysis.qualityAssessment += '\nIssues:\n' + detectedIssues.join('\n');
+        }
+        
+        // Update severity if we added issues
+        const totalIssues = (analysis.qualityAssessment.match(/^—/gm) || []).length;
+        if (totalIssues >= 4) {
+          analysis.qualityAssessment = analysis.qualityAssessment.replace(/^(MODERATE|LOW|READY).*PRIORITY/i, 'CRITICAL PRIORITY');
+        } else if (totalIssues >= 3) {
+          analysis.qualityAssessment = analysis.qualityAssessment.replace(/^(MODERATE|LOW|READY).*PRIORITY/i, 'HIGH PRIORITY');
+        }
       }
       
       // Post-process bestTrackMatch if it's just an ID
