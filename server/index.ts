@@ -23,30 +23,15 @@ app.use(cors({
     // Allow requests with no origin (like mobile apps, curl, or same-origin requests)
     if (!origin) return callback(null, true);
     
-    if (isProduction) {
-      // Production: Only allow specific domains
-      const productionOrigins = [
-        'https://cyber-pathfinder-dmetheredge.replit.app',
-        // Add any additional production domains here
-      ];
-      
-      if (productionOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        console.warn(`[SECURITY] Blocked CORS request from origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
+    // In production and development, allow all Replit domains
+    const isReplitDomain = origin.includes('.replit.dev') || origin.includes('.replit.app');
+    const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('0.0.0.0');
+    
+    if (isReplitDomain || isLocalhost) {
+      callback(null, true);
     } else {
-      // Development: Allow Replit dev URLs, localhost, and local IPs
-      const isReplitDev = origin.includes('.replit.dev') || origin.includes('.replit.app');
-      const isLocalhost = origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('0.0.0.0');
-      
-      if (isReplitDev || isLocalhost) {
-        callback(null, true);
-      } else {
-        console.warn(`[SECURITY] Blocked CORS request from unknown origin: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
+      console.warn(`[SECURITY] Blocked CORS request from origin: ${origin}`);
+      callback(new Error('Not allowed by CORS'));
     }
   },
   credentials: true,
@@ -114,7 +99,7 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
       fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'"],
+      scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://replit.com"],
       imgSrc: ["'self'", "data:", "https:"],
       connectSrc: ["'self'", "ws:", "wss:"],
     },
@@ -129,8 +114,11 @@ app.use(helmet({
 // Force HTTPS in production
 if (process.env.NODE_ENV === 'production') {
   app.use((req, res, next) => {
-    if (req.header('x-forwarded-proto') !== 'https') {
-      res.redirect(`https://${req.header('host')}${req.url}`);
+    const proto = req.header('x-forwarded-proto');
+    const host = req.header('host');
+    // Only redirect if we have valid headers and it's not already HTTPS
+    if (proto && proto !== 'https' && host) {
+      res.redirect(`https://${host}${req.url}`);
     } else {
       next();
     }
