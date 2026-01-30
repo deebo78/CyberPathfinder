@@ -81,6 +81,7 @@ interface CareerRecommendation {
     calculationDetails?: string;
   };
   timeToTransition: string;
+  mentorNarrative?: string;
 }
 
 interface ResumeAnalysisResult {
@@ -406,9 +407,34 @@ ANALYSIS REQUIREMENTS:
    - Work experience with years calculation
    - Education background
    - Technical and cybersecurity skills
-   - Certifications with status and dates
+   - Certifications with status and dates (see CERTIFICATION PARSING RULES below)
    - Notable projects
    - Determine experience level (entry/mid/senior/expert/executive)
+
+   **CERTIFICATION PARSING RULES - CRITICAL:**
+   Parse certification status CAREFULLY based on explicit language in the resume:
+   
+   Mark as status: "current" when resume uses language like:
+   - "Certified: [cert name]" or "[Cert] Certified"
+   - "CompTIA Certified: A+ | Security+"
+   - "Holds [certification]" or "Earned [certification]"
+   - "Completed [certification]"
+   - Certifications listed with past dates (e.g., "Security+ (2023)")
+   - Certifications in a "Certifications" section without "in progress" qualifier
+   
+   Mark as status: "in-progress" ONLY when resume explicitly uses language like:
+   - "In Progress: [cert name]" or "[Cert] In Progress"
+   - "Certifications in Progress: Network+ | CySA+"
+   - "Currently pursuing [certification]"
+   - "Expected [date]" or "Pending"
+   - "Studying for [certification]"
+   
+   IMPORTANT: If a resume has SEPARATE sections like:
+   - "CompTIA Certified: A+ | Security+" → A+ and Security+ are CURRENT
+   - "CompTIA Certifications in Progress: Network+ | CySA+" → Network+ and CySA+ are IN-PROGRESS
+   
+   Do NOT conflate certifications from different sections. Parse each section header independently.
+   When in doubt, look at the section header or qualifying language, not just the certification name.
 
 2. CRITICAL VALIDATION CHECKS:
    **Timeline Consistency Analysis**:
@@ -438,6 +464,20 @@ ANALYSIS REQUIREMENTS:
    - Suggest realistic salary ranges
    - Estimate transition timeline
    - **FACTOR IN VALIDATION ISSUES**: Reduce recommendations if timeline inconsistencies exist
+   - **INCLUDE MENTOR NARRATIVE**: Provide personalized career coaching for each recommendation
+
+   **MENTOR NARRATIVE REQUIREMENTS:**
+   For each career recommendation, include a "mentorNarrative" field that provides personalized, conversational career coaching. This should read like advice from an experienced mentor, NOT a repetition of the strengths/gaps/next steps bullets.
+   
+   The mentor narrative MUST include:
+   1. **Why You Matched**: Explain in plain language what specific experiences, skills, or background made this role a good fit. Connect dots between their resume and the role requirements.
+   2. **Resume Enhancement Tips**: Provide 2-3 specific, actionable suggestions for how they could improve their resume to better target this specific role. Be concrete (e.g., "Quantify your incident response achievements - instead of 'responded to security incidents', say 'Triaged and resolved 50+ security incidents monthly with 98% SLA compliance'").
+   3. **Positioning Advice**: Suggest how they should frame their experience when applying or interviewing for this type of role.
+   
+   The narrative should be 3-5 sentences, written in second person ("You" / "Your"), and feel like genuine mentorship rather than template advice.
+   
+   Example mentor narrative:
+   "Your IT Help Desk management experience gives you a strong foundation for Incident Response - you've already handled high-pressure situations and coordinated team responses. To strengthen your resume for this track, add metrics to your incident handling (response times, ticket volumes, escalation rates) and explicitly mention any security-related tickets you've resolved. When interviewing, emphasize your experience managing classified systems and your Security+ certification - these directly align with incident response responsibilities."
 
 4. COMPREHENSIVE ASSESSMENT:
    - Overall professional assessment of the candidate
@@ -655,7 +695,8 @@ Respond with detailed JSON analysis following this structure:
           "marketFactors": "supply/demand considerations"
         }
       },
-      "timeToTransition": "..."
+      "timeToTransition": "...",
+      "mentorNarrative": "..."
     }
   ],
   "overallAssessment": "...",

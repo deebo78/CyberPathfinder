@@ -47,6 +47,7 @@ interface CareerRecommendation {
     calculationDetails?: string;
   };
   timeToTransition?: string;
+  mentorNarrative?: string;
 }
 
 interface ValidationIssue {
@@ -290,6 +291,15 @@ export default function CareerMapping() {
               </div>
             ` : ''}
             ${rec.timeToTransition ? `<p><strong>Estimated Transition Time:</strong> ${rec.timeToTransition}</p>` : ''}
+            ${rec.mentorNarrative ? `
+              <div style="margin-top: 15px; background: linear-gradient(to right, #faf5ff, #eef2ff); border: 1px solid #a855f7; border-radius: 8px; padding: 15px;">
+                <h4 style="color: #7c3aed; margin: 0 0 10px 0; display: flex; align-items: center; gap: 8px;">
+                  <span style="width: 24px; height: 24px; background: #7c3aed; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: white; font-size: 12px;">&#128100;</span>
+                  Career Mentor Insights
+                </h4>
+                <p style="margin: 0; font-style: italic; color: #581c87; line-height: 1.6;">"${rec.mentorNarrative}"</p>
+              </div>
+            ` : ''}
           </div>
         `).join('')}
       </div>
@@ -1092,6 +1102,21 @@ export default function CareerMapping() {
                             ))}
                           </ul>
                         </div>
+
+                        {/* Mentor Narrative Section */}
+                        {recommendation.mentorNarrative && (
+                          <div className="mt-4 pt-4 border-t border-purple-200 bg-gradient-to-r from-purple-50 to-indigo-50 rounded-lg p-4">
+                            <div className="flex items-center gap-2 mb-3">
+                              <div className="w-8 h-8 bg-purple-600 rounded-full flex items-center justify-center">
+                                <User className="w-4 h-4 text-white" />
+                              </div>
+                              <h4 className="font-semibold text-purple-800">Career Mentor Insights</h4>
+                            </div>
+                            <p className="text-sm text-purple-900 leading-relaxed italic">
+                              "{recommendation.mentorNarrative}"
+                            </p>
+                          </div>
+                        )}
                       </div>
                     ))
                   ) : (
