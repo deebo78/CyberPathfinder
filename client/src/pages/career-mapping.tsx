@@ -76,8 +76,16 @@ interface ValidationFindings {
   };
 }
 
+interface NearMissRole {
+  trackId: number;
+  trackName: string;
+  matchScore: number;
+  briefReason: string;
+}
+
 interface CareerAnalysis {
   recommendations: CareerRecommendation[];
+  nearMissRoles?: NearMissRole[];
   overallAssessment: string;
   strengthAreas: string[];
   developmentAreas: string[];
@@ -303,6 +311,22 @@ export default function CareerMapping() {
           </div>
         `).join('')}
       </div>
+      
+      ${analysis.nearMissRoles && analysis.nearMissRoles.length > 0 ? `
+        <div class="section">
+          <h2>Other Roles Worth Exploring (70-74% Match)</h2>
+          <p style="color: #6b7280; font-size: 0.9em; margin-bottom: 15px;">These roles scored just below the recommendation threshold. With targeted skill development, they could become strong matches.</p>
+          ${analysis.nearMissRoles.map(role => `
+            <div style="display: flex; justify-content: space-between; align-items: center; background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 12px 16px; margin-bottom: 8px;">
+              <div>
+                <strong>${role.trackName}</strong>
+                <p style="margin: 4px 0 0 0; font-size: 0.85em; color: #6b7280;">${role.briefReason}</p>
+              </div>
+              <span style="color: #d97706; font-weight: bold; white-space: nowrap; margin-left: 16px;">${role.matchScore}%</span>
+            </div>
+          `).join('')}
+        </div>
+      ` : ''}
     `;
   };
 
@@ -1122,6 +1146,32 @@ export default function CareerMapping() {
                   ) : (
                     <div className="text-center text-muted-foreground py-8">
                       <p>No career recommendations available. Please try uploading your resume again or use the manual profile form.</p>
+                    </div>
+                  )}
+
+                  {analysis.nearMissRoles && analysis.nearMissRoles.length > 0 && (
+                    <div className="mt-6 pt-4 border-t border-gray-200">
+                      <h4 className="text-sm font-semibold text-gray-700 mb-3 flex items-center gap-2">
+                        <div className="w-2 h-2 rounded-full bg-amber-400"></div>
+                        Other Roles Worth Exploring (70-74% Match)
+                      </h4>
+                      <p className="text-xs text-gray-500 mb-3">
+                        These roles scored just below the recommendation threshold. With targeted skill development, they could become strong matches.
+                      </p>
+                      <div className="grid gap-2">
+                        {analysis.nearMissRoles.map((role, idx) => (
+                          <div key={idx} className="flex items-center justify-between bg-gray-50 border border-gray-200 rounded-md px-4 py-3">
+                            <div className="flex-1">
+                              <span className="text-sm font-medium text-gray-800">{role.trackName}</span>
+                              <p className="text-xs text-gray-500 mt-0.5">{role.briefReason}</p>
+                            </div>
+                            <div className="flex items-center gap-2 ml-4 flex-shrink-0">
+                              <Progress value={role.matchScore} className="w-16 h-1.5" />
+                              <span className="text-xs font-medium text-amber-600 whitespace-nowrap">{role.matchScore}%</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )}
                 </CardContent>

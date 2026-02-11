@@ -84,9 +84,17 @@ interface CareerRecommendation {
   mentorNarrative?: string;
 }
 
+interface NearMissRole {
+  trackId: number;
+  trackName: string;
+  matchScore: number;
+  briefReason: string;
+}
+
 interface ResumeAnalysisResult {
   extractedData: ExtractedResumeData;
   careerRecommendations: CareerRecommendation[];
+  nearMissRoles?: NearMissRole[];
   overallAssessment: string;
   strengthAreas: string[];
   developmentAreas: string[];
@@ -456,15 +464,17 @@ ANALYSIS REQUIREMENTS:
    - Cross-check years of experience against biographical timeline consistency
 
 3. CAREER TRACK MATCHING:
-   - Match the candidate to top 3-5 most suitable career tracks
-   - Calculate match scores (0-100) based on their skills, experience, interests
-   - Provide detailed reasoning for each match
+   - Calculate match scores (0-100) for ALL career tracks based on their skills, experience, interests
+   - **PRIMARY RECOMMENDATIONS (75%+ match score)**: Include FULL analysis for EVERY career track scoring 75% or higher. Do NOT limit to a fixed number — include ALL tracks that meet this threshold. Each must have detailed reasoning, gap analysis, mentor narrative, salary range, and all other fields.
+   - **NEAR-MISS ROLES (70-74% match score)**: List any career tracks scoring between 70-74% in a separate "nearMissRoles" array with just the track name, score, and a brief one-sentence reason why they fell short of the 75% threshold.
+   - If NO tracks score 75% or higher, include the top 3 highest-scoring tracks as primary recommendations regardless of score.
+   - Provide detailed reasoning for each primary match
    - Recommend appropriate career level within each track
    - Identify their skill gaps and development areas
    - Suggest realistic salary ranges
    - Estimate transition timeline
    - **FACTOR IN VALIDATION ISSUES**: Reduce recommendations if timeline inconsistencies exist
-   - **INCLUDE MENTOR NARRATIVE**: Provide personalized career coaching for each recommendation
+   - **INCLUDE MENTOR NARRATIVE**: Provide personalized career coaching for each primary recommendation
 
    **MENTOR NARRATIVE REQUIREMENTS:**
    For each career recommendation, include a "mentorNarrative" field that provides personalized, conversational career coaching. This should read like advice from an experienced mentor, NOT a repetition of the strengths/gaps/next steps bullets.
@@ -697,6 +707,14 @@ Respond with detailed JSON analysis following this structure:
       },
       "timeToTransition": "...",
       "mentorNarrative": "..."
+    }
+  ],
+  "nearMissRoles": [
+    {
+      "trackId": number,
+      "trackName": "...",
+      "matchScore": number,
+      "briefReason": "One sentence explaining why this role scored between 70-74% and what would push it above 75%"
     }
   ],
   "overallAssessment": "...",
@@ -1141,6 +1159,7 @@ VALIDATION IS MANDATORY - Every response must include this complete structure. A
           developmentAreas: analysis.developmentAreas,
           nextSteps: analysis.nextSteps,
           validationFindings: analysis.validationFindings,
+          nearMissRoles: analysis.nearMissRoles || [],
           analyzedAt: new Date().toISOString()
         }
       });

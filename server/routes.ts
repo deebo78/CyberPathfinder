@@ -1505,6 +1505,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             return null;
           }
         })(),
+        nearMissRoles: (() => {
+          try {
+            const metadata = typeof analysis.analysisMetadata === 'string' 
+              ? JSON.parse(analysis.analysisMetadata) 
+              : analysis.analysisMetadata || {};
+            return metadata.nearMissRoles || [];
+          } catch {
+            return [];
+          }
+        })(),
         createdAt: analysis.createdAt
       };
 
